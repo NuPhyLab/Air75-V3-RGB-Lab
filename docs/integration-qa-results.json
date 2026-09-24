@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-10T14:10:53.860Z",
+  "passed": 10,
+  "results": [
+    "local API rejects missing token",
+    "quota-only side update preserves original main effect without arming it",
+    "ending a game from quota-only mode restores idle canvas and resumes the prior side light",
+    "stop suspends quota updates and restores original lighting",
+    "API → helper → all 84 RGB channels exact readback",
+    "moving heart pauses without advancing and resumes",
+    "finite frame animation finishes on its final frame",
+    "Snake collision stops playback; end restores the suspended work",
+    "save and delete persist through the API",
+    "disconnect/reconnect confirms exact original 17-byte lighting state"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "air-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An experimental NuPhy Lab lighting studio for NuPhy Air75 V3 on macOS",
+  "scripts": {
+    "setup": "npm --prefix ui install",
+    "build:native": "mkdir -p bin && swiftc -target \"$(uname -m)-apple-macosx13.0\" native/HIDBridge.swift -O -o bin/HIDBridge -framework IOKit -framework AppKit -framework ApplicationServices && swiftc -target \"$(uname -m)-apple-macosx13.0\" native/main.swift native/AppHost.swift native/AudioCapture.swift -O -o bin/AirStudio -framework AppKit -framework WebKit -framework Carbon -framework AVFoundation -framework CoreAudio -framework Accelerate",
+    "build:ui": "npm --prefix ui run build",
+    "build:icon": "node scripts/build-icon.mjs",
+    "fetch-node": "node scripts/fetch-node.mjs",
+    "build": "npm run build:icon && npm run build:native && npm run build:ui",
+    "start": "node server/main.mjs",
+    "test": "node --test --test-concurrency=2 tests/*.test.mjs",
+    "package": "npm run build && node scripts/package.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bohu8264/NuPhyLab.git"
+  },
+  "homepage": "https://github.com/bohu8264/NuPhyLab",
+  "bugs": {
+    "url": "https://github.com/bohu8264/NuPhyLab/issues"
+  }
+}

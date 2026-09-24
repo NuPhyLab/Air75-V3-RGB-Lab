@@ -1,0 +1,30 @@
+node_modules/
+ui/node_modules/
+ui/dist/
+bin/
+release/
+vendor/
+.DS_Store
+*.log
+*.tmp
+
+native/air75-hid-bridge
+ui/*.tsbuildinfo
+
+backups/
+
+# Local credentials, runtime data and signing material
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.key
+*.pem
+runtime.json
+library.json
+original-lighting*.json
+native/hardware-qa-results.json
+
+# Local photo reference (not required to build)
+原图/

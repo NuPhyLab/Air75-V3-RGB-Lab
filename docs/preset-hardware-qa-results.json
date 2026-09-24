@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-09-15T10:44:03.154Z",
+  "firmware": "1.0.16.6",
+  "presetCount": 12,
+  "readbackSettleMs": 80,
+  "previousLightingRestored": true,
+  "settingsUnchanged": true,
+  "scenesUnchanged": true,
+  "results": [
+    {
+      "id": "heart",
+      "name": "一颗小心意",
+      "framesSent": 19,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "smile",
+      "name": "眨个眼",
+      "framesSent": 7,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "star",
+      "name": "星光闪闪",
+      "framesSent": 10,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "crescent",
+      "name": "月光轻漾",
+      "framesSent": 8,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "butterfly",
+      "name": "蝴蝶振翅",
+      "framesSent": 10,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "arrow",
+      "name": "向右流光",
+      "framesSent": 10,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "mint-breath",
+      "name": "薄荷呼吸",
+      "framesSent": 18,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "comet",
+      "name": "流星划过",
+      "framesSent": 9,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "ripple",
+      "name": "蓝色涟漪",
+      "framesSent": 8,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "twinkle",
+      "name": "紫色星点",
+      "framesSent": 9,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "rain",
+      "name": "琥珀落雨",
+      "framesSent": 9,
+      "rgbReadbackMatches": true
+    },
+    {
+      "id": "scan",
+      "name": "青绿扫描",
+      "framesSent": 10,
+      "rgbReadbackMatches": true
+    }
+  ]
+}

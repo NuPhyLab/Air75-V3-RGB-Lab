@@ -1,0 +1,164 @@
+{
+  "checkedAt": "2026-09-10/11 Asia/Shanghai",
+  "scope": "Public documentation and static inspection of official distributed software; no Micro physical-device validation, no installation or execution of Input, no execution of catalog commands. Air hardware capability refers to existing project verification records.",
+  "codex": {
+    "version": "26.903.71938",
+    "installedArchive": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+    "files": [
+      {
+        "pathInArchive": "package.json",
+        "bytes": 5676,
+        "sha256": "dda72a0ef2159e3b7ac1bcd7e8e1682474b0584f6ac5f50540f0a6c31d0170ba",
+        "purpose": "版本"
+      },
+      {
+        "pathInArchive": ".vite/build/service-fwho9bdp.js",
+        "bytes": 29630,
+        "sha256": "cec159b184105e117c684083b9a2c6954b01c8849f65dfe6068f4d4a91d216be",
+        "purpose": "任务灯、分区、语音覆盖、4 秒选择提示、自动息灯"
+      },
+      {
+        "pathInArchive": ".vite/build/src-B6LqG3ek.js",
+        "bytes": 1595342,
+        "sha256": "9a1d9737c526cbba0e18e5ffc3b9371ef055318e7eabb7584b082fbcdb24472e",
+        "purpose": "状态 RGB、默认配置、四种来源与旋钮模式"
+      },
+      {
+        "pathInArchive": "webview/assets/app-initial-a9514281e192.js",
+        "bytes": 10488982,
+        "sha256": "038d28242240bb19fd90c7a380d80c6d23caaebc77a3ebb87ff6045bc49762c6",
+        "purpose": "命令定义、静态候选范围与 Electron 回退处理器"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-settings-b152013ff3a2.js",
+        "bytes": 109005,
+        "sha256": "4245fb842d56a50de4005864572754f5fc753f5b2daf73ddd6a23c710039841b",
+        "purpose": "设置选项及界面能力"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-slot-signals-d4ced2736489.js",
+        "bytes": 6307,
+        "sha256": "1d030254f7d58e597be606d15ffcc595f636afd261647b5a0f8ed9262532f4fa",
+        "purpose": "任务来源、真实选中和状态归类"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-layout-5d7c6b3ed9c5.js",
+        "bytes": 5480,
+        "sha256": "1610760539bc4e4fc35029c7f9e3fcf9ded8c2d9962afc5b56cc8acfb40bbcb1",
+        "purpose": "39 个软件键帽条目及默认映射"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-commands-b7cee09e2e9a.js",
+        "bytes": 517,
+        "sha256": "a1321c6e65b9835e205287597f7e17598bd7f67d6e3073f1c36195952146ee1e",
+        "purpose": "Micro 命令候选筛选规则"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-bridge-e3295008e178.js",
+        "bytes": 26168,
+        "sha256": "e8d97b58607eaddad95cc66faa98853a5c197182bb7de7c9dc29776242ea837b",
+        "purpose": "按键手势、500 毫秒长按、350 毫秒双击、临时显示层"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-mini-games-28d0777dec16.js",
+        "bytes": 2105,
+        "sha256": "768e59dc7d1d8cafa64fa0a6be5013d17fcc856c07379b2151a87fc2aaa66929",
+        "purpose": "三个游戏、绕圈触发和灯光覆盖"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-mini-game-composer-57479aab0b5f.js",
+        "bytes": 22618,
+        "sha256": "d405c0b9195ffe74e44130c4e677c4eedac3a3dcc3caf15285eb8b6b5c6091a0",
+        "purpose": "游戏画面在输入区渲染"
+      },
+      {
+        "pathInArchive": "webview/assets/codex-micro-onboarding-animation-b5310ec3ae1c.js",
+        "bytes": 3742,
+        "sha256": "aa9c19f164199e4d6a80c69251130f40f2ba008fe0eb680847d894e8450994e9",
+        "purpose": "引导演示而非实际任务状态"
+      },
+      {
+        "pathInArchive": "node_modules/@worklouder/device-kit-oai/dist/rpc_api_oai/types/oai_lighting_effect.d.ts",
+        "bytes": 801,
+        "sha256": "cba712e2035f02fd6042f44bd497e4d7d20d548c4969fa817b12bbeace1b353f",
+        "purpose": "7 个底层灯效枚举；不等于 Input 菜单"
+      }
+    ]
+  },
+  "input": {
+    "version": "0.18.4",
+    "channel": "stable",
+    "release": "https://github.com/worklouder/input-releases/releases/tag/v0.18.4",
+    "archiveName": "input-0.18.4-arm64-mac.zip",
+    "sha256": "9b25a1eb7596baf16d175bc93dfa10e2d1a4a095cdb75d658a05b866d59ae73a",
+    "officialDigestMatched": true,
+    "files": [
+      {
+        "pathInArchive": "package.json",
+        "bytes": 747,
+        "sha256": "f68e80c90c9510582cc8477ca438beb01437e73999a4d252e325e7c8394689f1",
+        "purpose": "Input 版本"
+      },
+      {
+        "pathInArchive": "dist/assets/App-C-Qfs6oi.js",
+        "bytes": 10235584,
+        "sha256": "1da8c573f9135088c2e052f34f9c361c024eed7791043f008d127f899652eac2",
+        "purpose": "六种灯效下拉选项、参数启用条件、分区、每层保存、默认配置、Profile 和多动作"
+      }
+    ]
+  },
+  "airStudioSourceSnapshot": [
+    {
+      "path": "server/codex.mjs",
+      "sha256": "76b0557f25589802826186982f92a635d94083690428e0027f52e77df784408a"
+    },
+    {
+      "path": "server/engine.mjs",
+      "sha256": "8a275b85a1e6dbf6a4331a13a6c0788fc70487b23dee8f685dfac7a7755c1170"
+    },
+    {
+      "path": "server/storage.mjs",
+      "sha256": "77c5ce8ae47a877a126a9859b4622b2162767433d91f626b7d49edfe0ec4f3dd"
+    },
+    {
+      "path": "server/main.mjs",
+      "sha256": "6b86bb1abf419c1a15eabdc3ec9e899d8a31294a80462c02412a7a8f44ef13d0"
+    },
+    {
+      "path": "ui/src/Codex.tsx",
+      "sha256": "62180a7575afeb90f8bcb3f7d1cc42cd4f167fcb7daea6c7de1db57559076306"
+    },
+    {
+      "path": "ui/src/Studio.tsx",
+      "sha256": "b143c80f55607d211427fb5be14ad884ac481323e4511a93f45cbf9fea76d4fe"
+    },
+    {
+      "path": "ui/src/presets.ts",
+      "sha256": "d02324a1d63626340e7e9bd9b96dfffe182f143901da32262e631088c6fca60e"
+    },
+    {
+      "path": "native/AppHost.swift",
+      "sha256": "348465d43e884a3c5e94b6de7b6a87f2bea5eeecb97c2ab7eacc476976863af6"
+    },
+    {
+      "path": "native/HIDBridge.swift",
+      "sha256": "9baebbdc8c258311c46cc808ebf8a81c75841c581c7e642b4e878371ac6db7dc"
+    },
+    {
+      "path": "docs/CODEX_INTEGRATION.md",
+      "sha256": "b9c9ce406897434ec45a3058e51c8d4b4ab93cd788e2789b7b571bb600e5d7ec"
+    }
+  ],
+  "commands": {
+    "candidates": 134,
+    "keycapEntries": 39,
+    "runtimeAvailabilityVerified": false
+  },
+  "limits": [
+    "Static candidates can be gated by runtime state, model, account, project, feature flag or enabled skills.",
+    "Bundled keyboard defaults are not the user’s effective bindings.",
+    "Firmware speed and Magic are normalized parameters, not documented time units or verified animation formulas.",
+    "Input 1.0.0 release candidates were not included.",
+    "Third-party source is not redistributed in this project."
+  ]
+}

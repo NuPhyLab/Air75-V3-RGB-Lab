@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-10T15:19:30.516Z",
+  "firmware": "1.0.16.6",
+  "passed": 6,
+  "results": [
+    {
+      "check": "only snake and food lit, with Codex integration enabled",
+      "litMain": 4,
+      "darkSide": 20,
+      "body": [
+        49,
+        48,
+        47
+      ],
+      "food": 46
+    },
+    {
+      "check": "quota setting changes cannot relight side LEDs during a game",
+      "litMain": 4,
+      "darkSide": 20,
+      "body": [
+        49,
+        48,
+        47
+      ],
+      "food": 46
+    },
+    {
+      "check": "moving snake still leaves every other channel black",
+      "litMain": 4,
+      "darkSide": 20,
+      "body": [
+        50,
+        49,
+        48
+      ],
+      "food": 46
+    },
+    {
+      "check": "ending game restores prior artwork and original side settings",
+      "sideColor": null
+    },
+    {
+      "check": "stop restores original 17-byte device lighting state exactly"
+    },
+    {
+      "check": "real service exposes photo-aligned 16-unit geometry without remapping existing RGB indices"
+    }
+  ]
+}

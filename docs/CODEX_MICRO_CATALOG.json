@@ -1,0 +1,2102 @@
+{
+  "checkedAt": "2026-09-10/11",
+  "codexVersion": "26.903.71938",
+  "scope": "Static Micro command-catalog candidates; runtime capability, context, feature gates and user keybindings still apply. Not a public control API.",
+  "commandCount": 134,
+  "keycapCount": 39,
+  "commands": [
+    {
+      "id": "newTask",
+      "name": "新建任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+N",
+        "CmdOrCtrl+Shift+O"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "newProjectlessTask",
+      "name": "新建独立任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+O"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "quickChat",
+      "name": "快速聊天",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+N"
+      ],
+      "requiredAccess": null,
+      "feature": "chatgpt",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "temporaryChat",
+      "name": "临时聊天",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+N"
+      ],
+      "requiredAccess": null,
+      "feature": "chatgpt",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openThreadInNewWindow",
+      "name": "在新窗口打开任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "archiveThread",
+      "name": "归档任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+A"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "markThreadUnread",
+      "name": "标为未读",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+U"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleThreadPin",
+      "name": "固定／取消固定任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+P"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "copyConversationMarkdown",
+      "name": "复制对话 Markdown",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openSideChat",
+      "name": "打开侧任务",
+      "category": "任务",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+S"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openControlWindow",
+      "name": "打开控制窗口",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleDebugModal",
+      "name": "切换调试面板",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+D"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "undoAppAction",
+      "name": "撤销应用操作",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Z"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "redoAppAction",
+      "name": "重做应用操作",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Shift+Z"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "reopenClosedTab",
+      "name": "重新打开关闭的标签",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+T"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.openModelPicker",
+      "name": "选择模型",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+M"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "composer.openProjectPicker",
+      "name": "选择项目",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+Shift+O"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.startVoiceMode",
+      "name": "启动语音聊天",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+V"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "realtimeVoice.toggleMicrophoneMute",
+      "name": "切换麦克风静音",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "realtimeVoice.toggleOutputMute",
+      "name": "切换语音输出静音",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "realtimeVoice.endCall",
+      "name": "结束语音聊天",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.startDictation",
+      "name": "开始听写",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+D"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "composer.submitInBackground",
+      "name": "后台发送",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Enter"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.submit",
+      "name": "发送输入内容",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.steer",
+      "name": "发送引导消息",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.queue",
+      "name": "加入消息队列",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.clear",
+      "name": "清空输入",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.addPhotos",
+      "name": "添加图片",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.captureAppshot",
+      "name": "获取 Appshot",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": false,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.addFiles",
+      "name": "添加文件",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.toggleFastMode",
+      "name": "切换 Fast 模式",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.increaseReasoningEffort",
+      "name": "提高推理强度",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.decreaseReasoningEffort",
+      "name": "降低推理强度",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.cycleReasoningEffort",
+      "name": "循环推理强度",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.togglePlanMode",
+      "name": "切换计划模式",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.toggleWorktreeMode",
+      "name": "切换工作树模式",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "composer.toggleWorkRunLocation",
+      "name": "切换 Work 运行位置",
+      "category": "输入与语音",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "approval.approve",
+      "name": "批准当前请求",
+      "category": "批准与拒绝",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Enter"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "入口禁用；尚未接入真实请求上下文"
+    },
+    {
+      "id": "approval.decline",
+      "name": "拒绝当前请求",
+      "category": "批准与拒绝",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Escape"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "入口禁用；尚未接入真实请求上下文"
+    },
+    {
+      "id": "git.commit",
+      "name": "提交 Git 改动",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.createPullRequest",
+      "name": "创建 PR",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.createDraftPullRequest",
+      "name": "创建草稿 PR",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.createBranch",
+      "name": "创建分支",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.mergePullRequest",
+      "name": "合并 PR",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.openPullRequest",
+      "name": "打开 PR",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "git.toggleBlame",
+      "name": "显示／隐藏 Git blame",
+      "category": "Git 与 PR",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "forkThread",
+      "name": "分叉当前任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openAvatarOverlay",
+      "name": "打开头像悬浮窗",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Alt+Space"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "os-global",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "searchChats",
+      "name": "搜索任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "togglePriorityFilter",
+      "name": "切换优先筛选",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+U"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusMainChat",
+      "name": "聚焦主任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusSideChat",
+      "name": "聚焦侧任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "nextThreadNeedingAttention",
+      "name": "跳到需要处理的任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+A"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "previousTab",
+      "name": "上一个标签",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+Tab",
+        "Command+Shift+[",
+        "Command+Alt+Left"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "previousThread",
+      "name": "上一个任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Shift+[",
+        "Command+Alt+Left"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "previousRecentThread",
+      "name": "上一个最近任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+Tab"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "nextTab",
+      "name": "下一个标签",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Tab",
+        "Command+Shift+]",
+        "Command+Alt+Right"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "nextThread",
+      "name": "下一个任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Shift+]",
+        "Command+Alt+Right"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "nextRecentThread",
+      "name": "下一个最近任务",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Tab"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "recentThread1",
+      "name": "切换到最近任务 1",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+1"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "recentThread2",
+      "name": "切换到最近任务 2",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+2"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "recentThread3",
+      "name": "切换到最近任务 3",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+3"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "recentThread4",
+      "name": "切换到最近任务 4",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+4"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "recentThread5",
+      "name": "切换到最近任务 5",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+5"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "recentThread6",
+      "name": "切换到最近任务 6",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+6"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "focusTab1",
+      "name": "聚焦标签 1",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+1"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab2",
+      "name": "聚焦标签 2",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+2"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab3",
+      "name": "聚焦标签 3",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+3"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab4",
+      "name": "聚焦标签 4",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+4"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab5",
+      "name": "聚焦标签 5",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+5"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab6",
+      "name": "聚焦标签 6",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+6"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab7",
+      "name": "聚焦标签 7",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+7"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab8",
+      "name": "聚焦标签 8",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+8"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusTab9",
+      "name": "聚焦标签 9",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+9"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "switchToMode1",
+      "name": "切换 Chat 模式",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+1"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "switchToMode2",
+      "name": "切换 Work 模式",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+2"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "switchToMode3",
+      "name": "切换 Codex 模式",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+3"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "settings",
+      "name": "打开设置",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+,"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "codexMicroSettings",
+      "name": "打开 Micro 设置",
+      "category": "设置",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": false,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "mcpSettings",
+      "name": "打开 MCP 设置",
+      "category": "设置",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "personalitySettings",
+      "name": "打开个性化设置",
+      "category": "设置",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "importExternalAgent",
+      "name": "导入其他 AI 应用内容",
+      "category": "设置",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "keyboardShortcuts",
+      "name": "配置键盘快捷键",
+      "category": "设置",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "showKeyboardShortcuts",
+      "name": "显示快捷键帮助",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+/"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "clearAllUnreads",
+      "name": "清除全部未读",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Shift+Escape"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "manageTasks",
+      "name": "管理定时任务",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "forceReloadSkills",
+      "name": "重新加载技能",
+      "category": "技能",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openSkills",
+      "name": "打开技能／插件入口",
+      "category": "技能",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openFolder",
+      "name": "打开文件夹",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+O"
+      ],
+      "requiredAccess": "codexOrWorkLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleSidebar",
+      "name": "显示／隐藏侧栏",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+B"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleBottomPanel",
+      "name": "显示／隐藏底部面板",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+J"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "togglePinnedSummary",
+      "name": "显示／隐藏固定摘要",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleTerminal",
+      "name": "打开／收起终端",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Control+`"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openBrowserTab",
+      "name": "打开浏览器标签",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+T"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "closeOtherTabs",
+      "name": "关闭其他标签",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+W"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "showWorkspaceTabView",
+      "name": "显示工作区标签视图",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+F"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "stepWorkspaceLayout",
+      "name": "切换工作区布局",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+B"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "openReviewTab",
+      "name": "打开评审标签",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+Shift+G"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": "codex",
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleReviewTab",
+      "name": "切换评审标签",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleSidePanel",
+      "name": "切换评审侧面板",
+      "category": "面板",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+B"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleMaximizeSidePanel",
+      "name": "切换侧面板最大化",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "file.goToDefinition",
+      "name": "跳转定义",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Ctrl+]"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "file.navigateBack",
+      "name": "文件导航后退",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Control+-"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "file.navigateForward",
+      "name": "文件导航前进",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Control+Shift+-"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "findInThread",
+      "name": "在任务中查找",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+F"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "goToLine",
+      "name": "跳转到行",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+L"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "focusBrowserAddressBar",
+      "name": "聚焦浏览器地址栏",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+L"
+      ],
+      "requiredAccess": null,
+      "feature": "codex",
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "navigateBrowserBack",
+      "name": "浏览器后退",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Left"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "navigateBrowserForward",
+      "name": "浏览器前进",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Right"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "navigateBack",
+      "name": "应用历史后退",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+[",
+        "MouseBack"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "navigateForward",
+      "name": "应用历史前进",
+      "category": "导航",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+]",
+        "MouseForward"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "logOut",
+      "name": "退出账号",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "feedback",
+      "name": "反馈问题",
+      "category": "应用",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction1",
+      "name": "运行环境动作 1",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "Command+Shift+D"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction2",
+      "name": "运行环境动作 2",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction3",
+      "name": "运行环境动作 3",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction4",
+      "name": "运行环境动作 4",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction5",
+      "name": "运行环境动作 5",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction6",
+      "name": "运行环境动作 6",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction7",
+      "name": "运行环境动作 7",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction8",
+      "name": "运行环境动作 8",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "environmentAction9",
+      "name": "运行环境动作 9",
+      "category": "工作区",
+      "kind": "webview",
+      "macBundledDefaults": [],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": "app",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread1",
+      "name": "切换到位置 1 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+1"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread2",
+      "name": "切换到位置 2 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+2"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread3",
+      "name": "切换到位置 3 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+3"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread4",
+      "name": "切换到位置 4 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+4"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread5",
+      "name": "切换到位置 5 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+5"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread6",
+      "name": "切换到位置 6 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+6"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread7",
+      "name": "切换到位置 7 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+7"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread8",
+      "name": "切换到位置 8 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+8"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "thread9",
+      "name": "切换到位置 9 的任务",
+      "category": "其他上下文命令",
+      "kind": "webview",
+      "macBundledDefaults": [
+        "CmdOrCtrl+9"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "hotkeyWindow",
+      "name": "打开快捷任务窗口",
+      "category": "其他上下文命令",
+      "kind": "electron-only",
+      "macBundledDefaults": [],
+      "requiredAccess": "codexLocal",
+      "feature": null,
+      "shortcutScope": "os-global",
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "renameThread",
+      "name": "重命名任务",
+      "category": "其他上下文命令",
+      "kind": "electron-only",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Alt+R"
+      ],
+      "requiredAccess": null,
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    },
+    {
+      "id": "toggleFileTreePanel",
+      "name": "显示／隐藏文件树",
+      "category": "其他上下文命令",
+      "kind": "electron-only",
+      "macBundledDefaults": [
+        "CmdOrCtrl+Shift+E"
+      ],
+      "requiredAccess": "codexLocal",
+      "feature": null,
+      "shortcutScope": null,
+      "shortcutConfigurable": true,
+      "airStatus": "未接入"
+    }
+  ],
+  "keycaps": [
+    {
+      "id": "FAST",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.toggleFastMode",
+      "name": "切换 Fast 模式",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "APPR",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "approval.approve",
+      "name": "批准当前请求",
+      "airStatus": "入口禁用；尚未接入真实请求上下文"
+    },
+    {
+      "id": "REJ",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "approval.decline",
+      "name": "拒绝当前请求",
+      "airStatus": "入口禁用；尚未接入真实请求上下文"
+    },
+    {
+      "id": "SPLIT",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "forkThread",
+      "name": "分叉当前任务",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "MIC",
+      "size": "double",
+      "actionType": "named",
+      "commandId": null,
+      "name": "按住说话",
+      "airStatus": "只有听写入口，未实现按压语义"
+    },
+    {
+      "id": "MIC1",
+      "size": "single",
+      "actionType": "named",
+      "commandId": null,
+      "name": "按住说话",
+      "airStatus": "只有听写入口，未实现按压语义"
+    },
+    {
+      "id": "CODEX",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.submit",
+      "name": "发送输入内容",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "BUG",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "feedback",
+      "name": "反馈问题",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "OAI",
+      "size": "single",
+      "actionType": "external-url",
+      "commandId": null,
+      "name": "打开 OpenAI 开发者文档",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "TERM",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "toggleTerminal",
+      "name": "打开／收起终端",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "DWN",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "copyConversationMarkdown",
+      "name": "复制对话 Markdown",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "DEL",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "archiveThread",
+      "name": "归档任务",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "NEW",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "newTask",
+      "name": "新建任务",
+      "airStatus": "已有快捷入口；受权限、用户键位和上下文限制"
+    },
+    {
+      "id": "NAV",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "openBrowserTab",
+      "name": "打开浏览器标签",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "MAGIC",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "toggleThreadPin",
+      "name": "固定／取消固定任务",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "DIFF",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "toggleReviewTab",
+      "name": "切换评审标签",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "PLAY",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "environmentAction1",
+      "name": "运行环境动作 1",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "GIT",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "git.commit",
+      "name": "提交 Git 改动",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "BRCH",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "git.createDraftPullRequest",
+      "name": "创建草稿 PR",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "BRANCH",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "git.createBranch",
+      "name": "创建分支",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "MRG",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "git.mergePullRequest",
+      "name": "合并 PR",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "PR",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "git.createPullRequest",
+      "name": "创建 PR",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "PAINT",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.addPhotos",
+      "name": "添加图片",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "LAB",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "settings",
+      "name": "打开设置",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "PARTY",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "openSideChat",
+      "name": "打开侧任务",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "TIME",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "manageTasks",
+      "name": "管理定时任务",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "MIND+",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.increaseReasoningEffort",
+      "name": "提高推理强度",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "MIND-",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.decreaseReasoningEffort",
+      "name": "降低推理强度",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "EMPT1",
+      "size": "single",
+      "actionType": "custom-shortcut",
+      "commandId": null,
+      "name": "空白自定义动作",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "EMPT2",
+      "size": "single",
+      "actionType": "custom-shortcut",
+      "commandId": null,
+      "name": "空白自定义动作",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "EMPT3",
+      "size": "single",
+      "actionType": "custom-shortcut",
+      "commandId": null,
+      "name": "空白自定义动作",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "EMPT4",
+      "size": "single",
+      "actionType": "custom-shortcut",
+      "commandId": null,
+      "name": "空白自定义动作",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "SETUP",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "settings",
+      "name": "打开设置",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "FOLD",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "openFolder",
+      "name": "打开文件夹",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "UPL",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "composer.addFiles",
+      "name": "添加文件",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "APPS",
+      "size": "single",
+      "actionType": "command",
+      "commandId": "openSkills",
+      "name": "打开技能／插件入口",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "YOLO",
+      "size": "single",
+      "actionType": "composer-text",
+      "commandId": null,
+      "name": "在输入框写入 :yolo:",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "YEET",
+      "size": "single",
+      "actionType": "composer-text",
+      "commandId": null,
+      "name": "在输入框写入 :yeet:",
+      "airStatus": "未接入"
+    },
+    {
+      "id": "EMPT5",
+      "size": "double",
+      "actionType": "custom-shortcut",
+      "commandId": null,
+      "name": "空白自定义动作",
+      "airStatus": "未接入"
+    }
+  ]
+}
