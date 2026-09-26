@@ -235,7 +235,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
         window.saveFrame(usingName:windowFrameName)
         show()
     }
-    @objc func about(){NSApp.orderFrontStandardAboutPanel(options:[.applicationName:"NuPhyLab",.applicationVersion:"1.0.0",.credits:NSAttributedString(string:self.T("为 NuPhy Air75 V3 创作灯光。独立本地项目。"))])}
+    @objc func about(){NSApp.orderFrontStandardAboutPanel(options:[.applicationName:"NuPhyLab",.applicationVersion:(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Development"),.credits:NSAttributedString(string:self.T("为 NuPhy Air75 V3 创作灯光。独立本地项目。"))])}
     @objc func togglePause(){post(["op":"pause"])}
     @objc func restore(){post(["op":"restore"])}
     @objc func quit(){NSApp.terminate(nil)}

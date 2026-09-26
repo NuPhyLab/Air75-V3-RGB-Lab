@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {selectSigningIdentity,selectNamedIdentity} from '../scripts/signing.mjs';
+import {selectSigningIdentity,selectNamedIdentity,requireDistributionIdentity} from '../scripts/signing.mjs';
 const dev='A'.repeat(40), local='B'.repeat(40),distribution='C'.repeat(40);
 const listing=` 1) ${local} "Local test certificate"\n 2) ${dev} "Apple Development: Example (TEAM)"\n 2 valid identities found`;
 test('packaging selects an Apple certificate and never silently falls back to an ad-hoc identity',()=>{
@@ -28,4 +28,13 @@ test('an explicitly named certificate may be a local self-signed one, but never 
  assert.equal(selectNamedIdentity(untrusted,dev).apple,true);
  assert.throws(()=>selectNamedIdentity(untrusted,'Missing Certificate'));
  assert.throws(()=>selectNamedIdentity(untrusted,'-'));
+});
+
+test('distribution rejects development, ad-hoc and expired identities before packaging',()=>{
+ const name='Developer ID Application: Example (TEAM)';
+ const valid=` 1) ${distribution} "${name}"`;
+ assert.doesNotThrow(()=>requireDistributionIdentity({hash:distribution,name},valid));
+ assert.throws(()=>requireDistributionIdentity({hash:dev,name:'Apple Development: Example (TEAM)'},listing));
+ assert.throws(()=>requireDistributionIdentity({hash:'-',name:'ad-hoc',adhoc:true},valid));
+ assert.throws(()=>requireDistributionIdentity({hash:distribution,name},'0 valid identities found'));
 });

@@ -1,5 +1,6 @@
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 export function selectSigningIdentity(output, requested = process.env.AIR_STUDIO_SIGN_IDENTITY) {
   const identities = [...output.matchAll(/^\s*\d+\)\s+([A-F0-9]{40})\s+"([^"]+)"/gm)]
@@ -58,14 +59,25 @@ export function signingIdentity({
 // display name. A different development machine's TCC workaround must not
 // change the identity of existing installations.
 export const BUNDLE_ID = 'local.airstudio.desktop';
+export function requireDistributionIdentity(identity, validListing) {
+  if (!identity.name.startsWith('Developer ID Application: ') || identity.adhoc)
+    throw new Error('Distribution requires a valid Developer ID Application identity.');
+  selectSigningIdentity(validListing, identity.hash);
+}
 export function signApp(app, identity) {
+  const distribution = identity.name.startsWith('Developer ID Application: ');
+  const entitlements = fileURLToPath(new URL('../native/entitlements/', import.meta.url));
   // Sign every executable with the same certificate, then seal the completed
   // bundle once. No weak custom requirement, permissions reset or TCC writes.
-  for(const [file,id] of [
-    ['Contents/Resources/runtime/node',`${BUNDLE_ID}.runtime`],
-    ['Contents/Resources/bin/HIDBridge',`${BUNDLE_ID}.hid`],
-    ['', BUNDLE_ID],
-  ]) execFileSync('/usr/bin/codesign',['--force','--sign',identity.hash,'--identifier',id,'--timestamp=none',path.join(app,file)],{stdio:'pipe'});
+  for(const [file,id,permissions] of [
+    ['Contents/Resources/runtime/node',`${BUNDLE_ID}.runtime`,'node.plist'],
+    ['Contents/Resources/bin/HIDBridge',`${BUNDLE_ID}.hid`,null],
+    ['', BUNDLE_ID,'app.plist'],
+  ]) {
+    const options = distribution ? ['--options','runtime','--timestamp',
+      ...(permissions ? ['--entitlements',path.join(entitlements,permissions)] : [])] : ['--timestamp=none'];
+    execFileSync('/usr/bin/codesign',['--force','--sign',identity.hash,'--identifier',id,...options,path.join(app,file)],{stdio:'pipe'});
+  }
   // An ad-hoc bundle still has to verify; only its authority is missing.
   execFileSync('/usr/bin/codesign',['--verify','--deep','--strict',app],{stdio:'pipe'});
 }

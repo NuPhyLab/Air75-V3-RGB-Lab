@@ -39,7 +39,9 @@ open "release/NuPhyLab.app"
 
 权限页跳转使用 macOS 未公开的设置深链，不保证所有 macOS 版本都能定位到同一页面；若未打开对应页面，请进入「系统设置 → 隐私与安全性 → 输入监控 / 辅助功能」。这是 [Apple 未公开 URL scheme 的兼容性限制](https://developer.apple.com/forums/thread/761314)。源码运行时，权限可能归属于启动程序的终端，而不是打包后的 NuPhyLab。
 
-当前包使用这台 Mac 已有的 **Apple Development 开发证书签名**，主应用与后台可执行文件保持同一证书身份，更新内容不再导致授权绑定的身份随内容哈希变化。尚未使用 Developer ID 分发签名或提交 Apple 公证，因此本地签名验证不等于跨机器发行验证。当前构建为 Apple Silicon（arm64）。
+从 **v1.0.1** 起，对外发布包使用 **Shenzhen NuPhy Technology Co., Ltd. 的 Developer ID**，启用 Hardened Runtime 与安全时间戳，完成 Apple 公证并附带 staple 票据。正常情况下无需在系统设置里点「仍要打开」；首次联网下载提示和功能权限提示仍可能出现。当前构建为 Apple Silicon（arm64）。发布机的 Gatekeeper assessments 原本关闭，尚需在另一台默认安全设置开启的 Mac 上完成首次安装验证，不能把本机检查等同于该验证。
+
+从旧版开发签名升级会改变签名团队，可能需要重新授予可选的辅助功能或输入监控权限，作品数据目录保持不变。公司分发流程见 [macOS distribution](docs/MACOS_DISTRIBUTION.md)。
 
 ## 界面与窗口
 

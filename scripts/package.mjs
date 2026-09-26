@@ -2,7 +2,7 @@ import { cp, mkdir, writeFile, readFile, chmod, rm } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {signingIdentity,signApp,BUNDLE_ID} from './signing.mjs';
+import {signingIdentity,signApp,BUNDLE_ID,requireDistributionIdentity} from './signing.mjs';
 import {runtimePath,verifyRuntime} from './fetch-node.mjs';
 import {access} from 'node:fs/promises';
 import {constants} from 'node:fs';
@@ -15,6 +15,10 @@ const app = path.resolve(
 // Resolve signing before touching a previous package. Never modify an app whose
 // processes are running: macOS may retain the old executable signature in memory.
 const identity = signingIdentity();
+if (process.env.AIR_STUDIO_DISTRIBUTION === '1' || identity.name.startsWith('Developer ID Application: '))
+  requireDistributionIdentity(identity, execFileSync('/usr/bin/security',['find-identity','-v','-p','codesigning'],{encoding:'utf8'}));
+const {version} = JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
+if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('Invalid app version.');
 // The bundled runtime must not depend on anything outside the .app. A package
 // manager's node links against its own libraries and would fail on another Mac.
 const runtime = await (async () => {
@@ -76,7 +80,7 @@ await writeFile(
 <plist version="1.0"><dict>
 <key>CFBundleExecutable</key><string>AirStudio</string><key>CFBundleIdentifier</key><string>${BUNDLE_ID}</string>
 <key>CFBundleName</key><string>NuPhyLab</string><key>CFBundleDisplayName</key><string>NuPhyLab</string>
-<key>CFBundleVersion</key><string>1</string><key>CFBundleShortVersionString</key><string>1.0.0</string>
+<key>CFBundleVersion</key><string>${version}</string><key>CFBundleShortVersionString</key><string>${version}</string>
 <key>CFBundlePackageType</key><string>APPL</string><key>CFBundleIconFile</key><string>AppIcon</string>
 <key>LSMinimumSystemVersion</key><string>13.5</string><key>NSHighResolutionCapable</key><true/>
 <key>NSMicrophoneUsageDescription</key><string>将麦克风声音转换为键盘律动灯效。声音仅在本机分析，不保存或上传。</string>

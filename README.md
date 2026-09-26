@@ -6,7 +6,7 @@ Paint per-key RGB patterns, create animations, make your keyboard react to music
 
 [Download for macOS](https://github.com/bohu8264/NuPhyLab/releases) · [中文说明](README.zh-CN.md) · [Report an issue](https://github.com/bohu8264/NuPhyLab/issues)
 
-> **Experimental release.** The verified configuration is an Air75 V3 ANSI over USB, firmware **1.0.16.6**, using the Mac configuration profile. The downloadable app is for **Apple Silicon, macOS 13.5 or later**. It is development-signed and **not notarized by Apple**. Other models, layouts, firmware versions, Intel Macs, and Windows are outside the verified release scope.
+> **Experimental release.** The verified configuration is an Air75 V3 ANSI over USB, firmware **1.0.16.6**, using the Mac configuration profile. The downloadable app is for **Apple Silicon, macOS 13.5 or later**. Starting with **v1.0.1**, the release app is signed with the company **Developer ID**, **notarized by Apple**, and includes a stapled notarization ticket. Other models, layouts, firmware versions, Intel Macs, and Windows are outside the verified release scope.
 
 ## What you can do
 
@@ -26,7 +26,7 @@ No kernel extension or keyboard firmware modification is required. NuPhyLab stre
 1. Open [Releases](https://github.com/bohu8264/NuPhyLab/releases) and download **`NuPhyLab-macOS-arm64.zip`**.
 2. Unzip it, then move **NuPhyLab.app** to **Applications**.
 3. Connect an **Air75 V3 ANSI** with a USB data cable and select wired mode. Close NuPhyIO or other software controlling the keyboard lighting.
-4. Open NuPhyLab. Because this experimental build is not notarized, macOS may block the first launch. If you trust this release, use the system's **Privacy & Security → Open Anyway** flow when available. Do not disable Gatekeeper globally.
+4. Open NuPhyLab. The notarized release is intended to pass normal macOS Gatekeeper checks without **Open Anyway**. macOS may still ask you to confirm that you want to open an app downloaded from the internet, and optional features still require their normal permissions.
 5. Choose **English** using the language selector at the bottom left. Pick a preset or paint a pattern, then play it to the keyboard.
 
 The app includes its Node.js runtime; users do not need to install Node.js. If the keyboard's master light switch is off, press **Fn + ↑** on the keyboard before playing a pattern.
@@ -116,6 +116,10 @@ AIR_STUDIO_ALLOW_ADHOC=1 npm run package
 ```
 
 Ad-hoc builds are not notarized and may need permissions granted again after updates. Quit the app before replacing its bundle. A release build is architecture-specific, not universal.
+
+For company-signed distribution, follow [macOS distribution](docs/MACOS_DISTRIBUTION.md). Signing alone is not notarization: submit to Apple, staple the accepted ticket, and recreate the final ZIP. The release host has Gatekeeper assessments disabled; testing the final download on a separate Mac with default security settings enabled remains outstanding.
+
+Upgrading from the old development-signed v1.0.0 changes the signing team. macOS may require you to grant optional Accessibility or Input Monitoring permissions again; saved creations stay in the same data directory.
 
 ### Project structure
 
