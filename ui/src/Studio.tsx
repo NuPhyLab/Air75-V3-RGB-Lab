@@ -121,6 +121,7 @@ export function Studio({
       tab === "game" ||
       tab === "trigger" ||
       state.playback.mode === "game" ||
+      state.playback.mode === "agent" ||
       state.playback.mode === "trigger"
     )
       return;

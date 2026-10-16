@@ -7,11 +7,11 @@ const art=Array(84).fill('#123456');
 test('successful Codex task keys, task buttons and command keys wake the global timer without resetting it while awake',async t=>{
  const s=await fakeService(t,{tasks:[{id:'a',status:'running'}]});
  await s.command({op:'settings',settings:{codexEnabled:true,codexSelectedPulse:false,brightness:100,lightDurationMs:1000,lightIdleMs:0}});
- await s.command({op:'preview',colors:art});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
  for(const request of [{op:'codexKey',code:'F1',phase:'down'},{op:'codexAction',action:'task',threadId:'a'},{op:'codexKey',code:'F12',phase:'down'}]) {
   await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'timer did not send black');
   assert.equal((await s.command(request)).ok,true);
-  const awake=await until(s.state,v=>!v.lightPower.sleeping&&v.colors[0]==='#123456','Codex interaction left keyboard asleep');
+  const awake=await until(s.state,v=>!v.lightPower.sleeping&&v.colors[1]==='#304ffe','Codex interaction left keyboard asleep');
   assert.equal(awake.colors[1],'#304ffe');
   assert.equal(awake.settings.lightDurationMs,1000);
   if(request.code)await s.command({op:'codexKey',code:request.code,phase:'up'});
@@ -66,28 +66,28 @@ test('whole keyboard duration blacks main and side lights, survives language cha
  const saved=JSON.parse(await readFile(s.dataDir+'/library.json','utf8'));
  assert.equal(saved.settings.language,'en');assert.equal(saved.settings.lightDurationMs,1000);
 });
-test('global idle timer sleeps and wakes artwork and Codex together, ignoring legacy timeout',async t=>{
+test('global idle timer sleeps and wakes exclusive Codex lights, ignoring legacy timeout',async t=>{
  const s=await fakeService(t,{tasks:[{id:'a',status:'running'}]});
  await s.command({op:'settings',settings:{brightness:100,codexEnabled:true,codexAutoOffMs:1000,lightIdleMs:2200}});
- await s.command({op:'preview',colors:art});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
  await wait(1200);
- const lit=await s.state();assert.equal(lit.colors[0],'#123456');assert.equal(lit.colors[1],'#304ffe');assert.equal(lit.codex.lighting.sleeping,false);
+ const lit=await s.state();assert.equal(lit.colors[0],'#000000');assert.equal(lit.colors[1],'#304ffe');assert.equal(lit.codex.lighting.sleeping,false);
  const asleep=await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'whole keyboard did not send its sleeping frame');
  assert.equal(asleep.codex.lighting.sleeping,true);assert.ok(asleep.colors.every(c=>c==='#000000'));
  await s.configure({systemIdleMs:0});
- const awake=await until(s.state,v=>v.colors[0]==='#123456','system activity did not wake');
+ const awake=await until(s.state,v=>v.colors[1]==='#304ffe','system activity did not wake');
  assert.equal(awake.colors[1],'#304ffe');assert.equal(awake.codex.lighting.sleeping,false);
 });
 test('global duration controls Codex too; legacy wake also restores the whole keyboard',async t=>{
  const s=await fakeService(t,{tasks:[{id:'a',status:'completed'}]});
  await s.command({op:'settings',settings:{brightness:100,codexEnabled:true,codexAutoOffMs:0,lightDurationMs:1000}});
- await s.command({op:'preview',colors:art});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
  const asleep=await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'duration did not send the sleeping frame');
  assert.ok(asleep.colors.every(c=>c==='#000000'));assert.equal(asleep.codex.lighting.sleeping,true);
  await s.configure({tasks:[{id:'a',status:'running'}]});await wait(100);
  assert.equal((await s.state()).lightPower.sleeping,true);
  await s.command({op:'codexWake'});
- const awake=await until(s.state,v=>v.colors[0]==='#123456','legacy wake did not restore');
+ const awake=await until(s.state,v=>v.colors[1]==='#304ffe','legacy wake did not restore');
  assert.equal(awake.colors[1],'#304ffe');assert.equal(awake.codex.lighting.sleeping,false);
 });
 test('animation and game clocks pause during whole-keyboard sleep',async t=>{

@@ -106,7 +106,7 @@ const resolveCodexSlots = (snap = codex.snapshot()) => taskSlots.resolve(snap.ta
 // While USB displays task lights, the UI and physical keys use the same
 // acknowledged frame. A poll must not move a task before its RGB reaches USB.
 const codexOwnsLights = () => agentSource() === 'codex' && agentEnabled()
-  && hardware.state.connected && hardware.state.armed && !['idle','game','trigger','audio'].includes(playback.mode);
+  && hardware.state.connected && hardware.state.armed && playback.mode === 'agent';
 const slots = () => codexOwnsLights() && publishedCodexSlots !== null ? publishedCodexSlots : resolveCodexSlots();
 const capturedCodexTask = Symbol('capturedCodexTask');
 function captureTaskRequest(req) {
@@ -210,7 +210,8 @@ function state() {
 async function output(input) {
   let out = [...input];
   let nextCodexSlots = null;
-  if (agentEnabled() && !["game", "trigger", "audio"].includes(playback.mode)) {
+  if (agentEnabled() && playback.mode === 'agent') {
+    out = blank();
     if (agentSource() === "claude") out = claudeLights.render(out, claudeSlots(), store.data.settings, claudeTasks());
     else {
       const snap = codex.snapshot();
@@ -303,9 +304,10 @@ async function fireTrigger() {
   }
   return trigger.snapshot();
 }
-async function stop() {
+async function stop({restore = true} = {}) {
   audio.stop();
-  await codexGestures.release();
+  let keyReleaseError;
+  try { await codexGestures.release(); } catch(error) { keyReleaseError=error; }
   lightPower.wake();
   lightSleepStarted = null;
   await disableTrigger();
@@ -316,11 +318,28 @@ async function stop() {
   suspendedScene = null;
   pendingSceneRestore = false;
   lastFrame = "";
-  await hardware.restore();
+  if (restore) await hardware.restore();
   playback.lastError = null;
   invalidateLightingCache();
   colors = blank();
+  if (keyReleaseError && restore) throw keyReleaseError;
   return hardware.state;
+}
+async function startAgentLighting() {
+  // Task status has exclusive ownership: cancel capture, game and trigger
+  // dispatch before sending the first status frame. Keep saved artwork intact.
+  audio.stop();
+  await disableTrigger();
+  game.status = 'idle';
+  suspendedScene = null;
+  pendingSceneRestore = false;
+  playback = {...playback, mode:'agent', playing:false, elapsed:0};
+  integrationsSuspended = false;
+  publishedCodexSlots = null;
+  if (!hardware.state.connected || explicitDisconnect || hardware.state.capabilities?.perKey === false) return;
+  await activate();
+  await muteGameSide();
+  await output(blank());
 }
 async function persistGameScore() {
   if (game.bestScore <= (store.data.gameBestScores[game.type] ?? 0)) return;
@@ -339,6 +358,7 @@ async function restorePendingScene() {
   const suspended = integrationsSuspended;
   try {
     await activate();
+    if (playback.mode === 'agent') await muteGameSide();
     started = performance.now() - (playback.elapsed ?? 0);
     await output(renderAnimation(baseColors, animation, playback.elapsed ?? 0));
     pendingSceneRestore = false;
@@ -405,9 +425,7 @@ async function tick() {
             await output(game.render());
           } else if (playback.playing) await activate();
           else if (agentEnabled() && !integrationsSuspended) {
-            await activate();
-            playback.mode = "static";
-            await output(baseColors);
+            await startAgentLighting();
           }
         } catch {}
       }
@@ -454,7 +472,7 @@ async function tick() {
         started += performance.now() - lightSleepStarted;
         lastGameTick = performance.now();
         lightSleepStarted = null;
-        if (!["game", "trigger", "audio"].includes(playback.mode)) await restoreGameSide();
+        if (!["game", "trigger", "audio", "agent"].includes(playback.mode)) await restoreGameSide();
         lastFrame = "";
         if (["static", "paused"].includes(playback.mode)) await output(playback.mode === "paused" ? renderAnimation(baseColors, animation, playback.elapsed ?? 0) : baseColors);
       }
@@ -492,16 +510,16 @@ async function tick() {
     } else if (
       hardware.state.armed &&
       agentEnabled() &&
-      ["static", "paused"].includes(playback.mode)
+      playback.mode === 'agent'
     )
-      await output(playback.mode === "paused" ? renderAnimation(baseColors, animation, playback.elapsed ?? 0) : baseColors);
+      await output(blank());
     if (performance.now() - lastStatusCheck > 4000) {
       lastStatusCheck = performance.now();
       await hardware.status();
     }
     if (
       store.data.settings.quotaSideEnabled &&
-      !["game", "trigger", "audio"].includes(playback.mode) &&
+      !["game", "trigger", "audio", "agent"].includes(playback.mode) &&
       !integrationsSuspended &&
       hardware.state.connected &&
       performance.now() - quotaChanged > 60000
@@ -620,9 +638,10 @@ async function command(req) {
       void firmware.refresh(true);
       return firmware.snapshot(hardware.state);
     case "prepareFirmwareUpdate":
+      explicitDisconnect = true;
       await stop();
       await hardware.disconnect();
-      explicitDisconnect = true;
+      if (hardware.state.recoveryPending || hardware.state.error) throw new Error("原设置尚未恢复，请重新连接并恢复后再升级固件。");
       return { url: FIRMWARE_URL };
     case "openPermissionSettings": {
       if (!["inputMonitoring", "accessibility"].includes(req.permission))
@@ -651,23 +670,23 @@ async function command(req) {
         await activate();
         await muteGameSide();
         await output(game.render());
-      } else if (store.data.settings.codexEnabled && !["trigger","audio"].includes(playback.mode)) {
-        await activate();
-        playback.mode = "static";
-        await output(baseColors);
+      } else if (agentEnabled() && !["trigger","audio"].includes(playback.mode)) {
+        await startAgentLighting();
       }
       return result;
     }
     case "disconnect":
-      await stop();
-      await hardware.disconnect();
       explicitDisconnect = true;
+      // Release USB even when restoring the original lighting fails. The
+      // helper retains the journal and reports recovery separately.
+      await stop({restore:false});
+      await hardware.disconnect();
       return hardware.state;
     case "restore":
     case "stop":
       return stop();
     case "pause":
-      if (playback.mode === "idle") return playback;
+      if (["idle", "agent"].includes(playback.mode)) return playback;
       if (["trigger","audio"].includes(playback.mode)) return stop();
       if (playback.mode === "game") {
         return pauseGame();
@@ -741,8 +760,8 @@ async function command(req) {
         codexSetupRevision++;
       }
       const previousAgentEnabled = old.agentSource === "claude" ? old.claudeEnabled : old.codexEnabled;
-      const startsAgentLighting = agentEnabled() && (!previousAgentEnabled || settings.agentSource !== old.agentSource)
-        && !["game", "trigger", "audio"].includes(playback.mode);
+      const startsAgentLighting = agentEnabled() && (!previousAgentEnabled || settings.agentSource !== old.agentSource
+        || req.settings[agentSource() === 'claude' ? 'claudeEnabled' : 'codexEnabled'] === true);
       // Starting task lighting is a new lighting session even when a previous
       // scene still owns the device. Do not inherit that scene's elapsed timer.
       // Colour/binding edits and repeated polls must not restart the timer.
@@ -750,7 +769,7 @@ async function command(req) {
       if (
         old.quotaSideEnabled &&
         !settings.quotaSideEnabled &&
-        !["game", "trigger", "audio"].includes(playback.mode) &&
+        !["game", "trigger", "audio", "agent"].includes(playback.mode) &&
         hardware.state.connected
       ) {
         await updateSide({ restore: true });
@@ -766,17 +785,11 @@ async function command(req) {
       )
         integrationsSuspended = false;
       lastFrame = "";
-      if (
-        agentEnabled() &&
-        !["game", "trigger", "audio"].includes(playback.mode) &&
-        !integrationsSuspended &&
-        hardware.state.connected &&
-        !hardware.state.armed
-      ) {
-        await activate();
-        playback.mode = "static";
-      }
-      if (hardware.state.armed && ["static", "paused"].includes(playback.mode))
+      if (startsAgentLighting) await startAgentLighting();
+      else if (!agentEnabled() && playback.mode === 'agent') await stop();
+      else if (agentEnabled() && playback.mode === 'agent' && !integrationsSuspended && hardware.state.connected && !hardware.state.armed)
+        await startAgentLighting();
+      if (hardware.state.armed && ["static", "paused", "agent"].includes(playback.mode))
         await output(playback.mode === "paused" ? renderAnimation(baseColors, animation, playback.elapsed ?? 0) : baseColors);
       await syncKeyAdaptation();
       return settings;

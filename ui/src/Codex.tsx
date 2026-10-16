@@ -204,6 +204,10 @@ export function Codex({
       {failedKeys.length>0 && <p className="codex-key-warning" role="alert">{tr("以下按键尚未接管，请在「查看适配」中重新检查：")}{failedKeys.map(code=>tr(bindings.find(key=>key.code===code)?.label||code)).join("、")}</p>}
       {settings?.codexEnabled && keyState.enabled===false && state?.device.connected && ['game','trigger'].includes(state.playback.mode) && <p className="muted">{tr("游戏与按键触发期间，Codex 快捷控制暂停。")}</p>}
       {settings?.codexEnabled && <CodexSetup state={state} command={command}/>}
+      <p className="muted">{tr("开启 Codex 灯光会自动停止动画、游戏、按键触发和声音律动。")}</p>
+      {settings?.codexEnabled && !wireless && state?.device.connected && (state.playback.mode !== 'agent' || !state.device.armed) &&
+        <div className="codex-setup-banner"><div><strong>{tr("Codex 灯光尚未启用")}</strong><p>{tr("点击即可切换，不需要先关闭其他灯效。")}</p></div>
+          <Button onClick={()=>run(command({op:'settings',settings:{codexEnabled:true}}))}>{tr("启用 Codex 灯光")}</Button></div>}
       {!wireless && <CodexLightMode state={state} command={command}/>}
       <TaskContainer className={whole ? "product-details codex-task-shortcuts" : undefined}>
       {whole && <summary>{tr("任务快捷键")}</summary>}

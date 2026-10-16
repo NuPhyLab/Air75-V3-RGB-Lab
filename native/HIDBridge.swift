@@ -386,6 +386,53 @@ enum S4 {
         }
         return target
     }
+    // 1.0.23.6 stores the main colour as byte HSV, with V scaled to 200.
+    // D5 converts it back to RGB (official functions 0x4d92 / 0x4f16).
+    // Feeding that RGB straight back into D6 can change the hue, e.g.
+    // [64,0,14] -> [64,0,17]. Find an input whose readback is EXACTLY the
+    // saved colour instead of weakening restore verification or accumulating drift.
+    static func mainColorReadback(_ rgb: [UInt8]) -> [UInt8] {
+        let r = Int(rgb[0]), g = Int(rgb[1]), b = Int(rgb[2])
+        let hi = max(r,g,b), lo = min(r,g,b), delta = hi-lo
+        let value = ((hi * 200 / 255) * 255 + 100) / 200
+        if delta == 0 { return Array(repeating: UInt8(value), count: 3) }
+        let saturation = Int(Float(delta) / Float(hi) * 255 + 0.5)
+        var hue: Float
+        if hi == r { hue = Float(g-b) / Float(delta) * 43 }
+        else if hi == g { hue = (Float(b-r) / Float(delta) + 2) * 43 }
+        else { hue = (Float(r-g) / Float(delta) + 4) * 43 }
+        if hue < 0 { hue += 255 }
+        let h = Int(hue + 0.5) & 255, region = h / 43, remainder = (h - region * 43) * 6
+        let p = ((255-saturation) * value + 127) / 255
+        let q = ((255-saturation * remainder / 255) * value + 127) / 255
+        let t = ((255-saturation * (255-remainder) / 255) * value + 127) / 255
+        let result: [Int]
+        switch region {
+        case 0: result = [value,t,p]
+        case 1: result = [q,value,p]
+        case 2: result = [p,value,t]
+        case 3: result = [p,q,value]
+        case 4: result = [t,p,value]
+        default: result = [value,p,q]
+        }
+        return result.map(UInt8.init)
+    }
+    static func exactMainColorInput(_ target: [UInt8]) throws -> [UInt8] {
+        if mainColorReadback(target) == target { return target }
+        // Bound the search to one hue quantization interval plus value rounding.
+        // A colour outside the proven model fails closed, keeping its journal.
+        for radius in [4,8,16] {
+            for r in max(0,Int(target[0])-radius)...min(255,Int(target[0])+radius) {
+                for g in max(0,Int(target[1])-radius)...min(255,Int(target[1])+radius) {
+                    for b in max(0,Int(target[2])-radius)...min(255,Int(target[2])+radius) {
+                        let input = [UInt8(r),UInt8(g),UInt8(b)]
+                        if mainColorReadback(input) == target { return input }
+                    }
+                }
+            }
+        }
+        throw failure("RESTORE_COLOR_UNREPRESENTABLE", "Cannot exactly encode saved main colour \(target); original backup retained.")
+    }
     static func statesMatch(_ expected: [UInt8], _ observed: [UInt8], firmware: [UInt8]) -> Bool {
         guard let length = stateLength(firmware), expected.count == length, observed.count == length else { return false }
         // Official Air75 V3 1.0.16.6: both D6 dispatch tables skip offsets
@@ -988,7 +1035,10 @@ final class Air75Device {
     private func writeStateVerified(_ state: [UInt8]) throws {
         try verifyLightingProfileForWrite()
         let current = try readState()
-        let payload = try S4.stateWritePayload(state, current: current, firmware: firmware)
+        var payload = try S4.stateWritePayload(state, current: current, firmware: firmware)
+        if Array(firmware.prefix(6)) == [23,0,1,170,6,0] {
+            payload.replaceSubrange(6..<9, with: try S4.exactMainColorInput(Array(state[6..<9])))
+        }
         // Do not add a separate brightness-only commit: it can rescale RGB.
         let initialEcho = try request(0xd6, length: payload.count, payload: payload)
         guard initialEcho == payload else { throw failure("STATE_ACK_MISMATCH", "D6 did not echo the complete lighting payload.") }
@@ -1175,9 +1225,14 @@ final class Air75Device {
     }
     func disconnect() throws -> [String: Any] {
         var restored: [String: Any] = ["restored": false]
-        if mutationAttempted { restored = try restore() }
+        // A failed restore must not trap the USB handle open. Keep the durable
+        // journal and explicitly report deferred restoration after releasing it.
+        if recoveryPending {
+            do { restored = try restore() }
+            catch { restored = ["restored": false, "verified": false, "error": String(describing: error)]; diagnostic("Disconnect recovery deferred: \(error)") }
+        }
         closeTransport()
-        return ["connected": false, "restoration": restored, "recoveryPending": recoveryPending]
+        return ["connected": false, "armed": false, "restoration": restored, "recoveryPending": recoveryPending, "needsRestore": recoveryPending]
     }
     func shutdown() -> Bool {
         var ok = true
@@ -1570,7 +1625,13 @@ final class JSONServer {
             guard let color = command["color"] as? String else { throw failure("INVALID_SIDE", "side requires a color string.") }
             return try device.setSide(color: parseColor(color), brightness: command["brightness"] as? Int ?? 60)
         case "restore": return try device.restore()
-        case "disconnect": _ = try adaptation.restore(); _ = try device.restoreFunctionKey(); return try device.disconnect()
+        case "disconnect":
+            var keyErrors = [String]()
+            do { _ = try adaptation.restore() } catch { keyErrors.append(String(describing: error)) }
+            do { _ = try device.restoreFunctionKey() } catch { keyErrors.append(String(describing: error)) }
+            var result = try device.disconnect()
+            if !keyErrors.isEmpty { result["keyRestoreErrors"] = keyErrors }
+            return result
         case "keyMonitor": return try keys.configure(command)
         case "triggerMonitor": return try trigger.configure(command)
         case "shortcut": return try keys.shortcut(command)
@@ -1697,6 +1758,7 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
         var writes = 0
         var rgbPackets = [[UInt8]]()
         var rejectRGBProbe = false
+        var rejectStateWrite = false
         func exchange(_ frame: [UInt8]) throws -> [UInt8] {
             let command = frame[1], length = Int(frame[4])
             let address = Int(frame[5]) | Int(frame[6]) << 8
@@ -1718,8 +1780,12 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
                 }
                 payload = Array(rendered[address..<(address+length)])
             case 0xd6:
+                if rejectStateWrite { throw failure("HID_TIMEOUT", "simulated restore write timeout") }
                 writes += 1; payload = Array(frame[8..<(8+length)])
                 state.replaceSubrange(address..<(address+length), with: payload)
+                if firmware[0] == 23 && address <= 6 && address + length >= 9 {
+                    state.replaceSubrange(6..<9, with: S4.mainColorReadback(Array(state[6..<9])))
+                }
             case 0xd8:
                 writes += 1; payload = Array(frame[8..<(8+length)])
                 rgbPackets.append(payload)
@@ -1750,6 +1816,7 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
     try check(device.ownsChanges, "old session owns its actual mutations before upgrade")
     board.firmware = [23,0,1,170,6,0,0,0]
     board.state = [22,75,2,0,0,3,0,190,174,4,60,2,1,0,255,0,0,3,24,48,96,2]
+    board.state.replaceSubrange(6..<9, with: S4.mainColorReadback(Array(board.state[6..<9])))
     // Use exact inverse representatives so the fixture can check both raw
     // palette restoration and the rendered-readback quantization path.
     board.rgb = try S4.paletteFromRendered(S4.renderedCustomColors((0..<252).map {UInt8($0 % 251)}, firmware: board.firmware), firmware: board.firmware) + Array(repeating: 0, count: 60)
@@ -1804,6 +1871,7 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
               "ordinary unplug/reconnect retains same-firmware recovery instead of archiving it")
     _ = try device.restore()
     board.state = [21,40,2,0,1,3,64,128,192,4,60,2,1,0,255,0,0,3,24,48,96,2]
+    board.state.replaceSubrange(6..<9, with: S4.mainColorReadback(Array(board.state[6..<9])))
     board.rgb = (0..<312).map { UInt8(($0 * 73) % 256) }
     let dimState = board.state, dimRendered = try device.readRGB()
     _ = try device.arm(); _ = try device.paint(Array(repeating: 15, count: 252), verify: true)
@@ -1823,6 +1891,18 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
     _ = try device.restore()
     try check(board.state == rawPresetState && S4.renderedCustomColors(Array(board.rgb.prefix(252)), firmware: board.firmware) == rawPresetPalette,
               "restore retains raw preset state and prior rendered custom palette")
+    _ = try device.arm()
+    let disconnectJournal = try Data(contentsOf: journals.url(0))
+    board.rejectStateWrite = true
+    let disconnected = try device.disconnect()
+    try check(disconnected["connected"] as? Bool == false && disconnected["armed"] as? Bool == false,
+              "failed restoration must still release the connection")
+    try check(disconnected["recoveryPending"] as? Bool == true && (try Data(contentsOf: journals.url(0))) == disconnectJournal,
+              "failed disconnect restoration retains the exact recovery journal")
+    board.rejectStateWrite = false
+    _ = try device.connect(); _ = try device.restore()
+    try check(board.state == rawPresetState && !device.recoveryPending,
+              "a later explicit reconnect completes deferred restoration")
     try check(device.shutdown(), "upgraded session shuts down with all owned state restored")
 }
 
@@ -1928,6 +2008,16 @@ func selfTest() throws {
     try check(!S4.statesMatch(state, reservedDrift, firmware: [17,0,1,170,6,0,0,0]), "other firmware keeps exact comparison")
     try check(!S4.statesMatch(state, [], firmware: verifiedFirmware), "truncated readback fails")
     let latestFirmware: [UInt8] = [23,0,1,170,6,0,0,0]
+    try check(S4.mainColorReadback([64,0,14]) == [64,0,17], "captured firmware HSV round-trip drift")
+    try check(S4.mainColorReadback(try S4.exactMainColorInput([64,0,14])) == [64,0,14], "captured original colour restores exactly")
+    for r in stride(from:0,through:255,by:17) {
+        for g in stride(from:0,through:255,by:17) {
+            for b in stride(from:0,through:255,by:17) {
+                let observed = S4.mainColorReadback([UInt8(r),UInt8(g),UInt8(b)])
+                try check(S4.mainColorReadback(try S4.exactMainColorInput(observed)) == observed, "quantized colour has an exact restore input")
+            }
+        }
+    }
     let futureFirmware: [UInt8] = [99,0,1,170,6,0,0,0]
     let shapeState: [UInt8] = [22,75,2,0,0,3,0,190,174,4,60,2,1,0,255,0,0,3,24,48,96,2]
     try check(S4.stateLength(verifiedFirmware) == 17 && S4.stateLength(latestFirmware) == 22, "official old and extended state schemas")

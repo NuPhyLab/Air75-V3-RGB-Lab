@@ -127,6 +127,9 @@ export function Device({
               state?.playback.lastError ||
               String(device?.storageWarning))}
           </span>
+          {device?.connected && !wireless && (device.error || state?.playback.lastError) &&
+            <Button icon={<RotateCcw size={16}/>} busy={busy === "connect"} disabled={Boolean(busy)}
+              onClick={() => run(execute("connect"))}>{tr("重新连接")}</Button>}
         </div>
       ))}
       <div className="device-grid device-preferences">

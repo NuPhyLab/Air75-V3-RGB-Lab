@@ -114,33 +114,33 @@ test('preview exposes acknowledged RGB, scales brightness once and diagnoses rea
  await service.configure({mismatchIndex:null});
  await service.command({op:'settings',settings:{brightness:50,codexEnabled:true,codexBrightness:50,codexSelectedPulse:false}});
  const state=await until(service.state,s=>s.colors[1]==='#0c1440','Micro brightness was not applied once per level');
- assert.equal(state.colors[0],'#800000');
+ assert.equal(state.colors[0],'#000000','Codex turns unrelated lighting off');
  assert.equal(state.colors[2],'#401c00');
  assert.equal((await service.command({op:'verifyColors'})).result.matches,true);
  await service.command({op:'settings',settings:{codexEnabled:false}});
- assert.equal((await service.state()).colors[1],'#008000','releasing Codex restores original artwork');
+ assert.equal((await service.state()).device.armed,false,'disabling Codex restores the board');
+ await service.command({op:'preview',colors:frame});
+ assert.equal((await service.state()).colors[1],'#008000','the saved drawing can still be played');
  await service.command({op:'stop'});
  assert.equal((await service.command({op:'verifyColors'})).ok,false);
 });
-test('pausing an animation freezes the artwork while task status can still update and release its keys',async t=>{
+test('enabling Codex cancels a paused animation and clears non-task keys',async t=>{
  const service=await fakeService(t,{tasks:[tasks[0]]});
- await service.command({op:'settings',settings:{brightness:100,codexEnabled:true,codexAutoOffMs:0}});
  await service.command({op:'play',colors:Array(84).fill('#112233'),animation:{effect:'pulse',speed:4,loop:true}});
  await service.command({op:'pause'});
- const paused=await service.state();
- assert.equal(paused.playback.mode,'paused');
+ await service.command({op:'settings',settings:{brightness:100,codexEnabled:true,codexSelectedPulse:false}});
+ const active=await service.state();
+ assert.equal(active.playback.mode,'agent');assert.equal(active.playback.playing,false);assert.equal(active.colors[20],'#000000');
  await service.configure({tasks:[{...tasks[0],status:'completed'}]});
- const changed=await until(service.state,s=>s.colors[1]==='#00ff4c','paused task state stayed blue');
- assert.equal(changed.colors[20],paused.colors[20]);
+ await until(service.state,s=>s.colors[1]==='#00ff4c','task state stayed blue');
  await service.command({op:'settings',settings:{codexEnabled:false}});
- const released=await service.state();
- assert.equal(released.colors[1],released.colors[20]);
+ assert.equal((await service.state()).device.armed,false);
 });
 
 test('direct task keys and commands remap atomically, move lights, and pause for games',async t=>{
  const service=await fakeService(t,{tasks});
  await service.command({op:'settings',settings:{codexEnabled:true,brightness:100,codexBrightness:100,codexSelectedPulse:false}});
- await service.command({op:'preview',colors:Array(84).fill('#102030')});
+ await service.command({op:'settings',settings:{codexEnabled:true}});
  assert.equal((await service.command({op:'codexKey',code:'F1'})).ok,true);
  assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'working');
  assert.equal((await service.command({op:'codexBind',group:'task',index:0,code:'KeyA'})).ok,true);
@@ -148,7 +148,7 @@ test('direct task keys and commands remap atomically, move lights, and pause for
  const led=remapped.codex.keys.bindings[0].ledIndex;
  assert.equal(remapped.settings.codexTaskKeys[0],'KeyA');
  assert.equal(remapped.colors[led],'#304ffe');
- assert.equal(remapped.colors[1],'#102030');
+ assert.equal(remapped.colors[1],'#000000');
  assert.equal((await service.command({op:'codexKey',code:'F1'})).ok,false);
  assert.equal((await service.command({op:'codexKey',code:'KeyA'})).ok,true);
  assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'working');
@@ -174,7 +174,7 @@ test('direct task keys and commands remap atomically, move lights, and pause for
 test('a recent-task reorder keeps UI, physical key routing and status LEDs on one identity',async t=>{
  const service=await fakeService(t,{tasks});
  await service.command({op:'settings',settings:{codexEnabled:true,codexTaskSource:'recent',brightness:100,codexBrightness:100,codexSelectedPulse:false}});
- await service.command({op:'preview',colors:Array(84).fill('#000000')});
+ await service.command({op:'settings',settings:{codexEnabled:true}});
  const before=(await service.state()).codex.slots.map(t=>t?.id??null);
  await service.configure({tasks:[{...tasks[2],status:'error'},tasks[0],tasks[1]]});
  const state=await until(service.state,s=>s.codex.slots[2]?.status==='error','updated status did not reach its original slot');

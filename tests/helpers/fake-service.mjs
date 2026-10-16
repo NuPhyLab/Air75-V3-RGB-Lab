@@ -116,7 +116,7 @@ input.on('line',line=>{
    else {const commit=()=>{colors=[...request.colors,...Array(20).fill('#000000')];answer(request,{painted:84});};if(configuration().paintDelayMs)setTimeout(commit,configuration().paintDelayMs);else commit();}break;
   }
   case 'restore':if(!connected&&configuration().present===false){reject(request,'simulated not connected','DEVICE_NOT_FOUND');break;}connected=true;restore();answer(request,{...state(),restored:true,verified:true});break;
-  case 'disconnect':restore();connected=false;answer(request,state());break;
+  case 'disconnect':if(!configuration().deferRestore)restore();connected=false;armed=false;answer(request,state());break;
   case 'quit':restore();answer(request,{quitting:true});setTimeout(()=>process.exit(0),10);break;
   default:reject(request,'unsupported fake operation');
  }

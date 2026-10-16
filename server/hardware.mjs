@@ -4,7 +4,7 @@ import { EventEmitter } from "node:events";
 export function hardwareErrorMessage(code, detail) {
   const messages = {
     LIGHTING_DISABLED: "请先在键盘上按 Fn＋↑ 开启灯光，再点击播放。",
-    STATE_VERIFY_FAILED: "键盘未切换到灯效控制模式，请关闭其他灯效软件后重新连接。",
+    STATE_VERIFY_FAILED: "键盘未确认灯光设置，请点击重新连接后重试。",
     COLOR_VERIFY_FAILED: "灯光输出校验未通过，播放已停止。",
     ROUTE_MISMATCH: "键盘连接被其他软件改变，请关闭其他灯效软件后重新连接。",
     RESTORE_REQUIRED: "灯光控制已停止，原有灯效尚未恢复。请重新连接键盘后点击「恢复原有灯效」。",
@@ -222,9 +222,13 @@ export class Hardware extends EventEmitter {
     }
   }
   async disconnect() {
-    await this.restore();
-    await this.request("disconnect");
-    this.state = { ...this.state, connected: false, armed: false };
+    const result = await this.request("disconnect");
+    const pending = result.recoveryPending === true || result.keyRestoreErrors?.length > 0;
+    this.updateState({ ...result, connected: false, armed: false,
+      error: pending ? "键盘已断开，原设置备份已保留，下次连接时自动恢复。" : null,
+      errorCode: pending ? "RESTORE_DEFERRED" : null });
+    if (!pending) this.restoreFailure = this.keyRestoreFailure = null;
+    return this.state;
   }
   async close() {
     let failure;

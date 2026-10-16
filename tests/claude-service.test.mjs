@@ -50,7 +50,7 @@ test('real hook events drive session status, and the light follows the bound key
  const service=await claudeService(t);
  await service.command({op:'settings',settings:{agentSource:'claude',claudeEnabled:true,claudeSelectedPulse:false,
    claudeBrightness:100,brightness:100,claudeTaskAction:'selectOnly'}});
- await service.command({op:'preview',colors:Array(84).fill('#112233')});
+ await service.command({op:'settings',settings:{claudeEnabled:true}});
  await hook(service,{hook_event_name:'SessionStart',session_id:'s-one',cwd:'/Users/x/alpha',source:'startup'});
  let state=await until(service.state,v=>v.claude.tasks.length===1,'session did not appear');
  assert.equal(state.claude.tasks[0].status,'awaitingInput');
@@ -60,13 +60,15 @@ test('real hook events drive session status, and the light follows the bound key
  await hook(service,{hook_event_name:'PreToolUse',session_id:'s-one',tool_name:'Bash',tool_input:{command:'secret'}});
  state=await until(service.state,v=>v.claude.tasks[0].status==='running','session did not switch to running');
  await until(service.state,v=>v.colors[1]===CLAUDE_STATUS_COLORS.running.toLowerCase(),'F1 did not show running');
- assert.equal(state.colors[20],'#112233','the drawing under the other keys is preserved');
+ assert.equal(state.colors[20],'#000000','unrelated keys stay dark in task mode');
  await hook(service,{hook_event_name:'PermissionRequest',session_id:'s-one',tool_name:'Bash'});
  await until(service.state,v=>v.colors[1]===CLAUDE_STATUS_COLORS.awaitingApproval.toLowerCase(),'F1 did not show awaiting approval');
  await hook(service,{hook_event_name:'StopFailure',session_id:'s-one',error:'rate_limit'});
  state=await until(service.state,v=>v.claude.tasks[0].status==='error','failure was not reported');
  assert.equal(state.claude.tasks[0].errorType,'rate_limit');
  await service.command({op:'settings',settings:{claudeEnabled:false}});
+ assert.equal((await service.state()).device.armed,false);
+ await service.command({op:'preview',colors:Array(84).fill('#112233')});
  assert.deepEqual((await service.state()).colors,Array(84).fill('#112233'));
 });
 test('two sessions keep independent lights on their own keys',async t=>{

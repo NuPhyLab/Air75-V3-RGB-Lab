@@ -55,6 +55,8 @@ NuPhyLab can check official firmware information and open the official updater, 
 
 Version 1.0.10 also handles out-of-range preset-speed readback found on another 1.0.23.6 board, preserving the raw preset configuration through official partial D6 writes. See [the replacement-board check](docs/RELEASE_QA_1.0.10.md).
 
+Version 1.0.11 makes agent lighting exclusive: enabling it stops artwork, games, key-triggered lighting and audio capture, and turns off other keys and side lights. It fixes exact restoration of quantized main colours on 1.0.23.6 and releases USB even when recovery must be deferred. The official downgrade → update warning → upgrade flow was physically tested. See [the verification scope](docs/RELEASE_QA_1.0.11.md).
+
 The canvas maps **83 positions**. The firmware exposes **84 main RGB channels**, plus 20 side-light entries. Main channel 83 has no confirmed physical position and is preserved as black by default. Successful RGB readback verifies channel data, not the physical location of every LED.
 
 ## Codex and Claude Code

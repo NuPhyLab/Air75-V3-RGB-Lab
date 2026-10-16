@@ -29,14 +29,15 @@ test('palette patches merge, reject invalid states atomically, persist and can r
  assert.equal(statusColor({status:'running'},store.data.settings),STATUS_COLORS.running);
 });
 
-test('live service applies palette changes without stopping animation or resetting global timing',async t=>{
+test('live service applies palette changes without restarting task mode or resetting global timing',async t=>{
  const s=await fakeService(t,{tasks:CUSTOM_STATUS_IDS.map((status,i)=>({id:String(i),status}))});
  await s.command({op:'settings',settings:{brightness:100,codexBrightness:100,codexEnabled:true,codexSelectedPulse:false,lightDurationMs:60000}});
  await s.command({op:'play',colors:Array(84).fill('#123456'),animation:{effect:'move',direction:'right',speed:4,loop:true}});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
  const before=await s.state();
  const colors=Object.fromEntries(CUSTOM_STATUS_IDS.map((id,i)=>[id,['#FF0000','#00FF00','#0000FF','#FFFF00','#FF00FF','#00FFFF'][i]]));
  await s.command({op:'settings',settings:{codexStatusColors:colors}});
  const after=await until(s.state,v=>v.colors[1]==='#ff0000'&&v.colors[2]==='#00ff00','palette was not sent');
- assert.deepEqual(after.colors.slice(1,7),Object.values(colors).map(c=>c.toLowerCase()));assert.equal(after.playback.playing,true);
+ assert.deepEqual(after.colors.slice(1,7),Object.values(colors).map(c=>c.toLowerCase()));assert.equal(after.playback.mode,'agent');assert.equal(after.playback.playing,false);assert.equal(after.colors[20],'#000000');
  assert.ok(after.lightPower.remainingMs<=before.lightPower.remainingMs);
 });

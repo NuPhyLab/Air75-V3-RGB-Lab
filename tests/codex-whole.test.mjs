@@ -50,6 +50,7 @@ test('service follows a task outside six slots, reacts to status changes, preser
  const tasks=Array.from({length:7},(_,i)=>task('task-'+i));const s=await fakeService(t,{tasks});
  await s.command({op:'settings',settings:{...settings,codexEnabled:true,codexWholeTaskId:'task-6',brightness:100,codexStatusColors:{running:'#FF0000',completed:'#00FF00'}}});
  await s.command({op:'preview',colors:Array(84).fill('#112233')});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
  let state=await s.state();assert.equal(state.codex.lighting.wholeTaskId,'task-6');assert.deepEqual(state.colors.slice(0,83),Array(83).fill('#ff0000'));
  await s.configure({tasks:tasks.map(t=>t.id==='task-6'?{...t,status:'completed'}:t)});
  await until(s.state,v=>v.colors[0]==='#00ff00','status change did not recolor keyboard');
@@ -57,8 +58,10 @@ test('service follows a task outside six slots, reacts to status changes, preser
  await s.configure({tasks});await until(s.state,v=>v.colors[0]==='#ff0000','returning task not restored');
  await s.command({op:'gameStart',gameType:'snake'});state=await s.state();assert.ok(state.colors.filter(c=>c!=='#000000').length<10);
  await s.command({op:'gameStop'});assert.equal((await s.state()).colors[0],'#ff0000');
- await s.command({op:'settings',settings:{codexLightMode:'keys'}});state=await s.state();assert.equal(state.colors[20],'#112233');assert.equal(state.colors[1],'#ff0000');
- await s.command({op:'settings',settings:{codexEnabled:false}});assert.deepEqual((await s.state()).colors,Array(84).fill('#112233'));
+ assert.equal((await s.state()).device.state[10],0,'returning to Codex keeps side lights off');
+ await s.command({op:'settings',settings:{codexLightMode:'keys'}});state=await s.state();assert.equal(state.colors[20],'#000000');assert.equal(state.colors[1],'#ff0000');
+ await s.command({op:'settings',settings:{codexEnabled:false}});assert.equal((await s.state()).device.armed,false);
+ await s.command({op:'preview',colors:Array(84).fill('#112233')});assert.deepEqual((await s.state()).colors,Array(84).fill('#112233'));
 });
 
 test('whole mode shares idle timing and wakes only for the followed task, including one outside the task slots',async t=>{

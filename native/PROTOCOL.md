@@ -94,6 +94,12 @@ Recovery is scoped to the physical Mac / Win lighting profile. Given `--backup o
 
 `D8` ACK validation proves transport acceptance, not by itself physical light output; `verification` makes this distinction explicit. A failed paint or state mutation attempts restoration immediately, and preserves the backup if restoration cannot be verified. A timeout never causes an uncertain write to be blindly resent. Firmware protocol quirks or a competing client can still require a cable reconnect.
 
+## 1.0.23.6 main-colour quantization
+
+D6 stores the main colour as quantized byte HSV; D5 converts it to RGB. The official firmware round trip is not idempotent: the captured saved colour `[64,0,14]` becomes `[64,0,17]` if written verbatim. v1.0.11 computes an exact inverse input for this verified firmware only, checks the echo against the actual payload, and still compares D5 against the original saved state. An unrepresentable colour retains the journal and reports failure. No broader RGB tolerance or skipped colour fields are introduced.
+
+Explicit disconnect now releases the HID transport even if lighting or key restoration fails. It reports deferred recovery and keeps the original journal; the next explicit connection restores it before arming. The host records the explicit disconnect intent before attempting recovery, so auto-connect does not immediately reopen USB. Quit still distinguishes successful restoration from a retained failure.
+
 ## Restoration and lifecycle
 
 `restore` returns the complete saved state, including brightness and both side-light fields. It verifies `D5` equality for all implemented fields before deleting the backup, with the two unimplemented palette slots and the documented master-off exception below. A moving stock effect cannot reproduce a frame captured earlier, so its configuration is verified rather than comparing that old moving image. If the original mode was custom effect 21 at brightness 100, the saved main-key frame is also written and independently verified with `D2`. Existing custom effect 21 below brightness 100 is rejected before mutation because the unscaled RAM table cannot be recovered exactly from its dimmed rendered output.
