@@ -113,7 +113,7 @@ input.on('line',line=>{
    if(!armed){reject(request,'simulated NOT_ARMED');break;}
    const generation=configuration().failPaint??0;
    if(generation>failedGeneration){failedGeneration=generation;restore();log({event:'simulatedRollback'});reject(request,'simulated paint failure; original lighting restored');}
-   else {colors=[...request.colors,...Array(20).fill('#000000')];answer(request,{painted:84});}break;
+   else {const commit=()=>{colors=[...request.colors,...Array(20).fill('#000000')];answer(request,{painted:84});};if(configuration().paintDelayMs)setTimeout(commit,configuration().paintDelayMs);else commit();}break;
   }
   case 'restore':if(!connected&&configuration().present===false){reject(request,'simulated not connected','DEVICE_NOT_FOUND');break;}connected=true;restore();answer(request,{...state(),restored:true,verified:true});break;
   case 'disconnect':restore();connected=false;answer(request,state());break;

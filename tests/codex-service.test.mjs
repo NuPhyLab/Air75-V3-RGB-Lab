@@ -184,3 +184,46 @@ test('a recent-task reorder keeps UI, physical key routing and status LEDs on on
  assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'unread');
  assert.equal((await service.command({op:'verifyColors'})).result.matches,true);
 });
+
+test('an F2 press during a delayed frame opens the task whose light was visible at receipt',async t=>{
+ const initial=Array.from('abcdef',id=>({id,title:'Same title',status:id==='b'?'needsInput':'idle'}));
+ const service=await fakeService(t,{tasks:initial});
+ await service.command({op:'settings',settings:{codexEnabled:true,brightness:100,codexSelectedPulse:false}});
+ assert.equal((await service.state()).colors[2],'#ff6d00');
+ const paints=(await service.operations()).filter(o=>o.op==='paint').length;
+ await service.configure({paintDelayMs:600,tasks:[{id:'g',title:'Same title',status:'completed'},...initial.filter(t=>t.id!=='b'),initial[1]]});
+ await until(service.operations,ops=>ops.filter(o=>o.op==='paint').length>paints,'replacement frame did not start');
+ const pending=await service.state();
+ const pressed=service.command({op:'codexKey',code:'F2',phase:'down'});
+ assert.equal((await pressed).ok,true);
+ assert.equal(pending.colors[2],'#ff6d00');
+ assert.equal(pending.codex.slots[1].id,'b','UI must not publish a target before its LED frame');
+ assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'b','queued F2 was redirected by a later frame');
+ const updated=await until(service.state,s=>s.codex.slots[1]?.id==='g','replacement was never published');
+ assert.equal(updated.colors[2],'#00ff4c');
+ assert.equal(updated.codex.keys.lastEvent.threadId,'b');
+});
+
+test('same-colour replacements publish new task identities even without an RGB write',async t=>{
+ const initial=Array.from('abcdef',id=>({id,status:'running'}));
+ const service=await fakeService(t,{tasks:initial});
+ await service.command({op:'settings',settings:{codexEnabled:true,codexSelectedPulse:false}});
+ const paints=(await service.operations()).filter(o=>o.op==='paint').length;
+ await service.configure({tasks:[{id:'g',status:'running'},...initial.filter(t=>t.id!=='b'),initial[1]]});
+ await until(service.state,s=>s.codex.slots[1]?.id==='g','equal-colour identity never published');
+ assert.equal((await service.operations()).filter(o=>o.op==='paint').length,paints);
+ await service.command({op:'codexKey',code:'F2'});
+ assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'g');
+});
+
+test('a task removed while an F2 press waits never falls back to its replacement',async t=>{
+ const initial=Array.from('abcdef',id=>({id,status:id==='b'?'running':'idle'}));
+ const service=await fakeService(t,{tasks:initial});
+ await service.command({op:'settings',settings:{codexEnabled:true,codexSelectedPulse:false}});
+ const paints=(await service.operations()).filter(o=>o.op==='paint').length;
+ await service.configure({paintDelayMs:500,tasks:[{id:'g',status:'completed'},...initial.filter(t=>t.id!=='b')]});
+ await until(service.operations,ops=>ops.filter(o=>o.op==='paint').length>paints,'replacement frame did not start');
+ const result=await service.command({op:'codexKey',code:'F2'});
+ assert.equal(result.ok,false);
+ assert.equal((await service.operations()).filter(o=>o.op==='shortcut').length,0);
+});

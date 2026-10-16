@@ -101,11 +101,28 @@ let suspendedScene = null,
 const recordWarnings = new Map();
 const recordRetryAt = new Map();
 const taskSlots = new StableTaskSlots();
-const slots = () => {
-  const snap = codex.snapshot();
-  const tasks = snap.tasks ?? [];
-  return taskSlots.resolve(tasks, store.data.settings);
-};
+let publishedCodexSlots = null;
+const resolveCodexSlots = (snap = codex.snapshot()) => taskSlots.resolve(snap.tasks ?? [], store.data.settings);
+// While USB displays task lights, the UI and physical keys use the same
+// acknowledged frame. A poll must not move a task before its RGB reaches USB.
+const codexOwnsLights = () => agentSource() === 'codex' && agentEnabled()
+  && hardware.state.connected && hardware.state.armed && !['idle','game','trigger','audio'].includes(playback.mode);
+const slots = () => codexOwnsLights() && publishedCodexSlots !== null ? publishedCodexSlots : resolveCodexSlots();
+const capturedCodexTask = Symbol('capturedCodexTask');
+function captureTaskRequest(req) {
+  if (!req || agentSource() !== 'codex' || req.phase === 'up') return req;
+  const index = req.op === 'codexKey' ? agentBindings().findIndex(key => key.code === req.code)
+    : req.op === 'codexSlot' ? req.index : -1;
+  if (!Number.isInteger(index) || index < 0 || index >= 6) return req;
+  // Capture at HTTP receipt, before a frame or another command can finish.
+  // Symbols cannot be supplied by an external JSON client.
+  return {...req, [capturedCodexTask]: {index, id: slots()[index]?.id ?? null}};
+}
+function wakeCodexInteraction() {
+  // An explicit successful action can resume timed-out lights. Ordinary polls,
+  // typing and actions while already awake do not extend the one-hour timer.
+  if (codexOwnsLights() && lightPower.sleeping) lightPower.wake();
+}
 // One integration owns the task and command keys at a time; both keep their own
 // bindings, slots, colours and lighting settings while the other is inactive.
 const agentSource = () => (store.data.settings.agentSource === "claude" ? "claude" : "codex");
@@ -192,16 +209,26 @@ function state() {
 }
 async function output(input) {
   let out = [...input];
-  if (agentEnabled() && !["game", "trigger", "audio"].includes(playback.mode))
-    out = agentSource() === "claude"
-      ? claudeLights.render(out, claudeSlots(), store.data.settings, claudeTasks())
-      : codexLights.render(out, slots(), store.data.settings, codex.snapshot().tasks ?? []);
+  let nextCodexSlots = null;
+  if (agentEnabled() && !["game", "trigger", "audio"].includes(playback.mode)) {
+    if (agentSource() === "claude") out = claudeLights.render(out, claudeSlots(), store.data.settings, claudeTasks());
+    else {
+      const snap = codex.snapshot();
+      nextCodexSlots = resolveCodexSlots(snap);
+      out = codexLights.render(out, nextCodexSlots, store.data.settings, snap.tasks ?? []);
+    }
+  }
   out = out.map(c => scaleColor(c, store.data.settings.brightness / 100));
   if (lightPower.sleeping) out = blank();
   const signature = out.join("");
-  if (signature === lastFrame) return;
+  if (signature === lastFrame) {
+    // Equal colours can still represent different task identities.
+    if (nextCodexSlots !== null) publishedCodexSlots = nextCodexSlots;
+    return;
+  }
   await hardware.paint(out);
   colors = out;
+  if (nextCodexSlots !== null) publishedCodexSlots = nextCodexSlots;
   lastFrame = signature;
   playback.framesSent++;
   const now = performance.now();
@@ -883,6 +910,7 @@ async function command(req) {
     case "codexSelect": {
       if (!slots().some(task => task?.id === req.threadId)) throw new Error("任务不在当前六个槽位中");
       codexLights.select(req.threadId);
+      wakeCodexInteraction();
       return codexLights.snapshot();
     }
     case "codexBind":
@@ -931,8 +959,8 @@ async function command(req) {
       if(index<0) throw new Error('这个按键尚未绑定');
       if(req.phase==='down'&&!codexPresses.down(req.code))return {ignored:true,reason:'duplicate-press'};
       try {
-        const result=await command({op:agentSource()==='claude'?'claudeSlot':'codexSlot',index,phase:req.phase,source:req.code});
-        codexKeyEvent={id:++codexKeyEventId,code:req.code,ok:true};
+        const result=await command({op:agentSource()==='claude'?'claudeSlot':'codexSlot',index,phase:req.phase,source:req.code,[capturedCodexTask]:req[capturedCodexTask]});
+        codexKeyEvent={id:++codexKeyEventId,code:req.code,ok:true,threadId:result?.threadId??null};
         return result;
       } catch(error) {
         codexKeyEvent={id:++codexKeyEventId,code:req.code,ok:false,error:error.message};
@@ -941,12 +969,12 @@ async function command(req) {
     }
     case "codexSlot": {
       if (agentSource() !== "codex" || !codexKeysState().enabled || !Number.isInteger(req.index) || req.index < 0 || req.index > 11) throw new Error("命令键未启用");
-      codexLights.wake();
       if (req.index < 6) {
-        await codexGestures.release();
-        const task = slots()[req.index];
-        if (!task) throw new Error("这个任务键尚未绑定");
-        return command({op:"codexAction",action:"task",threadId:task.id});
+        const captured = req[capturedCodexTask];
+        if (captured && captured.index !== req.index) throw new Error("按键绑定已更新，请重新按下");
+        const threadId = captured ? captured.id : slots()[req.index]?.id;
+        if (!threadId) throw new Error("这个任务键尚未绑定");
+        return command({op:"codexAction",action:"task",threadId});
       }
       return command({op:"codexAction",action:store.data.settings.codexCommandIds[req.index-6],phase:req.phase,source:req.source});
     }
@@ -982,14 +1010,16 @@ async function command(req) {
           threadId,
         });
         codexLights.select(threadId);
-        return result;
+        wakeCodexInteraction();
+        return {...result,threadId};
       }
       if (action.requiresVerifiedApprovalContext)
         throw new Error(
           "请在 Codex 的当前审批卡中批准或拒绝；此处无法确认审批上下文",
         );
-      codexLights.wake();
-      return codexGestures.execute(action,{phase:req.phase,source:req.source});
+      const result = await codexGestures.execute(action,{phase:req.phase,source:req.source});
+      wakeCodexInteraction();
+      return result;
     }
     case "refreshClaude":
       return claude.refresh();
@@ -1175,7 +1205,8 @@ const server = http.createServer(async (req, res) => {
         } catch {
           throw new Error("数据不是有效的 JSON");
         }
-        const result = await serialized(() => command(value));
+        const captured = captureTaskRequest(value);
+        const result = await serialized(() => command(captured));
         return json(res, 200, { ok: true, result });
       }
       return json(res, 404, { ok: false, error: "接口不存在" });

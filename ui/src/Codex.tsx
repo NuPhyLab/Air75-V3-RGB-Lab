@@ -322,7 +322,7 @@ export function Codex({
           </div>
         </div>
         <CodexStatusColors settings={settings ?? {}} command={command} focusOnMount={focusColors} />
-        <p className="codex-light-footnote muted">{tr("灯光时间统一在「设备」页设置，Codex 状态灯也一起休眠和唤醒。")}</p>
+        <p className="codex-light-footnote muted">{tr("灯光时间在「设备」页统一设置。熄灯后，使用 Codex 任务键或命令键可重新点亮。")}</p>
         {bindings.some(key=>key.ledIndex===null) && <p className="muted">{tr("Del 可执行按键动作，但该位置没有可独立控制的灯。")}</p>}
       </section>}
       {recording && <CodexKeyRecorder title={tr(recording.group === "task" ? `更改任务键 ${recording.index+1}` : `更改命令键 ${recording.index+1}`)}

@@ -61,7 +61,9 @@ test("permission actions leave an armed static scene and all lighting settings u
   assert.equal((await service.command({ op: "refreshPermissions" })).ok, true);
   assert.deepEqual(lightingSnapshot(await service.state()), lightingSnapshot(before));
   const forwarded = (await service.operations()).slice(start);
-  assert(forwarded.every(({ op }) => ["openPermissionSettings", "permissions", "status", "bluetoothDevices"].includes(op)));
+  // The global idle timer polls independently while a static scene is armed.
+  // This read-only query is allowed; permission actions must still never paint.
+  assert(forwarded.every(({ op }) => ["openPermissionSettings", "permissions", "status", "bluetoothDevices", "systemIdle"].includes(op)),JSON.stringify(forwarded));
   const { id, ...nativeRequest } = forwarded.find(({ op }) => op === "openPermissionSettings");
   assert(Number.isInteger(id));
   assert.deepEqual(nativeRequest, {

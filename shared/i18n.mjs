@@ -254,6 +254,8 @@ export const messages = {
 
   "统一控制主灯、侧灯和 Codex 状态灯。": "Controls key lights, side lights, and Codex status lights together.",
   "灯光时间统一在「设备」页设置，Codex 状态灯也一起休眠和唤醒。": "Set all lighting timers in Device. Codex status lights sleep and wake with the keyboard.",
+  "灯光时间在「设备」页统一设置。熄灯后，使用 Codex 任务键或命令键可重新点亮。": "Set lighting timers in Device. Use a Codex task or command key to wake the lights after they turn off.",
+  "按键绑定已更新，请重新按下": "The key binding changed. Press the key again.",
   "开始听写": "Start dictation",
   "结束听写": "Stop dictation",
   "听写：按住对应按键说话，松开结束；最长 2 分钟。语音对话需要 Codex 当前页面支持，终端需要本地项目。": "Dictation: hold the assigned key to speak, then release to finish (up to 2 minutes). Voice requires support in the current Codex view; terminal requires a local project.",

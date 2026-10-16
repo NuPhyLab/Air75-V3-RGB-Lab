@@ -4,6 +4,29 @@ import {readFile} from 'node:fs/promises';
 import {fakeService,until} from './helpers/fake-service.mjs';
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const art=Array(84).fill('#123456');
+test('successful Codex task keys, task buttons and command keys wake the global timer without resetting it while awake',async t=>{
+ const s=await fakeService(t,{tasks:[{id:'a',status:'running'}]});
+ await s.command({op:'settings',settings:{codexEnabled:true,codexSelectedPulse:false,brightness:100,lightDurationMs:1000,lightIdleMs:0}});
+ await s.command({op:'preview',colors:art});
+ for(const request of [{op:'codexKey',code:'F1',phase:'down'},{op:'codexAction',action:'task',threadId:'a'},{op:'codexKey',code:'F12',phase:'down'}]) {
+  await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'timer did not send black');
+  assert.equal((await s.command(request)).ok,true);
+  const awake=await until(s.state,v=>!v.lightPower.sleeping&&v.colors[0]==='#123456','Codex interaction left keyboard asleep');
+  assert.equal(awake.colors[1],'#304ffe');
+  assert.equal(awake.settings.lightDurationMs,1000);
+  if(request.code)await s.command({op:'codexKey',code:request.code,phase:'up'});
+  await wait(180);
+  const before=(await s.state()).lightPower.remainingMs;
+  await s.command({op:'codexAction',action:'task',threadId:'a'});
+  assert.ok((await s.state()).lightPower.remainingMs<=before,'an awake interaction restarted the duration');
+ }
+ await until(s.state,v=>v.lightPower.sleeping,'timer did not expire again');
+ await s.command({op:'codexKey',code:'F1',phase:'up'});
+ assert.equal((await s.command({op:'codexAction',action:'task',threadId:'missing'})).ok,false);
+ await s.configure({shortcutPermissionError:true});
+ assert.equal((await s.command({op:'codexKey',code:'F12'})).ok,false);
+ assert.equal((await s.state()).lightPower.sleeping,true,'failed or release actions woke the timer');
+});
 test('enabling Codex on an already armed scene starts a fresh timer, while ordinary edits do not',async t=>{
  const s=await fakeService(t,{tasks:[{id:'a',status:'running'}]});
  await s.command({op:'settings',settings:{lightDurationMs:2000,lightIdleMs:0}});
