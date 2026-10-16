@@ -1,4 +1,4 @@
-import { access, readdir, stat, open, realpath } from "node:fs/promises";
+import { access, readdir, open, realpath } from "node:fs/promises";
 import { constants } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -25,6 +25,7 @@ const validId = (value) =>
 
 import { STATUS_COLORS } from "../shared/codex-lighting.mjs";
 import { readLiveWriters } from "./codex-writers.mjs";
+import { readEventLines, findLatestEvent } from "./codex-event-tail.mjs";
 export { STATUS_COLORS };
 
 export const SHORTCUTS = Object.freeze(
@@ -204,9 +205,9 @@ export function normalizeQuota(result, now = Date.now()) {
 /** Only structural event fields survive parsing. The original JSON and message text are discarded. */
 export function classifyEvents(
   data,
-  { now = Date.now(), activityObservedAt = null, activeWindowMs = 15_000, pendingRequests = [] } = {},
+  { now = Date.now(), activityObservedAt = null, activeWindowMs = 15_000, previousEvent = null, pendingRequests = previousEvent?.pendingRequests ?? [] } = {},
 ) {
-  let last = null;
+  let last = previousEvent?.kind ? previousEvent : null;
   const pending = new Map(pendingRequests.slice(0,64).map(entry=>[entry.id,entry]));
   const active = new Set([
     "agent_reasoning",
@@ -837,37 +838,32 @@ export class CodexAdapter {
       const root = await realpath(this.codexHome);
       if (!file.startsWith(`${root}${path.sep}`) || !file.endsWith(".jsonl"))
         return unknown;
-      const info = await stat(file);
       const old = this.cache.get(row.id);
-      const same =
-        old?.file === file &&
-        old.size === info.size &&
-        old.mtimeMs === info.mtimeMs;
       let raw = old?.raw;
       let activityObservedAt = old?.activityObservedAt ?? null;
-      if (!same) {
-        raw = classifyEvents(
-          await boundedRead(file, this.tailBytes, { tail: true }),
-          { now: this.now(), pendingRequests: old?.file === file && info.size >= old.size ? old.raw?.pendingRequests : [] },
-        );
-        if (
-          old?.raw &&
-          raw.signature !== old.raw.signature &&
-          raw.kind === "active" &&
-          file === old.file &&
-          info.size >= old.size
-        )
-          activityObservedAt = this.now();
-        else if (raw.signature !== old?.raw?.signature)
-          activityObservedAt = null;
-        this.cache.set(row.id, {
-          file,
-          size: info.size,
-          mtimeMs: info.mtimeMs,
-          raw,
-          activityObservedAt,
+      let bootstrap = old?.bootstrap;
+      let continuous = true;
+      const tail = await readEventLines(file, {
+        previous: old?.tail, tailBytes: this.tailBytes,
+        onReset: () => { continuous = false; raw = null; bootstrap = null; activityObservedAt = null; },
+        onLine: line => {
+          const next = classifyEvents(line, {now:this.now(), previousEvent:raw});
+          if (next.signature !== raw?.signature)
+            activityObservedAt = continuous && next.kind === "active" ? this.now() : null;
+          raw = next;
+        },
+      });
+      if (!raw?.kind && tail.offset === tail.size) {
+        bootstrap = await findLatestEvent(file, {
+          snapshot: tail, previous: bootstrap,
+          isEventLine: line => Boolean(classifyEvents(line).kind),
         });
-      }
+        if (bootstrap.line) {
+          raw = classifyEvents(bootstrap.line, {now:this.now()});
+          bootstrap = {done:true};
+        }
+      } else if (raw?.kind) bootstrap = {done:true};
+      this.cache.set(row.id, {file, tail, raw, activityObservedAt, bootstrap});
       if (!raw) return unknown;
       if (raw.kind === "active") {
         const age = raw.eventAt === null ? Infinity : this.now() - raw.eventAt;

@@ -618,6 +618,7 @@ async function command(req) {
       void firmware.refresh();
       invalidateLightingCache();
       if (hardware.state.capabilities?.perKey === false) return result;
+      playback.lastError = null;
       if (pendingSceneRestore) await restorePendingScene();
       else if (playback.mode === "game") {
         await activate();

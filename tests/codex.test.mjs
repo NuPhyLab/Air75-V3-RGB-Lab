@@ -6,6 +6,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { PassThrough } from "node:stream";
+import {CodexLights,StableTaskSlots,STATUS_COLORS} from '../shared/codex-lighting.mjs';
 import {
   CodexAdapter,
   classifyEvents,
@@ -582,6 +583,71 @@ test('live writer keeps a silent current turn stable, but process exit cannot le
  writers=new Map();await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'unknown');
  writers=new Map([['live',{startedAt:now}]]);await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'unknown','old activity from a previous process is not current execution');
  await appendFile(f.file('live'),event('task_complete',now));await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'completed');
+});
+test('two live tasks keep their blue LEDs through oversized tool results, compaction and partial JSONL writes',async t=>{
+ let now=baseTime;
+ const f=await fixture(t,{rows:[{id:'one',events:event('task_started')},{id:'two',events:event('task_started')}]});
+ const writers=new Map(['one','two'].map(id=>[id,{startedAt:baseTime-1000}]));
+ const adapter=new CodexAdapter({codexHome:f.home,enableQuota:false,now:()=>now,liveWriters:async()=>writers});
+ t.after(()=>adapter.stop());await adapter.start();
+ const slots=new StableTaskSlots(),lights=new CodexLights(()=>0);
+ const checkBoth=()=>{
+  const tasks=adapter.snapshot().tasks;assert.deepEqual(tasks.map(t=>t.status),['running','running']);
+  const frame=lights.render(Array(84).fill('#000000'),slots.resolve(tasks,{}),{});
+  assert.deepEqual(frame.slice(1,3),Array(2).fill(STATUS_COLORS.running.toLowerCase()));
+ };
+ checkBoth();now+=60000;
+ // Real reports contain tool results over 1 MB and compactions over 13 MB.
+ await appendFile(f.file('two'),event('custom_tool_call_output',now,{output:'x'.repeat(1800000)},'response_item'));
+ await adapter.pollTasks();checkBoth();
+ await appendFile(f.file('one'),JSON.stringify({type:'compacted',payload:'x'.repeat(13500000)})+'\n');
+ for(let i=0;i<4;i++){await adapter.pollTasks();checkBoth();assert.ok(adapter.cache.get('one').tail.fragment.length<=1048576);}
+ const complete=event('task_complete',now+1000);const cut=Math.floor(complete.length/2);
+ await appendFile(f.file('two'),complete.slice(0,cut));await adapter.pollTasks();checkBoth();
+ await appendFile(f.file('two'),complete.slice(cut));await adapter.pollTasks();
+ assert.deepEqual(adapter.snapshot().tasks.map(t=>t.status),['running','completed']);
+ const final=lights.render(Array(84).fill('#000000'),slots.resolve(adapter.snapshot().tasks,{}),{});
+ assert.deepEqual(final.slice(1,3),['#304ffe','#00ff4c']);
+});
+test('a completed event before a huge later record is not skipped or held blue',async t=>{
+ const f=await fixture(t,{rows:[{id:'done',events:event('task_started')}]});
+ const adapter=new CodexAdapter({codexHome:f.home,enableQuota:false,now:()=>baseTime+10000,
+  liveWriters:async()=>new Map([['done',{startedAt:baseTime-1000}]])});
+ t.after(()=>adapter.stop());await adapter.start();
+ await appendFile(f.file('done'),event('task_complete',baseTime+1000)+JSON.stringify({type:'compacted',payload:'x'.repeat(6000000)})+'\n');
+ await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'completed');
+ await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'completed');
+});
+test('cold start recovers two running tasks behind large records without reviving completed or previous-process tasks',async t=>{
+ const giant=JSON.stringify({type:'compacted',payload:'x'.repeat(13500000)})+'\n';
+ const tool=event('custom_tool_call_output',baseTime+100,{output:'x'.repeat(1800000)},'response_item');
+ const f=await fixture(t,{rows:[
+  {id:'one',events:event('task_started')+giant},
+  {id:'two',events:event('task_started')+tool},
+  {id:'done',events:event('task_started')+event('task_complete',baseTime+10)+giant},
+  {id:'old-process',events:event('task_started',baseTime-10000)+tool},
+  {id:'pending',events:event('custom_tool_call',baseTime,{name:'functions.request_user_input_async',call_id:'question'},'response_item')+giant},
+ ]});
+ const writers=new Map(['one','two','done','old-process','pending'].map(id=>[id,{startedAt:baseTime-1000}]));
+ const adapter=new CodexAdapter({codexHome:f.home,enableQuota:false,now:()=>baseTime+1000,liveWriters:async()=>writers});
+ t.after(()=>adapter.stop());await adapter.start();
+ for(let i=0;i<4;i++){
+  const done=adapter.snapshot().tasks.find(t=>t.id==='done');assert.notEqual(done.status,'running');
+  await adapter.pollTasks();
+ }
+ assert.deepEqual(adapter.snapshot().tasks.map(t=>t.status),['running','running','completed','unknown','needsInput']);
+ assert.equal(adapter.cache.get('old-process').raw.eventAt,baseTime-10000);
+ await appendFile(f.file('one'),event('task_complete',baseTime+500));await adapter.pollTasks();
+ assert.deepEqual(adapter.snapshot().tasks.slice(0,2).map(t=>t.status),['completed','running']);
+});
+test('new structural evidence supersedes an unfinished cold-start search',async t=>{
+ const f=await fixture(t,{rows:[{id:'latest',events:event('task_started')+JSON.stringify({type:'compacted',payload:'x'.repeat(13500000)})+'\n'}]});
+ const adapter=new CodexAdapter({codexHome:f.home,enableQuota:false,now:()=>baseTime+1000,
+  liveWriters:async()=>new Map([['latest',{startedAt:baseTime-1000}]])});
+ t.after(()=>adapter.stop());await adapter.start();
+ assert.equal(adapter.snapshot().tasks[0].status,'unknown');
+ await appendFile(f.file('latest'),event('task_complete',baseTime+100));
+ for(let i=0;i<5;i++){await adapter.pollTasks();assert.equal(adapter.snapshot().tasks[0].status,'completed');}
 });
 test('current unread identity format clears green after reading; ambiguous accounts do not invent a read state',async t=>{
  const f=await fixture(t,{rows:[{id:'done',events:event('task_complete')}]});

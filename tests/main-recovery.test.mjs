@@ -57,6 +57,17 @@ test('unplug and automatic same-profile reconnect restores before the next anima
   assert.equal((await s.state()).playback.lastError,null);
 });
 
+test('a verified explicit reconnect clears a prior playback error',async t=>{
+  const s=await fakeService(t);
+  await s.command({op:'settings',settings:{autoConnect:false,codexEnabled:false}});
+  await s.command({op:'connect'});
+  assert.equal((await s.command({op:'play',colors:Array(84).fill('#123456'),animation:{effect:'pulse',speed:3,loop:true}})).ok,true);
+  await s.configure({failPaint:1});
+  await until(s.state,x=>Boolean(x.playback.lastError),'playback failure');
+  assert.equal((await s.command({op:'connect'})).ok,true);
+  assert.equal((await s.state()).playback.lastError,null);
+});
+
 test("successful explicit restore clears the playback recovery warning", { timeout: 15000 }, async (t) => {
   const service = await fakeService(t);
   assert.equal((await service.command({ op: "gameStart", speed: 10 })).ok, true);

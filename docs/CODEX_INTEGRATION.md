@@ -4,7 +4,7 @@ NuPhyLab independently reads local task metadata and structural lifecycle events
 
 ## Sources and state stability
 
-`server/codex.mjs` discovers the newest compatible `state_*.sqlite`, opens it read-only and selects up to 100 unarchived user threads. Pinned and explicitly tracked slot IDs are included before the recency limit. Rollout paths must resolve beneath the Codex home; bounded tails retain structural event fields only, not user message text.
+`server/codex.mjs` discovers the newest compatible `state_*.sqlite`, opens it read-only and selects up to 100 unarchived user threads. Pinned and explicitly tracked slot IDs are included before the recency limit. Rollout paths must resolve beneath the Codex home. The first read uses a bounded tail; subsequent reads process appended bytes through `codex-event-tail.mjs`. Structural event fields are retained; complete message text is discarded. An unfinished JSONL record is buffered in memory up to 1 MiB, while larger records are skipped through their newline. File replacement or truncation resets the reader. No Codex files are modified.
 
 `server/codex-writers.mjs` reads existing task-writer handles with `lsof` and process start times with `ps`. It never acquires or changes lock files. A living writer, an active event from that process lifetime, and no terminal event provide evidence for ongoing work even during a long silent interval. Stale activity predating the process does not. Without writer evidence, the earlier bounded observation rule remains: recent activity newly observed after connection, otherwise unknown. Writer ownership is an inference from local lifecycle data, not the official Micro live state feed.
 
@@ -44,7 +44,7 @@ Sources checked: installed Codex 26.908.40834 command definitions and dictation 
 
 `new CodexAdapter({onChange, codexHome, enableQuota, liveWriters, now})`; `start()`, `stop()`, `refresh()`, `snapshot()`, `action(id,args)`, `track(ids)`.
 
-Defaults: task polling 2500 ms, quota polling 60000 ms, maxTasks 100, tailBytes 262144, fallback activeWindowMs 15000. Reads and outputs are bounded; returned snapshots are defensive copies. Separate status fields explain unknown/stale data.
+Defaults: task polling 1000 ms, quota polling 60000 ms, maxTasks 100, initial tailBytes 262144, incremental reads up to 4 MiB per file per poll, fallback activeWindowMs 15000. A large tool result or compaction no longer erases a previously observed state, and completion events before large records are processed in order. A cold start with no recognized event in the initial tail also searches backwards, up to 4 MiB per poll and 32 MiB total, skipping oversized records without retaining their contents. The newest complete structural event becomes the initial evidence; partial trailing records cannot invent a state. Newly appended structural events take precedence over this historical search. Writer/process checks still apply. An exhausted search with no evidence stays unknown. Reads and outputs are bounded; returned snapshots are defensive copies. Separate status fields explain unknown/stale data.
 
 Additional service commands: `codexSelect {threadId}`, `codexWake`, `codexSlot {index:0..11}`, and read-only `verifyColors` comparing the last acknowledged 84-color frame to device memory. Dynamic animation may advance between UI snapshots; the service serializes its own readback with lighting writes. The native reader waits for the 45 ms firmware render boundary after D8 before reading D2, preventing a mixture of preceding/current frame chunks.
 
