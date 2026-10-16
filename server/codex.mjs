@@ -254,7 +254,14 @@ export function classifyEvents(
     const state =
       typeof payload.status === "string" ? payload.status.toLowerCase() : "";
     let kind;
-    if (["task_complete", "turn_complete", "turn_completed"].includes(type))
+    // Current Codex persists final messages before task_complete. Some versions
+    // only expose this completed item until the view catches up. Use explicit
+    // final-answer phases, never message text, viewport position or unread flags.
+    const finalMessage = event.type === "response_item" && type === "message" &&
+      payload.role === "assistant" && ["final", "final_answer"].includes(payload.phase);
+    const finalItem = event.type === "event_msg" && type === "item_completed" &&
+      payload.item?.type === "AgentMessage" && ["final", "final_answer"].includes(payload.item.phase);
+    if (["task_complete", "turn_complete", "turn_completed"].includes(type) || finalMessage || finalItem)
       kind = "completed";
     else if (
       event.type === "event_msg" &&
@@ -529,7 +536,7 @@ export class CodexAdapter {
     onChange = () => {},
     cliPath,
     enableQuota = true,
-    pollIntervalMs = 2_500,
+    pollIntervalMs = 1_000,
     quotaIntervalMs = 60_000,
     maxTasks = 100,
     tailBytes = 262_144,

@@ -1005,13 +1005,21 @@ final class Air75Device {
             return ["armed": true, "state": next, "backupPath": backupURL.path, "verified": true]
         } catch { throw rollbackError(error) }
     }
-    private func writeRGB(_ colors: [UInt8]) throws {
+    private func writeRGB(_ colors: [UInt8], previous: [UInt8]? = nil) throws {
         try verifyLightingProfileForWrite()
         guard colors.count == 252 else { throw failure("INVALID_COLORS", "Expected RGB data for 84 keys.") }
-        for start in stride(from: 0, to: 84, by: 13) {
-            let end = min(start + 13, 84)
+        // D8 carries independent index/R/G/B records. Keep the proven 13-record
+        // packet size, but do not resend 84 LEDs when only task keys change.
+        // First paint, explicit verification and restoration always use a full
+        // frame; lastPaint advances only after every packet is acknowledged.
+        let changed = (0..<84).filter { index in
+            guard let previous = previous, previous.count == 252 else { return true }
+            return colors[(index*3)..<(index*3+3)] != previous[(index*3)..<(index*3+3)]
+        }
+        for start in stride(from: 0, to: changed.count, by: 13) {
+            let end = min(start + 13, changed.count)
             var records = [UInt8]()
-            for index in start..<end { records += [UInt8(index)] + Array(colors[(index * 3)..<(index * 3 + 3)]) }
+            for index in changed[start..<end] { records += [UInt8(index)] + Array(colors[(index * 3)..<(index * 3 + 3)]) }
             let echoed = try request(0xd8, length: records.count, payload: records)
             guard echoed == records else { throw failure("COLOR_ACK_MISMATCH", "D8 did not echo the complete indexed RGB records.") }
         }
@@ -1022,7 +1030,7 @@ final class Air75Device {
         if colors == lastPaint && !verify { return ["painted": 84, "skipped": true, "verification": "unchanged"] }
         do {
             let fullVerification = verify || !firstPaintVerified
-            try writeRGB(colors)
+            try writeRGB(colors, previous: fullVerification ? nil : lastPaint)
             if fullVerification {
                 let rendered = try readRGB()
                 let expected = S4.renderedCustomColors(colors, firmware: firmware)
@@ -1668,6 +1676,7 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
         var state: [UInt8] = [6,25,4,0,1,0,0,1,64,4,60,0,1,0,255,0,0]
         var rgb = [UInt8](repeating: 20, count: 312)
         var writes = 0
+        var rgbPackets = [[UInt8]]()
         var rejectRGBProbe = false
         func exchange(_ frame: [UInt8]) throws -> [UInt8] {
             let command = frame[1], length = Int(frame[4])
@@ -1693,6 +1702,7 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
                 writes += 1; payload = Array(frame[8..<(8+length)]); state = payload
             case 0xd8:
                 writes += 1; payload = Array(frame[8..<(8+length)])
+                rgbPackets.append(payload)
                 for index in stride(from: 0, to: length, by: 4) {
                     let start = Int(payload[index])*3
                     rgb.replaceSubrange(start..<(start+3), with: payload[(index+1)..<(index+4)])
@@ -1742,7 +1752,23 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
               "same-process upgrade archives the exact old journal once")
     try check(board.writes == priorWrites && board.state == upgradedState && board.rgb == upgradedRGB,
               "firmware transition never writes the old schema into the new board")
-    _ = try device.arm(); _ = try device.paint(Array(repeating: 32, count: 252), verify: true)
+    _ = try device.arm()
+    board.rgbPackets.removeAll()
+    var animated = [UInt8](repeating: 32, count: 252)
+    _ = try device.paint(animated, verify: false)
+    try check(board.rgbPackets.count == 7 && board.rgbPackets.flatMap { $0 }.count == 336,
+              "first paint after arm sends all 84 LEDs and validates readback")
+    board.rgbPackets.removeAll()
+    for index in [0,1,12,13,26,52,83] { animated[index*3] = 64 }
+    _ = try device.paint(animated, verify: false)
+    try check(board.rgbPackets.count == 1 && stride(from: 0, to: 28, by: 4).map { board.rgbPackets[0][$0] } == [0,1,12,13,26,52,83],
+              "sparse frame sends actual changed LED indices in one acknowledged packet")
+    try check(Array(try device.readRGB().prefix(252)) == S4.renderedCustomColors(animated, firmware: board.firmware),
+              "delta output preserves all unchanged LED values")
+    board.rgbPackets.removeAll(); _ = try device.paint(animated, verify: false)
+    try check(board.rgbPackets.isEmpty, "unchanged frame sends no D8")
+    _ = try device.paint(animated, verify: true)
+    try check(board.rgbPackets.count == 7, "explicit verification resends a full frame even when unchanged")
     board.firmware[6] = 124; board.firmware[7] = 124
     let restored = try device.restore()
     try check(restored["verified"] as? Bool == true && board.state == upgradedState && board.rgb == upgradedRGB,

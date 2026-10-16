@@ -1,5 +1,6 @@
 import http from "node:http";
 import {AudioSession} from "./audio.mjs";
+import {startFrameLoop} from "./frame-loop.mjs";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
@@ -39,7 +40,7 @@ const port = Number(process.env.AIR_STUDIO_PORT || process.env.AIR_STUDIO_PREFER
 const store = await new Store(dataDir).load();
 // Written by scripts/package.mjs. Absent when running from source.
 const build = await readFile(path.join(root, "signing.json"), "utf8")
-  .then(text => { const value = JSON.parse(text); return { adhoc: value.adhoc === true, identity: String(value.identity ?? ""), packagedAt: String(value.packagedAt ?? "") }; })
+  .then(text => { const value = JSON.parse(text); return { version: String(value.version ?? ""), platform: process.platform, arch: process.arch, adhoc: value.adhoc === true, identity: String(value.identity ?? ""), packagedAt: String(value.packagedAt ?? "") }; })
   .catch(() => ({ adhoc: false, identity: "", packagedAt: "" }));
 const hardware = new Hardware(
   process.env.AIR_STUDIO_HID ?? path.join(root, "bin/HIDBridge"),
@@ -226,7 +227,7 @@ async function reconcileHardwareError() {
 }
 async function activate() {
   if (hardware.state.capabilities?.perKey === false)
-    throw new Error("当前固件尚未通过灯效兼容性验证，请在设备页检查更新。");
+    throw new Error("当前设备未通过逐键灯效协议检查，请在设备页查看详情并更新 NuPhyLab。");
   integrationsSuspended = false;
   if (!hardware.state.armed) invalidateLightingCache();
   await hardware.arm();
@@ -519,7 +520,7 @@ async function tick() {
     busy = false;
   }
 }
-const timer = setInterval(tick, 50);
+const timer = startFrameLoop(tick);
 async function serialized(fn) {
   const run = async () => {
     if (stopping) throw new Error("软件正在退出");
@@ -1248,7 +1249,7 @@ async function shutdown() {
   stopping = true;
   audio.stop();
   playback.playing = false;
-  clearInterval(timer);
+  timer.stop();
   firmware.close();
   server.close();
   let exitCode = process.exitCode || 0;

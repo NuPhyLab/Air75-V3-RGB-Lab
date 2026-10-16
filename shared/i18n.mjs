@@ -1,4 +1,7 @@
 export const messages = {
+  "软件版本": "App version",
+  "当前设备未通过逐键灯效协议检查，请在设备页查看详情并更新 NuPhyLab。": "The device did not pass the per-key lighting protocol checks. See Device details and update NuPhyLab.",
+  "已识别键盘，但逐键灯效协议检查未通过。请更新 NuPhyLab 并查看设备详情。": "Keyboard detected, but per-key lighting protocol checks failed. Update NuPhyLab and see Device details.",
   "上次灯光尚未恢复，请重新连接键盘后重试。": "The previous lighting session still needs recovery. Reconnect the keyboard and try again.",
   "无法整理灯光恢复记录，原始备份已保留。": "Lighting recovery records could not be organized. The original backups have been preserved.",
   "颜色模式": "Color mode",

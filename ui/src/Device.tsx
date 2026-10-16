@@ -168,6 +168,7 @@ export function Device({
       <details className="product-details device-diagnostics">
         <summary>{tr("设备详情")}</summary>
         <dl className="detail-list">
+          <div><dt>{tr("软件版本")}</dt><dd>{state?.build?.version || "—"}{state?.build?.platform === "darwin" && ` · macOS ${state.build.arch || ""}`}</dd></div>
           <div><dt>{tr("固件版本")}</dt><dd>{tr(device?.firmware || "连接后读取")}</dd></div>
           <div><dt>{tr("可读取灯位")}</dt><dd>{tr(device?.ledCount ? `${device.ledCount} 个` : "—")}</dd></div>
           <div><dt>{tr("灯效控制")}</dt><dd>{tr(device?.armed ? "NuPhyLab 正在控制" : "原有灯效")}</dd></div>

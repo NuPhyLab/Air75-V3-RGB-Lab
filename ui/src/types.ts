@@ -166,7 +166,7 @@ export type AppState = {
     shortcuts?: Shortcut[];
     [key: string]: unknown;
   };
-  build?: { adhoc: boolean; identity: string; packagedAt: string };
+  build?: { version?: string; platform?: string; arch?: string; adhoc: boolean; identity: string; packagedAt: string };
   game: GameState;
   trigger?: TriggerState;
   native?: Record<string, unknown>;

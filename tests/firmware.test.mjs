@@ -82,5 +82,5 @@ test('online latest version never grants missing device capabilities', async () 
   assert.equal(next.status, 'newer');
   assert.equal(next.compatible, true);
   assert.equal(next.stateBytes, 22);
-  assert.equal(next.verifiedVersion, '1.0.16.6', 'protocol support must not claim new-firmware hardware testing');
+  assert.equal(next.verifiedVersion, '1.0.23.6', 'future protocol support must not claim future-firmware hardware testing');
 });

@@ -29,7 +29,11 @@ test('unplug in Win then reconnect in Mac preserves Win recovery and allows a ne
   await until(s.state,x=>!x.device.connected,'Win unplug');
   await s.configure({present:true,lightingProfile:0});
   assert.equal((await s.command({op:'connect'})).ok,true);
-  let state=await s.state();assert.deepEqual(state.device.deferredProfiles,[1]);assert.equal(state.device.recoveryPending,false);
+  // The render loop may already have resumed the scene on the new profile.
+  // A journal owned by that armed session is expected, not stale Win recovery.
+  let state=await s.state();assert.deepEqual(state.device.deferredProfiles,[1]);
+  assert.equal(state.device.lightingProfile,0);assert.equal(state.device.recoveryPending,state.device.armed);
+  assert.equal(state.playback.lastError,null);
   assert.equal((await s.command(scene)).ok,true);
   assert.equal((await s.command({op:'verifyColors'})).result.matches,true);
   assert.equal((await s.command({op:'stop'})).ok,true);

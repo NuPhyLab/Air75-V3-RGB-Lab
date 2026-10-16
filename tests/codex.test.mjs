@@ -23,6 +23,37 @@ const event = (type, at = baseTime, extra = {}, envelope = "event_msg") =>
   }) + "\n";
 const sqlString = (value) => `'${String(value).replaceAll("'", "''")}'`;
 
+test('final-answer records finish thinking before task_complete without reading the UI', () => {
+  for (const final of [
+    event('message', baseTime+100, {role:'assistant',phase:'final_answer',content:[]}, 'response_item'),
+    event('message', baseTime+100, {role:'assistant',phase:'final',content:[]}, 'response_item'),
+    event('item_completed', baseTime+100, {item:{type:'AgentMessage',phase:'final_answer',content:[]}}),
+  ]) {
+    const result = classifyEvents(event('task_started') + final + event('token_count',baseTime+101), {now:baseTime+200});
+    assert.equal(result.status,'completed');
+    assert.deepEqual(result.pendingRequests,[]);
+    assert.equal(classifyEvents(event('function_call',baseTime,{name:'request_user_input',call_id:'pending'})+final,{now:baseTime+200}).status,'completed');
+    assert.equal(classifyEvents(event('task_started')+final+event('task_started',baseTime+300),{now:baseTime+400,activityObservedAt:baseTime+350}).status,'running');
+  }
+  for (const extra of [{role:'user',phase:'final_answer'}, {role:'assistant',phase:'commentary'}, {role:'assistant'}]) {
+    assert.notEqual(classifyEvents(event('message',baseTime,extra,'response_item'),{now:baseTime}).status,'completed');
+  }
+  assert.notEqual(classifyEvents(event('item_completed',baseTime,{item:{type:'McpToolCall',status:'completed'}}),{now:baseTime}).status,'completed');
+});
+
+test('an unviewed task changes to completed even while Codex retains its writer and unread marker', async t => {
+  const {home,file} = await fixture(t,{rows:[{id:'offscreen',events:event('task_started')}]});
+  await writeFile(path.join(home,'.codex-global-state.json'),JSON.stringify({'unread-thread-ids-by-host-v1':{local:['offscreen']}}));
+  const adapter = new CodexAdapter({codexHome:home,enableQuota:false,now:()=>baseTime+1000,
+    liveWriters:async()=>new Map([['offscreen',{startedAt:baseTime-1000}]])});
+  t.after(()=>adapter.stop()); await adapter.start();
+  assert.equal(adapter.snapshot().tasks[0].status,'running');
+  await appendFile(file('offscreen'),event('message',baseTime+500,{role:'assistant',phase:'final_answer'},'response_item'));
+  await adapter.refresh();
+  assert.equal(adapter.snapshot().tasks[0].status,'completed');
+  assert.equal(adapter.snapshot().tasks[0].isUnread,true);
+});
+
 async function fixture(t, { version = 12, schema = "normal", rows = [] } = {}) {
   const home = await mkdtemp(path.join(tmpdir(), "air-studio-codex-test-"));
   t.after(() => rm(home, { recursive: true, force: true }));

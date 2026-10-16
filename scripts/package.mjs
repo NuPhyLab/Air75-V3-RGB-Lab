@@ -94,7 +94,7 @@ await writeFile(
 // after a rebuild; the app has to be able to say that out loud.
 await writeFile(
   path.join(resources, "signing.json"),
-  JSON.stringify({ adhoc: identity.adhoc === true, apple: identity.apple === true, identity: identity.name, packagedAt: new Date().toISOString() }, null, 2),
+  JSON.stringify({ version, platform: process.platform, arch: process.arch, adhoc: identity.adhoc === true, apple: identity.apple === true, identity: identity.name, packagedAt: new Date().toISOString() }, null, 2),
 );
 signApp(app,identity);
 console.log("Packaged: " + app);

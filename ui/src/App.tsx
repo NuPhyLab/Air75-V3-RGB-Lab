@@ -257,7 +257,7 @@ export default function App() {
               <CircleAlert size={17} />
               <span>{tr(state.firmware.status === "updateAvailable"
                 ? `Air75 V3 有新固件 ${state.firmware.latest}，当前为 ${state.firmware.current}。`
-                : "已识别键盘，当前固件的灯效兼容性尚未验证。")}</span>
+                : "已识别键盘，但逐键灯效协议检查未通过。请更新 NuPhyLab 并查看设备详情。")}</span>
               <Button kind="ghost" onClick={() => setPage("device")}>{tr("查看更新")}</Button>
             </div>
           ))}
