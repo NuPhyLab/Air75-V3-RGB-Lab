@@ -234,3 +234,14 @@ with a still-leased key fail closed; later user changes are never overwritten.
 F3/F5/F6 firmware actions emit HID 12:0x29f, 12:0xcf, 1:0x9b respectively.
 Scoped macOS mappings target Consumer and System Control services, preserving
 all pre-existing conflicting mappings and restoring owned rows on release.
+
+## Preset readback tolerance (v1.0.10)
+
+Some Air75 V3 1.0.23.6 boards return a preset-speed byte outside the setter's
+0–4 range (observed: 94 at D5 offset 21). The official NuPhyIO parser clamps this
+read value. Readable state and writable state are now distinct: retain the raw
+byte in recovery journals, and never send an invalid speed through D6. When
+preset offsets 17–21 are unchanged, use the official contiguous-field write for
+only offsets 0–16; verify the entire 22-byte state afterwards. Unknown or changed
+fields still fail validation, and a differing invalid preset cannot be restored
+by silently normalizing it. See [replacement-board validation](../docs/RELEASE_QA_1.0.10.md).

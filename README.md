@@ -53,6 +53,8 @@ The checksums cover both the application and source archives; download both if y
 
 NuPhyLab can check official firmware information and open the official updater, but **does not flash firmware**. Starting with v1.0.2, Air75 V3 ANSI firmware **1.0.23.6** has a protocol adapter for its 22-byte lighting state. Compatible updates within the S4 1.x.x.6 family are checked by geometry, state, LED count and RGB readback instead of an exact version whitelist. Changed protocol families fail closed. v1.0.3 has now passed physical 1.0.23.6 RGB readback and restoration checks, and fixes reconnecting after upgrading while the app is open. New firmware scales custom output; verification accounts for that rendered value. See [firmware compatibility and validation](docs/FIRMWARE_COMPATIBILITY_20261015.md).
 
+Version 1.0.10 also handles out-of-range preset-speed readback found on another 1.0.23.6 board, preserving the raw preset configuration through official partial D6 writes. See [the replacement-board check](docs/RELEASE_QA_1.0.10.md).
+
 The canvas maps **83 positions**. The firmware exposes **84 main RGB channels**, plus 20 side-light entries. Main channel 83 has no confirmed physical position and is preserved as black by default. Successful RGB readback verifies channel data, not the physical location of every LED.
 
 ## Codex and Claude Code

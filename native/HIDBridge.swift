@@ -364,6 +364,28 @@ enum S4 {
             state[3] <= 3 && state[4] <= 1 && state[9] <= 4 && state[10] <= 100 &&
             state[11] <= 4 && state[12] <= 1 && (length == 17 || (state[17] <= 7 && state[21] <= 4))
     }
+    static func readableState(_ state: [UInt8], firmware: [UInt8]) -> Bool {
+        guard stateLength(firmware) == 22, state.count == 22 else { return validState(state, firmware: firmware) }
+        // NuPhyIO clamps the *read* shape-speed byte; some 1.0.23.6 boards
+        // return e.g. 94 here. That is not a different packet schema. Retain
+        // the raw byte in the journal, but never send it through the setter.
+        var checked = state
+        checked[21] = 0
+        return validState(checked, firmware: firmware)
+    }
+    static func stateWritePayload(_ target: [UInt8], current: [UInt8], firmware: [UInt8]) throws -> [UInt8] {
+        guard readableState(target, firmware: firmware), readableState(current, firmware: firmware) else {
+            throw failure("INVALID_STATE", "Refusing an invalid lighting configuration.")
+        }
+        // Official D6 supports contiguous field writes. Keep the proven
+        // complete main/side prefix (including RGB triplets), and leave the
+        // five preset fields untouched when this operation doesn't own them.
+        if target.count == 22 && target.suffix(5) == current.suffix(5) { return Array(target.prefix(17)) }
+        guard validState(target, firmware: firmware) else {
+            throw failure("INVALID_STATE", "Cannot overwrite an unrecognized preset parameter; original backup retained.")
+        }
+        return target
+    }
     static func statesMatch(_ expected: [UInt8], _ observed: [UInt8], firmware: [UInt8]) -> Bool {
         guard let length = stateLength(firmware), expected.count == length, observed.count == length else { return false }
         // Official Air75 V3 1.0.16.6: both D6 dispatch tables skip offsets
@@ -489,7 +511,7 @@ struct LightingJournals {
         do {
             let record = try JSONDecoder().decode(LightingBackup.self, from: Data(contentsOf: url))
             guard record.schema == 1, record.vendorID == 0x19f5, record.productID == 0x1028,
-                  S4.validState(record.state, firmware: record.firmware), record.renderedColors.count == 312,
+                  S4.readableState(record.state, firmware: record.firmware), record.renderedColors.count == 312,
                   record.customColors == nil || record.customColors?.count == 252,
                   (record.lightingProfile ?? 0) <= 1 else {
                 throw failure("INVALID_BACKUP", "The lighting backup has an invalid schema or size.")
@@ -798,7 +820,7 @@ final class Air75Device {
             throw failure("UNSUPPORTED_PROTOCOL", "键盘协议结构已改变，请更新 NuPhyLab 后重试。未修改键盘设置。")
         }
         let state = try request(0xd5, length: length)
-        guard S4.validState(state, firmware: firmware) else {
+        guard S4.readableState(state, firmware: firmware) else {
             protocolReady = false
             throw failure("UNSUPPORTED_PROTOCOL", "键盘协议结构已改变，请更新 NuPhyLab 后重试。未修改键盘设置。")
         }
@@ -965,14 +987,11 @@ final class Air75Device {
     }
     private func writeStateVerified(_ state: [UInt8]) throws {
         try verifyLightingProfileForWrite()
-        guard S4.validState(state, firmware: firmware) else {
-            throw failure("INVALID_STATE", "Refusing an invalid or non-stock side-light state.")
-        }
-        // On this verified firmware the full-state setter applies all fields.
-        // A separate brightness-only commit experimentally changed saved RGB
-        // 190/174 into 191/175, so it must NOT be used for exact restoration.
-        let initialEcho = try request(0xd6, length: state.count, payload: state)
-        guard initialEcho == state else { throw failure("STATE_ACK_MISMATCH", "D6 did not echo the complete lighting state.") }
+        let current = try readState()
+        let payload = try S4.stateWritePayload(state, current: current, firmware: firmware)
+        // Do not add a separate brightness-only commit: it can rescale RGB.
+        let initialEcho = try request(0xd6, length: payload.count, payload: payload)
+        guard initialEcho == payload else { throw failure("STATE_ACK_MISMATCH", "D6 did not echo the complete lighting payload.") }
         pump(0.12)
         var lastRead = [UInt8]()
         for attempt in 0..<5 {
@@ -1699,7 +1718,8 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
                 }
                 payload = Array(rendered[address..<(address+length)])
             case 0xd6:
-                writes += 1; payload = Array(frame[8..<(8+length)]); state = payload
+                writes += 1; payload = Array(frame[8..<(8+length)])
+                state.replaceSubrange(address..<(address+length), with: payload)
             case 0xd8:
                 writes += 1; payload = Array(frame[8..<(8+length)])
                 rgbPackets.append(payload)
@@ -1790,6 +1810,19 @@ func testFirmwareUpgradeLifecycle(_ check: (Bool, String) throws -> Void) throws
     _ = try device.restore()
     try check(board.state == dimState && (try device.readRGB()) == dimRendered,
               "quantized palette candidates restore the exact original dimmed custom output")
+    // Capture from the replacement 1.0.23.6 board: NuPhyIO tolerates its
+    // out-of-range readback speed. It must survive a full lighting lifecycle.
+    board.state = [6,100,2,0,1,6,0,9,255,4,60,2,1,0,255,0,0,6,94,94,94,94]
+    let rawPresetState = board.state
+    let rawPresetPalette = try S4.renderedCustomColors(Array(board.rgb.prefix(252)), firmware: board.firmware)
+    _ = try device.connect(); _ = try device.arm()
+    let rawRecord = try journals.read(journals.url(0), serial: "self-test")
+    try check(rawRecord.state == rawPresetState, "journal preserves unnormalized preset readback")
+    _ = try device.paint(Array(repeating: 48, count: 252), verify: true)
+    try check(board.state.suffix(5) == rawPresetState.suffix(5), "playback leaves all five preset bytes untouched")
+    _ = try device.restore()
+    try check(board.state == rawPresetState && S4.renderedCustomColors(Array(board.rgb.prefix(252)), firmware: board.firmware) == rawPresetPalette,
+              "restore retains raw preset state and prior rendered custom palette")
     try check(device.shutdown(), "upgraded session shuts down with all owned state restored")
 }
 
@@ -1910,7 +1943,21 @@ func selfTest() throws {
     for (offset,value): (Int,UInt8) in [(0,23),(1,101),(2,5),(3,4),(4,2),(9,5),(10,101),(11,5),(12,2),(17,8),(21,5)] {
         var invalid = shapeState; invalid[offset] = value
         try check(!S4.validState(invalid, firmware: latestFirmware), "out-of-schema field rejected: \(offset)")
+        try check(S4.readableState(invalid, firmware: latestFirmware) == (offset == 21), "read tolerance is restricted to preset speed")
     }
+    for speed in 0...255 {
+        var rawState = shapeState; rawState[21] = UInt8(speed)
+        var target = rawState; target[0] = 21; target[1] = 100
+        try check(S4.readableState(rawState, firmware: latestFirmware), "readback preset speed retained without normalization")
+        try check(try S4.stateWritePayload(target, current: rawState, firmware: latestFirmware) == Array(target.prefix(17)), "untouched preset never enters D6 payload")
+    }
+    var rawPreset = shapeState; rawPreset[21] = 94
+    do { _ = try S4.stateWritePayload(rawPreset, current: shapeState, firmware: latestFirmware); throw failure("SELF_TEST", "out-of-range preset setter accepted") }
+    catch let error as BridgeError { try check(error.code == "INVALID_STATE", "read tolerance cannot enable invalid preset writes") }
+    try check(try S4.stateWritePayload(shapeState, current: rawPreset, firmware: latestFirmware) == shapeState, "valid changed presets retain full restoration")
+    try check(try S4.stateWritePayload(state, current: state, firmware: verifiedFirmware) == state, "legacy full-state writes unchanged")
+    var changedRaw = rawPreset; changedRaw[21] = 95
+    try check(!S4.statesMatch(rawPreset, changedRaw, firmware: latestFirmware), "read tolerance never skips restoration equality")
     for offset in shapeState.indices {
         var changed = shapeState; changed[offset] ^= 1
         try check(S4.statesMatch(shapeState, changed, firmware: latestFirmware) == (offset == 13), "latest schema verifies every implemented byte: \(offset)")
