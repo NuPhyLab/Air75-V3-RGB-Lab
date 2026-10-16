@@ -44,12 +44,58 @@ test('dictation holds until matching release, releases before another action and
  assert.deepEqual(sent.slice(-2).map(x=>x.phase),['up','tap']);assert.equal(keys.held,null);
 });
 
+test('new global dictation overrides retired composer bindings and uses a complete global hold',async t=>{
+ const home=await mkdtemp(path.join(os.tmpdir(),'nuphy-keymap-'));t.after(()=>rm(home,{recursive:true,force:true}));
+ const file=path.join(home,'keybindings.json');
+ const old=[{command:'composer.startDictation',key:'F11'}];
+ const resolve=()=>resolveCodexShortcut(describeAction('dictation'),{codexHome:home,blockedCodes:['F9','F11']});
+ await writeFile(file,JSON.stringify([...old,{command:'globalDictationHold',key:'Control+Shift+D'}]));
+ const resolved=await resolve();
+ assert.equal(resolved.delivery,'globalHold');assert.equal(resolved.keyCode,2);
+ assert.deepEqual(resolved.modifiers,['control','shift']);
+ const sent=[];const gestures=new CodexKeyGestures({send:async value=>{sent.push(value);return {sent:true};},resolve});
+ await gestures.execute(describeAction('dictation'),{phase:'down',source:'F9'});
+ await gestures.release('F9');
+ assert.equal(sent[0].delivery,'globalHold');assert.deepEqual(sent.map(x=>x.phase),['down','up']);
+ assert.equal(gestures.held,null);
+ await writeFile(file,JSON.stringify([...old,{command:'globalDictationHold',key:null}]));
+ await assert.rejects(resolve(),/停用/,'explicitly disabled global binding never falls back');
+ await writeFile(file,JSON.stringify([...old,{command:'globalDictationHold',key:'F9'}]));
+ await assert.rejects(resolve(),/冲突/,'global forwarding cannot re-enter a bound source key');
+ await writeFile(file,JSON.stringify([...old,{command:'globalDictationHold',key:'Fn'}]));
+ assert.equal((await resolve()).modifierOnly,true);
+ assert.deepEqual(parseMacShortcut('Control+Shift',{allowBareModifiers:true}),{keyCode:56,modifiers:['control','shift'],code:'Modifiers',modifierOnly:true});
+ assert.equal(parseMacShortcut('Control+Shift'),null,'ordinary commands cannot become bare modifier holds');
+ assert.equal(parseMacShortcut('Control+Ctrl',{allowBareModifiers:true}),null);
+});
+
 test('failed native release clears stale local hold so future commands can recover',async()=>{
  let broken=false;
  const keys=new CodexKeyGestures({send:async()=>{if(broken)throw new Error('helper exited');return {sent:true};},resolve:async()=>({keyCode:2,modifiers:['control','shift']})});
  await keys.execute(describeAction('dictation'),{phase:'down',source:'F9'});
  broken=true;await assert.rejects(keys.release(),/helper exited/);assert.equal(keys.held,null);
  broken=false;await keys.execute(describeAction('voice'));assert.equal(keys.held,null);
+});
+
+test('tap-to-dictate sends one complete tap per press; key-up never toggles again',async t=>{
+ const home=await mkdtemp(path.join(os.tmpdir(),'nuphy-dictation-toggle-'));t.after(()=>rm(home,{recursive:true,force:true}));
+ await writeFile(path.join(home,'keybindings.json'),JSON.stringify([
+  {command:'globalDictationHold',key:null},
+  {command:'globalDictationSingleTap',key:'Ctrl+Shift+D'},
+  {command:'composer.startDictation',key:'F11'},
+ ]));
+ const sent=[];const action=describeAction('dictation');
+ const gesture=new CodexKeyGestures({resolve:a=>resolveCodexShortcut(a,{codexHome:home}),send:async request=>{sent.push(request);return {sent:true};}});
+ assert.equal((await gesture.inspectDictation(action)).mode,'toggle');
+ await gesture.execute(action,{phase:'down',source:'F9'});
+ await gesture.execute(action,{phase:'up',source:'F9'});
+ assert.equal(sent.length,1);assert.equal(sent[0].delivery,'globalTap');assert.equal(sent[0].phase,'tap');
+ assert.equal(gesture.held,null,'toggle mode never invents a held key or recording state');
+ await gesture.execute(action,{phase:'down',source:'F9'});
+ await gesture.release();
+ assert.deepEqual(sent.map(x=>x.phase),['tap','tap'],'mode shutdown/release cannot accidentally restart dictation');
+ await gesture.execute(action,{source:'button'});
+ assert.equal(sent.length,3,'button uses the same toggle path');
 });
 
 test('a focus-transition duplicate cannot open and immediately close a toggle',()=>{

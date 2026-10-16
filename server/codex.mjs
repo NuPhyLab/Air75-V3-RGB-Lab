@@ -749,7 +749,7 @@ export class CodexAdapter {
       const filters = [
         columns.has("archived") ? "COALESCE(archived, 0) = 0" : "1 = 1",
         columns.has("thread_source")
-          ? "COALESCE(thread_source, 'user') = 'user'"
+          ? "COALESCE(thread_source, 'user') IN ('user', 'agent_created_thread')"
           : "1 = 1",
       ];
       const metadata = await this.metadata();

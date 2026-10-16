@@ -153,6 +153,8 @@ export function Codex({
   const commandIds = (settings?.codexCommandIds ?? ["modelPicker", "newTask", "dictation", "voice", "toggleTerminal", "settings"]) as string[];
   const bindings = codexBindings(settings);
   const keyState = asObject(codex?.keys), keyHost=asObject(keyState.host);
+  const dictationToggle=asObject(keyState.dictation).mode==='toggle';
+  const dictationLabel=dictationToggle?'开始 / 结束听写':keyState.held?'结束听写':'开始听写';
   const executeCommand = (action:string) => run(command({op:'codexAction',action,...(action==='dictation'?{
     phase:keyState.held?'up':'down',source:keyState.held?String(asObject(keyState.held).source):'button'
   }:{})}));
@@ -199,7 +201,7 @@ export function Codex({
         <p>{tr("Codex 模式已关闭，但原有按键尚未恢复，请重试。")}</p>
         <Button onClick={()=>run(command({op:'codexAdaptRestore'}))}>{tr("重试恢复")}</Button>
       </div> : <p className="muted">{tr(settings?.codexEnabled ? "开启时，绑定按键用于 Codex；关闭后恢复键盘原功能。" : asObject(codex?.adaptation).keycapsMapped ? "普通模式下，F1–F12 对应键帽功能。请保持 NuPhyLab 运行。" : settings?.codexKeycapFallback && asObject(codex?.adaptation).status!=='keycaps' ? "键帽功能尚未就绪，请在设备页检查连接与权限。" : "已关闭 Codex 模式，键盘使用原来的功能。")}</p>}
-      {failedKeys.length>0 && <p className="codex-key-warning" role="alert">{tr("这些按键被系统占用，请更换绑定：")}{failedKeys.map(code=>tr(bindings.find(key=>key.code===code)?.label||code)).join("、")}</p>}
+      {failedKeys.length>0 && <p className="codex-key-warning" role="alert">{tr("以下按键尚未接管，请在「查看适配」中重新检查：")}{failedKeys.map(code=>tr(bindings.find(key=>key.code===code)?.label||code)).join("、")}</p>}
       {settings?.codexEnabled && keyState.enabled===false && state?.device.connected && ['game','trigger'].includes(state.playback.mode) && <p className="muted">{tr("游戏与按键触发期间，Codex 快捷控制暂停。")}</p>}
       {settings?.codexEnabled && <CodexSetup state={state} command={command}/>}
       {!wireless && <CodexLightMode state={state} command={command}/>}
@@ -301,11 +303,11 @@ export function Codex({
           <select id={`micro-command-${i}`} aria-label={tr(`命令键 ${i+1} 的动作`)} value={id} onChange={e=>{const next=[...commandIds];next[i]=e.target.value;setSettings({codexCommandIds:next});}}>
             {shortcuts.filter(s=>s.available !== false).map(s=><option key={s.id} value={s.id}>{tr(s.label)}</option>)}
           </select>
-          <Button kind="ghost" disabled={!canSendSystemKeys || !codex?.available} title={tr(!canSendSystemKeys ? "需要辅助功能权限" : undefined)} onClick={()=>executeCommand(id)}>{tr(id==='dictation'?(keyState.held?"结束听写":"开始听写"):"执行")}</Button>
+          <Button kind="ghost" disabled={!canSendSystemKeys || !codex?.available} title={tr(!canSendSystemKeys ? "需要辅助功能权限" : undefined)} onClick={()=>executeCommand(id)}>{tr(id==='dictation'?dictationLabel:"执行")}</Button>
         </div>)}</div>
         {!canSendSystemKeys && <p className="codex-command-note muted">{tr("命令执行需要辅助功能权限；任务跳转无需此权限。")}</p>}
-        {commandIds.includes("dictation") && <p className="codex-command-note muted">{tr("听写时按住对应按键，松开结束。")}</p>}
-        <details className="product-details codex-command-note"><summary>{tr("命令键使用说明")}</summary><p>{tr("听写：按住对应按键说话，松开结束；最长 2 分钟。语音对话需要 Codex 当前页面支持，终端需要本地项目。")}</p></details>
+        {commandIds.includes("dictation") && <p className="codex-command-note muted">{tr(dictationToggle?"听写时按一次开始，再按一次结束。":"听写时按住对应按键，松开结束。")}</p>}
+        <details className="product-details codex-command-note"><summary>{tr("命令键使用说明")}</summary><p>{tr("听写方式跟随 Codex 的快捷键设置；长按模式最长 2 分钟。语音对话需要当前页面支持，终端需要本地项目。")}</p><p>{tr("新版 Codex 请先在语音设置中配置听写快捷键；如配置了「按一下听写」，这里会优先使用单击切换。")}</p></details>
       </section>
       {!wireless && <section className="micro-settings">
         <div className="section-heading"><div><h2>{tr("状态灯")}</h2><p className="muted">{tr(whole ? "整把键盘跟随同一个任务的状态。" : "灯光跟随绑定的按键位置。")}</p></div>
@@ -390,7 +392,7 @@ export function Codex({
                   title={tr(approval ? "请在 Codex 当前审批卡中操作" : needsPermission ? "需要辅助功能权限" : undefined)}
                   onClick={() => executeCommand(action)}
                 >
-                  <span>{tr(action==='dictation'&&keyState.held?"结束听写":shortcut.label)}</span>
+                  <span>{tr(action==='dictation'?dictationLabel:shortcut.label)}</span>
                   {tr(shortcut.shortcut && <kbd>{tr(shortcut.shortcut)}</kbd>)}
                 </Button>
                 );

@@ -6,6 +6,7 @@ import {
   mkdtemp,
   mkdir,
   writeFile,
+  rename,
   readFile,
   chmod,
   rm,
@@ -36,6 +37,10 @@ export async function fakeService(t, initialControl = {}) {
   const dir = await mkdtemp(path.join(tmpdir(), "air-studio-main-recovery-"));
   const dataDir = path.join(dir, "data");
   await mkdir(dataDir);
+  if(initialControl.codexKeybindings) {
+    await mkdir(path.join(dir,'codex-home'));
+    await writeFile(path.join(dir,'codex-home/keybindings.json'),JSON.stringify(initialControl.codexKeybindings));
+  }
   const helper = path.join(dir, "fake-hid.mjs");
   const controlFile = path.join(dir, "control.json");
   const logFile = path.join(dir, "operations.jsonl");
@@ -50,7 +55,7 @@ import {readFileSync,appendFileSync} from 'node:fs';
 const controlFile=${JSON.stringify(controlFile)}, logFile=${JSON.stringify(logFile)};
 let connected=false,armed=false,pending=false,failedGeneration=0,disconnectGeneration=0,triggerGeneration=0,triggerCode=null;
 const original=[1,100,0,0,0,0,0,0,0,2,65,0,0,0,19,51,68];
-let lighting=[...original];
+let lighting=[...original];let functionKeyLease=false;
 let lightingProfile=0;const pendingProfiles=new Set();
 let colors=Array(104).fill('#000000');
 const configuration=()=>{try{return JSON.parse(readFileSync(controlFile,'utf8'));}catch{return {};}};
@@ -72,22 +77,25 @@ const input=createInterface({input:process.stdin});
 input.on('close',()=>process.exit(0));
 input.on('line',line=>{
  const request=JSON.parse(line);log(request);
- if(!connected&&!['connect','status','quit','disconnect','restore','restoreKeys','triggerMonitor','permissions','openPermissionSettings','bluetoothDevices','shortcut'].includes(request.op)&&!(['adaptKeys','keyMappingStatus'].includes(request.op)&&request.transport==='bluetooth'&&configuration().bluetoothDevices?.length===1)){reject(request,'simulated not connected');return;}
+ if(!connected&&!['connect','status','quit','disconnect','restore','restoreKeys','restoreFunctionKey','triggerMonitor','permissions','openPermissionSettings','bluetoothDevices','shortcut'].includes(request.op)&&!(['adaptKeys','keyMappingStatus'].includes(request.op)&&request.transport==='bluetooth'&&configuration().bluetoothDevices?.length===1)){reject(request,'simulated not connected');return;}
  switch(request.op){
   case 'connect':if(configuration().present===false){reject(request,'not present','DEVICE_NOT_FOUND');break;}selectProfile();connected=true;answer(request,state());break;
   case 'status':selectProfile();answer(request,state());break;
   case 'permissions':answer(request,permissions());break;
   case 'bluetoothDevices':answer(request,{devices:configuration().bluetoothDevices??[]});break;
   case 'restoreKeys':answer(request,{restored:true});break;
+  case 'restoreFunctionKey':functionKeyLease=false;answer(request,{restored:true});break;
+  case 'prepareFunctionKey':functionKeyLease=true;answer(request,{leased:true,verified:true});break;
   case 'adaptKeys':if(configuration().denyAdapt){reject(request,'mapping denied');break;}answer(request,{verified:true,applied:true});break;
   case 'keyMappingStatus':answer(request,{verified:!configuration().mappingLost});break;
   case 'readKeymap':{
    const standard=Array(98).fill(0);for(let i=1;i<=12;i++)standard[i]=57+i;
-   answer(request,configuration().keymap??{mode:0,locationId:1,firmwareVersion:'1.0.16.6',active:standard,defaults:[standard,standard]});break;
+   const map=structuredClone(configuration().keymap??{mode:0,locationId:1,firmwareVersion:'1.0.16.6',active:standard,defaults:[standard,standard]});
+   if(functionKeyLease){map.active[map.defaults[1].indexOf(61)]=61;map.functionKeyLease=true;}answer(request,map);break;
   }
   case 'systemIdle':answer(request,{idleMs:configuration().systemIdleMs??100000,recordsKeys:false});break;
   case 'shortcut':if(configuration().shortcutPermissionError&&request.action!=='task'){reject(request,'Enable Accessibility for the parent application to send shortcuts.','ACCESSIBILITY_REQUIRED');break;}answer(request,{sent:true});break;
-  case 'readColors':answer(request,{colors:colors.map((color,index)=>configuration().mismatchIndex===index?'#010203':color)});break;
+  case 'readColors':answer(request,{customColorScale:configuration().customColorScale??255,colors:colors.map((color,index)=>configuration().mismatchIndex===index?'#010203':configuration().customColorScale===200?'#'+[1,3,5].map((start,c)=>{let v=Math.floor(parseInt(color.slice(start,start+2),16)*200/255);if(index===83&&c>0)v=Math.floor(v*150/255);return v.toString(16).padStart(2,'0')}).join(''):color)});break;
   case 'openPermissionSettings':
    if(!['inputMonitoring','accessibility'].includes(request.permission)){reject(request,'unsupported permission');break;}
    answer(request,{opened:true,permission:request.permission,permissions:permissions()});break;
@@ -121,6 +129,7 @@ input.on('line',line=>{
     fakeCodex,
     `import {readFileSync} from 'node:fs';
     import {SHORTCUTS,describeAction} from ${JSON.stringify(codexURL+"?real")};
+    export {describeAction};
     export class CodexAdapter {
     async start(){} async stop(){} async refresh(){return this.snapshot();}
     action(id,args){return describeAction(id,{...args,tasks:this.snapshot().tasks});}
@@ -279,7 +288,10 @@ export class FirmwareChecker extends RealChecker {
       .map((line) => JSON.parse(line));
   const configure = async (changes) => {
     control = { ...control, ...changes };
-    await writeFile(controlFile, JSON.stringify(control));
+    // The helper polls concurrently. Never expose a truncated configuration,
+    // which would make a deliberately absent keyboard appear present.
+    await writeFile(controlFile + '.next', JSON.stringify(control));
+    await rename(controlFile + '.next', controlFile);
   };
   if (!initialControl.skipInitialConnect) {
     const connected = await command({ op: "connect" });

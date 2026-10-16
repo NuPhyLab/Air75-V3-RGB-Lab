@@ -1,6 +1,6 @@
 # Air75 Studio native bridge
 
-`HIDBridge.swift` is an independent Swift implementation of the researched NuPhy S4 protocol. It uses macOS user-space `IOHIDManager`, without a kernel driver, firmware modification, EEPROM keymap changes, or an `EE` session-key setter. The only permitted HID opcodes are `A1`, `D1`, `D2`, `D5`, `D6`, and `D8`.
+`HIDBridge.swift` is an independent Swift implementation of the researched NuPhy S4 protocol. It uses macOS user-space `IOHIDManager`, without a kernel driver, firmware flashing, or an `EE` session-key setter. Lighting uses `A1`, `D1`, `D2`, `D5`, `D6`, and `D8`; key adaptation reads `A0`/`B1`/`B2`. v1.0.4 permits a guarded two-byte `B3` update solely to lease/restore the verified factory Mac F4 entry (see below).
 
 ```sh
 npm run build:native
@@ -37,7 +37,7 @@ Each stdin line is a JSON object with an `id` and `op`. Each response is `{ "id"
 | `shortcut` | same fields with `phase:'down'`; later `phase:'up'` | holds dictation until release; key-up goes to the original process even after focus changes; automatically released after 120 seconds and before shutdown. `sent` confirms delivery only, not the action's result in Codex. |
 | `quit` | none | responds `quitting:true`, restores owned changes, then exits |
 
-`firmwareVersion` follows NuPhyIO's S4 `parseFirmwareVersion`: `info[2].info[1].info[0].(info[4] | info[5] << 8)` with marker `info[3] == 0xaa`. The last two bytes are not interpreted as version components. Older versions, including zero-major versions, can be identified read-only. Lighting writes still require the verified signature `10 00 01 aa 06 00` (1.0.16.6) and 104 LEDs; online latest-version checks do not bypass compatibility validation. See [firmware source and verification](../docs/FIRMWARE_ONBOARDING_QA.md).
+`firmwareVersion` follows NuPhyIO's S4 `parseFirmwareVersion`: `info[2].info[1].info[0].(info[4] | info[5] << 8)` with marker `info[3] == 0xaa`. The last two bytes are not interpreted as version components. Older versions, including zero-major versions, can be identified read-only. Since v1.0.2, lighting uses the official S4 family schema: 1.0.16.6 uses 17 bytes, 1.0.17.6+ within 1.x.x.6 uses 22 bytes. Writes require matching ANSI geometry, 104 LEDs, complete state and RGB read probes; first output is still read back. Online latest-version information never grants capabilities. See [current compatibility evidence](../docs/FIRMWARE_COMPATIBILITY_20261015.md). See [firmware source and verification](../docs/FIRMWARE_ONBOARDING_QA.md).
 
 Examples:
 
@@ -136,7 +136,7 @@ The host explicitly restores owned temporary key mappings and lights before requ
 
 ### Keycap compatibility profile
 
-`adaptKeys` / `keyMappingStatus` accept optional `profile: "keycaps"`. This permits only 12 exact F13–F24 sources paired, in physical order, to display brightness down/up, Mission Control, AC Search, Voice Command, Do Not Disturb, previous/play/next, mute and volume down/up. The mode is opt-in at the application layer; HID firmware keymap opcodes remain read-only. OS mappings are journaled and restored on exit as before.
+`adaptKeys` / `keyMappingStatus` accept optional `profile: "keycaps"`. This permits only 12 exact F13–F24 sources paired, in physical order, to display brightness down/up, Mission Control, AC Search, Voice Command, Do Not Disturb, previous/play/next, mute and volume down/up. The mode is opt-in at the application layer; this extended-layer fallback does not change onboard keys. OS mappings are journaled and restored on exit as before.
 
 
 ## Mac / Win lighting profiles and reserved slots (2026-09-17)
@@ -173,3 +173,64 @@ unverified restore acknowledgement as success.
 
 Official binary source (downloaded only for offline inspection, never flashed):
 https://cdn.nuphy.io/image/2026/07/21/35f97f78d9d84393a7dea646f77e8f11.zip
+
+
+## v1.0.2 firmware adaptation (2026-10-15)
+
+The 17-byte notes above describe the original 1.0.16.6 implementation. For newer
+S4 firmware, D5/D6 use 22 bytes: offset 17 is shape, 18–20 RGB, 21 speed. The
+entire state is captured, retained while changing main/side fields, restored and
+verified. On inspected 1.0.23.6, byte 5 mirrors shape and remains strict; only
+unimplemented byte 13 is excluded. Unknown future versions get exact comparison.
+D8 is addressed to the active Mac/Win profile just like D5/D6.
+
+The new D8 handler updates a profile-specific palette and marks it dirty; its
+idle task saves changes after approximately one second without changes. Therefore
+it is no longer described as purely volatile. Before the first D8 on the 22-byte
+schema, arm selects custom mode, reads its palette, and atomically persists it in
+the existing journal. Restoration writes/verifies that original palette before
+restoring the complete original effect, including preset shapes. A crash between
+mode selection and palette capture is protected by the state-only journal; no D8
+has been issued at that point. New schema journals have optional `customColors`
+(252 bytes); old journals stay readable.
+
+A journal from another firmware version is never applied blindly. Following
+successful current read-only probes, an unowned old journal is moved, byte for
+byte, into `firmware-recovery-history` with a unique name. The newly read firmware
+configuration becomes the next session baseline. A firmware change during owned
+mutations blocks writes and preserves the journal. v1.0.3 permits a fresh, fully
+validated connect to retire old-firmware ownership in the same process. Ordinary
+same-firmware reconnection retains recovery. This is archival,
+not a claim that the pre-upgrade state was restored.
+
+
+## v1.0.3 custom rendering and recovery
+
+The actual 1.0.23.6 renderer scales raw palette channels by an internal HSV value
+capped at 200/255. Custom ownership uses a white main colour and 100% brightness;
+all RGB readback checks compare against that scaling (LED 83 additionally scales
+G/B by 150/255). D2 is rendered output, not an exact raw-palette getter. Saved
+`customColors` contains inverse-interval representatives which reproduce the
+captured full-brightness output. Original custom output is independently checked
+after restoring its original state, with alternate interval endpoints if needed.
+Hidden raw palette codes may differ within the same quantized output interval;
+visible restoration must verify, or the journal remains. See the compatibility
+report for disassembly offsets and real-device validation.
+
+
+## Factory Mac F4 lease (v1.0.4)
+
+Official NuPhyIO `setKey` uses B3: address = layer × 196 + position × 2,
+length = 2, big-endian key value. Mac base layer is zero. The factory key
+0x7e07 emits Command+Space rather than an independently remappable HID usage.
+NuPhyLab validates A0 geometry and both default layers, journals the complete
+original Mac base with firmware/serial/location, and changes only the unique
+factory F4 position to 0x003d. B2 readback is mandatory after B3; ACK alone is
+not success. Repeated polling does not rewrite the entry. Mode disable/quit
+restores 0x7e07 and verifies it, including when the keyboard is now in Win mode.
+Unexpected unplug defers recovery to the same USB location. Firmware changes
+with a still-leased key fail closed; later user changes are never overwritten.
+
+F3/F5/F6 firmware actions emit HID 12:0x29f, 12:0xcf, 1:0x9b respectively.
+Scoped macOS mappings target Consumer and System Control services, preserving
+all pre-existing conflicting mappings and restoring owned rows on release.

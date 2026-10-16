@@ -1,6 +1,6 @@
 {
   "name": "air-studio",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "private": true,
   "type": "module",
   "description": "An experimental NuPhy Lab lighting studio for NuPhy Air75 V3 on macOS",

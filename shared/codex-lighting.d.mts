@@ -5,6 +5,9 @@ export function validateStatusColors(input:unknown,previous?:Record<string,strin
 export function statusColor(task?: {status?:string} | null,settings?:Record<string,unknown>): string;
 export function resolveSlots<T extends {id?:string;status?:string;pinned?:boolean;pinOrder?:number}>(tasks:T[], settings:Record<string,unknown>): (T|null)[];
 export function resolveWholeTask<T extends {id?:string}>(tasks:T[], settings:Record<string,unknown>, selectedId?:string|null):T|null;
+export class StableTaskSlots {
+  resolve<T extends {id?:string;status?:string;pinned?:boolean;pinOrder?:number}>(tasks:T[],settings:Record<string,unknown>):(T|null)[];
+}
 export class CodexLights {
   constructor(now?:()=>number);
   wake():void;

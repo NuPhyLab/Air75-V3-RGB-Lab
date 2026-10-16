@@ -28,14 +28,14 @@ export function FirmwareStatus({ state, command }: { state: AppState | null; com
         <p aria-live="polite">{tr("当前")} {tr(fw.current || "未识别")}
           {tr(fw.latest && fw.latest !== fw.current && ` · ${tr(fw.stale ? "上次查询正式版" : "官方正式版")} ${fw.latest}`)}
         </p>
-        {tr(!fw.compatible && <p>{tr("此固件的灯效兼容性尚未验证。")}{tr(outdated ? "请先更新键盘固件。" : "请检查固件或更新 NuPhyLab。")}</p>)}
+        {tr(!fw.compatible && <p>{tr("此固件未通过灯效协议检查。")}{tr(outdated ? "请先更新键盘固件。" : "请更新 NuPhyLab 后重新连接键盘。")}</p>)}
         {tr(outdated && <p>{tr("使用 Chrome 或 Edge 完成官方更新，完成后回到这里点击「连接键盘」。")}</p>)}
         {tr(fw.status === "unavailable" && <p>{tr("联网后可重试，离线时仍可使用已兼容的灯效。")}</p>)}
       </div>
       <div className="firmware-actions">
         <Button icon={<RefreshCw size={14} />} busy={fw.checking} disabled={opening}
           onClick={() => run(command({ op: "checkFirmware" }))}>{tr("检查更新")}</Button>
-        {tr((outdated || !fw.compatible) && <Button kind={outdated ? "primary" : "secondary"}
+        {tr(outdated && <Button kind="primary"
           icon={<ArrowUpRight size={14} />} busy={opening} onClick={() => run(openUpdate())}>{tr("前往官方更新")}</Button>)}
       </div>
     </section>

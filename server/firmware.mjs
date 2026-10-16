@@ -1,5 +1,6 @@
 export const FIRMWARE_URL = "https://drive.nuphy.io/?lang=zh-CN";
 export const FIRMWARE_API = "https://drive.nuphy.io/prod-api/api/nuphyIo/getLastFirmwareVersionsByType?businessId=1930212869851615233&type=1";
+// Hardware-tested version is distinct from protocol support and online latest.
 export const VERIFIED_FIRMWARE = "1.0.16.6";
 const BUSINESS_ID = "1930212869851615233";
 const FRESH_MS = 6 * 60 * 60 * 1000;
@@ -87,7 +88,9 @@ export class FirmwareChecker {
     return { status, current, latest: this.latest?.version ?? null,
       checkedAt: this.checkedAt, checking: Boolean(this.pending), stale,
       error: this.error, updateUrl: FIRMWARE_URL,
-      compatible: device.connected && device.capabilities?.perKey !== false,
+      compatible: Boolean(device.connected && device.capabilities?.perKey === true),
+      protocol: device.capabilities?.protocol ?? null,
+      stateBytes: device.capabilities?.stateBytes ?? null,
       verifiedVersion: VERIFIED_FIRMWARE };
   }
   close() { this.abort?.abort(); }

@@ -11,9 +11,9 @@ import {KeyAdaptation} from './key-adaptation.mjs';
 import {KeyCapture} from './key-capture.mjs';
 import {BluetoothInput} from './bluetooth-input.mjs';
 import { FirmwareChecker, FIRMWARE_URL } from "./firmware.mjs";
-import { CodexAdapter } from "./codex.mjs";
+import { CodexAdapter, describeAction } from "./codex.mjs";
 import {CodexKeyGestures,PhysicalPressGate,resolveCodexShortcut} from './codex-shortcuts.mjs';
-import { CodexLights, resolveSlots, resolveWholeTask } from "../shared/codex-lighting.mjs";
+import { CodexLights, StableTaskSlots, resolveWholeTask } from "../shared/codex-lighting.mjs";
 import {codexBindings, rebindCodexKey} from '../shared/codex-keys.mjs';
 import { ClaudeCodeAdapter } from "./claude-code.mjs";
 import { ClaudeLights, resolveClaudeSlots, resolveClaudeWholeTask, CLAUDE_ATTENTION_RANK } from "../shared/claude-lighting.mjs";
@@ -56,6 +56,10 @@ const codexGestures=new CodexKeyGestures({
   }),
   resolve:action=>resolveCodexShortcut(action,{blockedCodes:codexBindings(store.data.settings).map(key=>key.code)})
 });
+// Read user-editable shortcuts only. Keep the button/physical key instructions
+// in sync when Codex switches between hold-to-talk and tap-to-toggle.
+void codexGestures.inspectDictation(describeAction('dictation'));
+setInterval(()=>void codexGestures.inspectDictation(describeAction('dictation')),2000).unref();
 const codexLights = new CodexLights();
 const claude = new ClaudeCodeAdapter({ dataDir });
 const claudeLights = new ClaudeLights();
@@ -95,10 +99,11 @@ let suspendedScene = null,
   frameTimes = [];
 const recordWarnings = new Map();
 const recordRetryAt = new Map();
+const taskSlots = new StableTaskSlots();
 const slots = () => {
   const snap = codex.snapshot();
   const tasks = snap.tasks ?? [];
-  return resolveSlots(tasks, store.data.settings);
+  return taskSlots.resolve(tasks, store.data.settings);
 };
 // One integration owns the task and command keys at a time; both keep their own
 // bindings, slots, colours and lighting settings while the other is inactive.
@@ -124,7 +129,7 @@ function codexKeysState() {
   if(signature!==codexKeySignature){codexKeySignature=signature;codexKeyRevision++;}
   return {...config,revision:codexKeyRevision,setupRevision:codexSetupRevision,
     host:codexKeyHost && Date.now()-codexKeyHost.updatedAt<15000 ? codexKeyHost : null, lastEvent:codexKeyEvent,
-    held:codexGestures.held};
+    held:codexGestures.held,dictation:codexGestures.dictation};
 }
 function syncKeyAdaptation(force=false) {
   return keyAdaptation.sync({enabled:keyCapture.active || store.data.settings.codexKeyAdaptation || store.data.settings.codexKeycapFallback,
@@ -941,8 +946,13 @@ async function command(req) {
       return hardware.request("readColors");
     case "verifyColors": {
       if (!hardware.state.connected || !hardware.state.armed) throw new Error("请先连接键盘并播放灯效");
-      const expected = [...colors];
       const actual = await hardware.request("readColors");
+      const expected = colors.map((color,index) => actual.customColorScale === 200
+        ? '#'+[1,3,5].map((start,channel)=>{
+            let value=Math.floor(parseInt(color.slice(start,start+2),16)*200/255);
+            if(index===83&&channel>0)value=Math.floor(value*150/255);
+            return value.toString(16).padStart(2,'0');
+          }).join('') : color);
       const mismatches = expected.flatMap((color,index) => color.toLowerCase() === actual.colors?.[index]?.toLowerCase() ? [] : [index]);
       return {matches:mismatches.length === 0,checked:84,mismatches,expected,actual:actual.colors?.slice(0,84)};
     }

@@ -573,3 +573,18 @@ test('unrelated tool output does not clear a pending question; its matching resp
  const wait=classifyEvents(pending+other,{now:baseTime+2});assert.equal(wait.status,'needsInput');assert.equal(wait.pendingKind,'response');
  const answered=classifyEvents(event('custom_tool_call_output',baseTime+3,{call_id:'question'},'response_item'),{now:baseTime+4,pendingRequests:wait.pendingRequests,activityObservedAt:baseTime+3});assert.equal(answered.status,'running');
 });
+
+test('normal tasks created by an assistant are visible while internal agents stay excluded',async t=>{
+ const f=await fixture(t,{rows:[
+  {id:'manual',source:'user',events:event('task_complete')},
+  {id:'created',source:'agent_created_thread',events:event('task_started')},
+  {id:'internal',source:'subagent',events:event('task_started')},
+  {id:'review',source:'guardian_review',events:event('task_started')},
+  {id:'archived',source:'agent_created_thread',archived:1,events:event('task_complete')},
+ ]});
+ const adapter=new CodexAdapter({codexHome:f.home,enableQuota:false,now:()=>baseTime+10,liveWriters:async()=>new Map([['created',{startedAt:baseTime-1000}]])});
+ t.after(()=>adapter.stop());
+ const snapshot=await adapter.start();
+ assert.deepEqual(snapshot.tasks.map(t=>t.id),['manual','created']);
+ assert.equal(snapshot.tasks[1].status,'running');
+});

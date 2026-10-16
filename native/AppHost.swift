@@ -32,6 +32,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
     var keyEventSending = false
     var registeredCodes: [String] = []
     var failedCodes: [String] = []
+    var carbonRegisteredCodes: [String] = []
+    var nextCaptureRetry = Date.distantPast
+    var captureAttemptOverride: (() -> Bool)? // In-process tests only; never configured by IPC.
     var lastKeyReport = Date.distantPast
     var lastKeyReportSignature = ""
     var keyRevision = -1
@@ -207,7 +210,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
             let alert=NSAlert()
             alert.alertStyle=failed ? .warning : .informational
             let hasBackup=["original-lighting.json","original-lighting.profile-0.json","original-lighting.profile-1.json"].contains {FileManager.default.fileExists(atPath:dataDirectory.appendingPathComponent($0).path)}
-            let hasKeyBackup=FileManager.default.fileExists(atPath:dataDirectory.appendingPathComponent("key-mapping-backup.json").path)
+            let hasKeyBackup=["key-mapping-backup.json","function-key-backup.json"].contains { FileManager.default.fileExists(atPath:dataDirectory.appendingPathComponent($0).path) }
             alert.messageText=failed ? self.T(hasBackup ? "未能确认键盘恢复" : hasKeyBackup ? "未能确认功能键恢复" : "退出检查未完成") : self.T("灯光服务已停止")
             let backupMessage=hasBackup ? self.T("原始灯效备份仍保留在本机。连接键盘后重新打开 NuPhyLab，可再次尝试恢复。") : hasKeyBackup ? self.T("部分功能键尚未确认恢复，按键适配备份已保留。重新打开 NuPhyLab 后会再次尝试恢复。") : self.T("服务已经停止，但退出检查未全部通过。详细原因已记录在日志中。")
             let logExists=FileManager.default.fileExists(atPath:workerLogURL.path)
@@ -326,6 +329,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
     }
     func refreshHotkeys(){
         setHotkeysEnabled(configuredKeysEnabled && !capturingKey && !(editingField && NSApp.isActive) && !terminating && hotkeyPollTimer != nil)
+        if hotkeysEnabled { refreshReservedKeyCapture() }
         if capturingKey && NSApp.isActive && !terminating { _ = startReservedKeyCapture() }
         else if !hotkeysEnabled { stopReservedKeyCapture() }
         reportHotkeys()
@@ -385,7 +389,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
             }
             hotkeysEnabled=false
             for key in hotKeys {if let key=key {UnregisterEventHotKey(key)}}
-            hotKeys.removeAll();heldHotkeys.removeAll();registeredCodes.removeAll();failedCodes.removeAll()
+            hotKeys.removeAll();heldHotkeys.removeAll();registeredCodes.removeAll();failedCodes.removeAll();carbonRegisteredCodes.removeAll();nextCaptureRetry = .distantPast
             if let handler=hotkeyHandler {RemoveEventHandler(handler);hotkeyHandler=nil}
         }
     }
@@ -409,18 +413,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
             if result==noErr {hotKeys.append(key);registeredCodes.append(binding.code)}
             else {failedCodes.append(binding.code);appendWorkerLog(Data("Hotkey \(binding.code) unavailable: \(result)\n".utf8))}
         }
-        // Bare F keys can be reserved by macOS (including secondaryFn+F11).
-        // Use one tap for configured F keys, sharing the Carbon/local held gate.
+        carbonRegisteredCodes = registeredCodes
+        refreshReservedKeyCapture(force:true)
+    }
+    func refreshReservedKeyCapture(force:Bool=false,now:Date=Date()) {
+        guard hotkeysEnabled else{return}
         let functions=keyConfiguration.filter{functionKeyCodes[$0.keyCode] != nil}.map{$0.code}
-        if !functions.isEmpty {
-            if startReservedKeyCapture() {
-                failedCodes.removeAll{functions.contains($0)}
-                for code in functions where !registeredCodes.contains(code) {registeredCodes.append(code)}
-            } else if functions.contains("F11"),!failedCodes.contains("F11") {
-                failedCodes.append("F11")
-                appendWorkerLog(Data("F11 capture unavailable; Accessibility is required.\n".utf8))
-            }
-        }
+        guard !functions.isEmpty else{return}
+        // Permission may be granted after registration. Retry without requiring
+        // a mode toggle or app restart, and rebuild reports from actual capture.
+        guard force || reservedKeyTap != nil || now >= nextCaptureRetry else{return}
+        nextCaptureRetry=now.addingTimeInterval(2)
+        let captured=startReservedKeyCapture()
+        registeredCodes=keyConfiguration.map{$0.code}.filter{carbonRegisteredCodes.contains($0) || (captured && functions.contains($0))}
+        failedCodes=keyConfiguration.map{$0.code}.filter{!registeredCodes.contains($0) || (!captured && $0=="F11")}
+        // A key needing the event tap is not ready merely because Carbon
+        // accepted a registration that macOS can intercept first.
+        registeredCodes.removeAll{failedCodes.contains($0)}
     }
     func stopReservedKeyCapture(){
         if let tap=reservedKeyTap {CGEvent.tapEnable(tap:tap,enable:false);CFMachPortInvalidate(tap)}
@@ -428,9 +437,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNa
         reservedKeyTap=nil;reservedKeySource=nil
     }
     func startReservedKeyCapture()->Bool {
-        guard reservedKeyTap==nil else{return true}
+        if let attempt=captureAttemptOverride {return attempt()}
+        if let tap=reservedKeyTap {
+            if !CGEvent.tapIsEnabled(tap:tap) {CGEvent.tapEnable(tap:tap,enable:true)}
+            return CGEvent.tapIsEnabled(tap:tap)
+        }
         let mask=(CGEventMask(1)<<CGEventType.keyDown.rawValue)|(CGEventMask(1)<<CGEventType.keyUp.rawValue)
-        guard let tap=CGEvent.tapCreate(tap:.cgSessionEventTap,place:.headInsertEventTap,options:.defaultTap,eventsOfInterest:mask,callback:{_,type,event,context in
+        guard let tap=CGEvent.tapCreate(tap:.cghidEventTap,place:.headInsertEventTap,options:.defaultTap,eventsOfInterest:mask,callback:{_,type,event,context in
             guard let context=context else{return Unmanaged.passUnretained(event)}
             let host=Unmanaged<AppDelegate>.fromOpaque(context).takeUnretainedValue()
             if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {

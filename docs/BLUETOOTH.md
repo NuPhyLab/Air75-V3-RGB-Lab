@@ -1,6 +1,6 @@
 # Bluetooth support
 
-NuPhyLab detects a connected Air75 V3 separately from its USB lighting channel. Existing task and command bindings use non-exclusive Carbon shortcuts in both modes. The configured F11 key additionally uses a native session event tap, because macOS reserves the secondaryFn-marked physical F11 event for Show Desktop. It shares the same held-key gate and dispatch queue as Carbon/local events, so it does not toggle twice. It runs only while shortcuts are enabled and F11 is bound, and stops during capture/editing suspension or exit. Modified shortcuts and ordinary typing pass through; no system shortcut preferences are changed.
+NuPhyLab detects a connected Air75 V3 separately from its USB lighting channel. Existing task and command bindings use non-exclusive Carbon shortcuts in both modes. The configured F11 key additionally uses a native HID event tap (v1.0.4; previously a session tap), because macOS reserves the secondaryFn-marked physical F11 event for Show Desktop. It shares the same held-key gate and dispatch queue as Carbon/local events, so it does not toggle twice. It runs only while shortcuts are enabled and F11 is bound, and stops during capture/editing suspension or exit. Modified shortcuts and ordinary typing pass through; no system shortcut preferences are changed.
 
 ## Available
 
@@ -38,3 +38,5 @@ The inspected 249-byte HID descriptor has keyboard, consumer and mouse input rep
 - Automated service checks cover task/custom bindings, all six command routes, single F11 toggle, dictation release, permission failures, reconnect, restore of prior USB mappings and absence of RGB/firmware writes over Bluetooth.
 - An isolated native host uses the production key registration and UI code with a fake downstream Codex/keyboard adapter. F1–F12 each reach the intended action; F9 has one down/up pair, F11 one toggle. Capture/remap to A and the English Bluetooth page are verified through the native UI.
 - Downstream Codex commands are checked against an isolated adapter; this does not claim every real Codex page action was executed. No real Codex test task or recording is created. Temporary UI fixtures and logs are removed after verification.
+
+In v1.0.4 capture occurs at the HID head rather than the later session stage, so earlier input-method hotkeys cannot consume a bound F key first. Only unmodified configured F keys are consumed; mode-off removes the tap. Permissions arriving after launch trigger a bounded retry.

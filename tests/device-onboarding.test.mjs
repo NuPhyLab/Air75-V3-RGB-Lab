@@ -62,3 +62,17 @@ test("manual network recheck does not block playback or other device commands", 
   const state=await until(s.state,x=>x.firmware.status==="unavailable","offline check missing");
   assert.equal(state.device.connected,true); assert.equal(state.device.armed,true);
 });
+
+test('latest and future compatible firmware can play, restore and reconnect offline', async t => {
+  for (const firmwareVersion of ['1.0.23.6','1.0.99.6']) {
+    const s = await fakeService(t,{firmwareVersion,compatible:true,firmwareOffline:true});
+    assert.equal((await s.state()).firmware.compatible,true);
+    assert.equal((await s.command({op:'preview',colors:Array(84).fill('#010203')})).ok,true);
+    assert.equal((await s.state()).device.armed,true);
+    assert.equal((await s.command({op:'stop'})).ok,true);
+    assert.equal((await s.command({op:'disconnect'})).ok,true);
+    assert.equal((await s.command({op:'connect'})).ok,true);
+    assert.equal((await s.state()).device.firmware,firmwareVersion);
+    assert.equal((await s.state()).device.armed,false);
+  }
+});

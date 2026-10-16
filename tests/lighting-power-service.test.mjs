@@ -27,7 +27,7 @@ test('global idle timer sleeps and wakes artwork and Codex together, ignoring le
  await s.command({op:'preview',colors:art});
  await wait(1200);
  const lit=await s.state();assert.equal(lit.colors[0],'#123456');assert.equal(lit.colors[1],'#304ffe');assert.equal(lit.codex.lighting.sleeping,false);
- const asleep=await until(s.state,v=>v.lightPower.sleeping,'whole keyboard did not sleep');
+ const asleep=await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'whole keyboard did not send its sleeping frame');
  assert.equal(asleep.codex.lighting.sleeping,true);assert.ok(asleep.colors.every(c=>c==='#000000'));
  await s.configure({systemIdleMs:0});
  const awake=await until(s.state,v=>v.colors[0]==='#123456','system activity did not wake');

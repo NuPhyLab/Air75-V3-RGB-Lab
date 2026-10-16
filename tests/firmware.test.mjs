@@ -69,3 +69,18 @@ test("closing aborts an in-flight check without an unhandled rejection", async (
   const pending=checker.refresh(); await Promise.resolve(); checker.close(); await pending;
   assert.equal(checker.snapshot(device()).checking,false);
 });
+
+test('online latest version never grants missing device capabilities', async () => {
+  const checker = new FirmwareChecker({fetchImpl: async () => new Response(JSON.stringify(manifest('1.0.23.6')))});
+  await checker.refresh();
+  for (const capabilities of [undefined, {}, {perKey:false}]) {
+    const result = checker.snapshot({...device('1.0.23.6'), capabilities});
+    assert.equal(result.status, 'current');
+    assert.equal(result.compatible, false);
+  }
+  const next = checker.snapshot({...device('1.0.99.6'), capabilities:{perKey:true,protocol:'air75-s4',stateBytes:22}});
+  assert.equal(next.status, 'newer');
+  assert.equal(next.compatible, true);
+  assert.equal(next.stateBytes, 22);
+  assert.equal(next.verifiedVersion, '1.0.16.6', 'protocol support must not claim new-firmware hardware testing');
+});

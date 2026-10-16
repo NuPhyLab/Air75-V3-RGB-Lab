@@ -6,21 +6,21 @@ Codex → **适配这把键盘 / Set up this keyboard** enables a local, opt-in 
 
 Bluetooth shortcut registration and scoped extended-function-key translation are supported independently; see [Bluetooth support](BLUETOOTH.md). The media remapping described below remains USB-only. Bluetooth supports standard function keys, F13–F24 extended mode and the user's ordinary-key bindings, without inferring its live keymap from a prior USB connection.
 
-- Air75 V3 ANSI, USB `19f5:1028`, verified firmware `1.0.16.6`.
-- Read-only `A0`, `B1`, `B2` identify geometry, active mode and factory positions. This implementation never sends `B3`, firmware/IAP or factory-reset commands.
+- Air75 V3 ANSI, USB `19f5:1028`. Hardware-verified on `1.0.16.6`; v1.0.2 also accepts a native read-only, geometry-verified S4 keymap on newer firmware. See [firmware compatibility](FIRMWARE_COMPATIBILITY_20261015.md) for evidence and hardware-testing limits.
+- Read-only `A0`, `B1`, `B2` identify geometry, active mode and factory positions. v1.0.4 adds a strictly limited `B3` lease for the original Mac F4 only; no firmware/IAP or factory-reset commands.
 - Already-standard F1–F12 require no OS mapping. User-selected task and command bindings are preserved; only bound F-key positions are considered.
 - Factory Mac F1/F2 send F14/F15. Previous/play/next/mute/volume use distinct Consumer usages. These eight positions can be translated through macOS `UserKeyMapping` on the matching USB services.
-- Factory Mac F3–F6 use vendor-specific codes. Their complete physical-input behavior has not been verified, so the app lists them as unsupported and links to NuPhyIO's key configuration workflow. It does not claim all twelve factory keys are automatically adapted.
+- Factory Mac F3, F5 and F6 resolve to Consumer Show All Windows (`0x29f`), Consumer Voice Command (`0xcf`) and Generic Desktop Do Not Disturb (`0x9b`). v1.0.4 maps them on their own Consumer/System Control services. F4 generates a Command+Space chord in firmware; only its confirmed factory base-layer entry is temporarily changed to standard F4. Ordinary Command+Space remains untouched.
 - A knob or another key on this keyboard emitting an identical media usage shares that mapping. The setup sheet explains this. Other keyboards and headset controls are excluded by vendor, product, transport, USB location and service identity.
-- Unknown firmware, custom macros/ordinary typing at F positions, ambiguous geometry and conflicting pre-existing system mappings do not get silently overwritten.
+- Unverified keymap structure, custom macros/ordinary typing at F positions, ambiguous geometry and conflicting pre-existing system mappings do not get silently overwritten.
 
 ## Lifecycle and recovery
 
 Disable setup to restore only the mappings this app installed. Disabling Codex controls, editing a field in the app, running games/triggers, disconnecting or quitting releases the temporary mappings. Enabling controls again resumes the saved adaptation choice. Mapping checks also detect changes made by other utilities.
 
-`key-mapping-backup.json` records exact USB service registry IDs and original rows before mutation. Restore preserves later changes made by other utilities. Unplugged services are never restored onto a replacement keyboard. A killed process cannot clean up at the moment of termination; the next helper start restores the journal. Normal exit, stdin closure and signals restore immediately. No mappings are written into keyboard firmware.
+`key-mapping-backup.json` records exact USB service registry IDs and original rows before mutation. Restore preserves later changes made by other utilities. Unplugged services are never restored onto a replacement keyboard. A killed process cannot clean up at the moment of termination; the next helper start restores the journal. Normal exit, stdin closure and signals restore immediately. The separate `function-key-backup.json` stores F4's exact original Mac map, firmware, serial and USB location before its one-entry onboard change. Only F4 values `0x7e07` and `0x003d` are permitted. Verified disable/quit restores that entry. Unplugged recovery is deferred until the same keyboard and USB location reconnect; incompatible firmware or map changes fail closed, and a newer user F4 edit is preserved. No firmware image is flashed.
 
-“Ready” means the actual keymap, permissions and native shortcut registration passed checks. It does not prove every downstream Codex command is available on every page. F9 retains press/release behavior; the pre-existing non-exclusive Carbon registration path is unchanged.
+“Ready” means the actual keymap, permissions and native shortcut registration passed checks. It does not prove every downstream Codex command is available on every page. Since v1.0.5, F9 follows the configured Codex global dictation shortcut: tap-to-dictate takes priority when enabled, otherwise press/release is retained for hold mode. Each physical press emits one complete shortcut in tap mode; release, repeat and mode shutdown do not emit an extra toggle. Global dictation includes modifier transitions at the HID event entry point; the pre-existing non-exclusive Carbon registration path is unchanged.
 
 ## Verification, 2026-09-14
 

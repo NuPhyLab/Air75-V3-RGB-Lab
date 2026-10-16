@@ -6,7 +6,7 @@ Paint per-key RGB patterns, create animations, make your keyboard react to music
 
 [Download for macOS](https://github.com/bohu8264/NuPhyLab/releases) · [中文说明](README.zh-CN.md) · [Report an issue](https://github.com/bohu8264/NuPhyLab/issues)
 
-> **Experimental release.** The verified configuration is an Air75 V3 ANSI over USB, firmware **1.0.16.6**, using the Mac configuration profile. The downloadable app is for **Apple Silicon, macOS 13.5 or later**. Starting with **v1.0.1**, the release app is signed with the company **Developer ID**, **notarized by Apple**, and includes a stapled notarization ticket. Other models, layouts, firmware versions, Intel Macs, and Windows are outside the verified release scope.
+> **Experimental release.** Air75 V3 ANSI USB lighting has been verified on firmware **1.0.16.6 and 1.0.23.6**, using the Mac configuration profile. The latest function-key and dictation checks use **1.0.23.6**. The downloadable app is for **Apple Silicon, macOS 13.5 or later**. Published release apps are signed with the company **Developer ID**, **notarized by Apple**, and include a stapled notarization ticket. Other models, layouts, firmware versions, Intel Macs, and Windows are outside the verified release scope.
 
 ## What you can do
 
@@ -51,7 +51,7 @@ The checksums cover both the application and source archives; download both if y
 | Configured agent shortcuts | Supported, subject to permissions | Limited support; see [Bluetooth notes](docs/BLUETOOTH.md) |
 | Firmware compatibility checks | Supported | Unavailable |
 
-NuPhyLab can check official firmware information and open the official updater, but **does not flash firmware**. A newer firmware version is not automatically treated as compatible. Do not use this release as evidence that other Air models or firmware versions work.
+NuPhyLab can check official firmware information and open the official updater, but **does not flash firmware**. Starting with v1.0.2, Air75 V3 ANSI firmware **1.0.23.6** has a protocol adapter for its 22-byte lighting state. Compatible updates within the S4 1.x.x.6 family are checked by geometry, state, LED count and RGB readback instead of an exact version whitelist. Changed protocol families fail closed. v1.0.3 has now passed physical 1.0.23.6 RGB readback and restoration checks, and fixes reconnecting after upgrading while the app is open. New firmware scales custom output; verification accounts for that rendered value. See [firmware compatibility and validation](docs/FIRMWARE_COMPATIBILITY_20261015.md).
 
 The canvas maps **83 positions**. The firmware exposes **84 main RGB channels**, plus 20 side-light entries. Main channel 83 has no confirmed physical position and is preserved as black by default. Successful RGB readback verifies channel data, not the physical location of every LED.
 
@@ -60,6 +60,8 @@ The canvas maps **83 positions**. The firmware exposes **84 main RGB channels**,
 Agent integration is optional; the lighting studio works without either application.
 
 **Codex:** reads locally available task information and can query account usage through an existing Codex installation. Available actions depend on the installed Codex version and macOS permissions. Unavailable or unknown data stays unavailable or unknown.
+
+F9 follows the dictation shortcut configured in Codex Voice settings. With tap-to-dictate enabled, press F9 once to start and again to stop; hold-only configurations retain press/release behavior. NuPhyLab reads this setting without changing Codex's keybindings. Recording and transcription status remain in Codex.
 
 **Claude Code:** use the Claude Code page to install the local hook integration. It updates the user's Claude Code hook configuration and records session events locally. It does not provide subscription-usage readings. The integration can be removed from the app.
 

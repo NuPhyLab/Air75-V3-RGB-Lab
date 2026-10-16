@@ -4,10 +4,17 @@ import path from 'node:path';
 import keys from '../shared/trigger-keys.json' with {type:'json'};
 
 const commandIds={dictation:'composer.startDictation',voice:'composer.startVoiceMode',modelPicker:'composer.openModelPicker'};
-const modifiers={cmd:'command',command:'command',cmdorctrl:'command',commandorcontrol:'command',super:'command',ctrl:'control',control:'control',alt:'option',option:'option',shift:'shift'};
-export function parseMacShortcut(value) {
+const modifiers={cmd:'command',command:'command',cmdorctrl:'command',commandorcontrol:'command',super:'command',ctrl:'control',control:'control',alt:'option',option:'option',shift:'shift',fn:'fn'};
+const modifierCodes={control:59,shift:56,option:58,command:55,fn:63};
+export function parseMacShortcut(value,{allowBareModifiers=false}={}) {
   if(typeof value!=='string'||value.length>100) return null;
-  const parts=value.split('+').map(x=>x.trim()),key=parts.pop();
+  const parts=value.split('+').map(x=>x.trim());
+  if(allowBareModifiers&&parts.every(x=>modifiers[x.toLowerCase()])) {
+    const flags=parts.map(x=>modifiers[x.toLowerCase()]);
+    if(new Set(flags).size!==flags.length)return null;
+    return {keyCode:modifierCodes[flags.at(-1)],modifiers:flags,code:'Modifiers',modifierOnly:true};
+  }
+  const key=parts.pop();
   const flags=parts.map(x=>modifiers[x.toLowerCase()]);
   if(flags.some(x=>!x)||new Set(flags).size!==flags.length) return null;
   const aliases={enter:'Enter',return:'Enter',escape:'Escape',esc:'Escape',space:'Space',backspace:'Backspace',delete:'Delete',up:'ArrowUp',down:'ArrowDown',left:'ArrowLeft',right:'ArrowRight'};
@@ -28,19 +35,31 @@ export async function resolveCodexShortcut(action,{codexHome=process.env.CODEX_H
   } catch(error) {
     if(error.code!=='ENOENT') throw new Error('无法读取 Codex 自定义快捷键，请检查 keybindings.json。');
   }
-  const overrides=entries.filter(x=>x.command===(commandIds[action.id]??action.id));
+  // New Codex releases moved press-and-hold dictation from the composer to a
+  // native global listener. Never fall back to the retired composer binding
+  // when the user has configured (or explicitly disabled) the new command.
+  const globalTap=action.id==='dictation'&&entries.some(x=>x.command==='globalDictationSingleTap'&&x.key!==null);
+  const globalHold=!globalTap&&action.id==='dictation'&&entries.some(x=>x.command==='globalDictationHold');
+  const overrides=entries.filter(x=>x.command===(globalTap?'globalDictationSingleTap':globalHold?'globalDictationHold':commandIds[action.id]??action.id));
   if(overrides.some(x=>x.key===null)) throw new Error('这个动作的快捷键已在 Codex 中停用。');
   const candidates=overrides.length?overrides.map(x=>x.key):[action.keys.join('+')];
   // Dictation's press/hold listener uses the primary accelerator only.
   for(const value of action.id==='dictation'?candidates.slice(0,1):candidates) {
-    const shortcut=parseMacShortcut(value);
-    if(shortcut && !(shortcut.modifiers.length===0&&blockedCodes.includes(shortcut.code))) return {...shortcut,accelerator:value,custom:overrides.length>0};
+    const shortcut=parseMacShortcut(value,{allowBareModifiers:globalHold||globalTap});
+    if(shortcut && !(shortcut.modifiers.length===0&&blockedCodes.includes(shortcut.code))) return {...shortcut,accelerator:value,custom:overrides.length>0,...(globalTap?{delivery:'globalTap'}:globalHold?{delivery:'globalHold'}:{})};
   }
   throw new Error('Codex 快捷键无法转发，或与 NuPhyLab 的任务／命令键冲突。请更改其中一处绑定。');
 }
 
 export class CodexKeyGestures {
-  constructor({send,resolve,now=Date.now}) {this.send=send;this.resolve=resolve;this.now=now;this.held=null;}
+  constructor({send,resolve,now=Date.now}) {this.send=send;this.resolve=resolve;this.now=now;this.held=null;this.dictation={mode:'hold'};}
+  async inspectDictation(action) {
+    try {
+      const shortcut=await this.resolve(action);
+      this.dictation={mode:shortcut.delivery==='globalTap'?'toggle':'hold',accelerator:shortcut.accelerator};
+    } catch(error) {this.dictation={...this.dictation,error:error.message};}
+    return this.dictation;
+  }
   async release(source=null) {
     if(!this.held||(source!==null&&this.held.source!==source)) return {released:false};
     clearTimeout(this.timer);
@@ -53,9 +72,11 @@ export class CodexKeyGestures {
     if(this.held?.source===source&&action.id==='dictation') return {held:true};
     await this.release();
     const shortcut=await this.resolve(action);
-    if(action.id==='dictation'&&phase!=='down') throw new Error('听写需要按住命令键，松开后结束。');
-    const result=await this.send({...shortcut,phase:action.id==='dictation'?'down':'tap',target:'com.openai.codex',activateTarget:true});
-    if(action.id==='dictation') {
+    const hold=action.id==='dictation'&&shortcut.delivery!=='globalTap';
+    if(action.id==='dictation')this.dictation={mode:hold?'hold':'toggle',accelerator:shortcut.accelerator};
+    if(hold&&phase!=='down') throw new Error('听写需要按住命令键，松开后结束。');
+    const result=await this.send({...shortcut,phase:hold?'down':'tap',target:'com.openai.codex',activateTarget:true});
+    if(hold) {
       this.held={source,action:'dictation',startedAt:this.now()};
       this.timer=setTimeout(()=>{void this.release().catch(()=>{});},120000);
       this.timer.unref?.();

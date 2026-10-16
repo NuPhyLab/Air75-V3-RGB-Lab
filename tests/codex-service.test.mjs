@@ -37,6 +37,41 @@ test('native command failures return a visible localized status instead of faili
  const event=(await service.state()).codex.keys.lastEvent;
  assert.equal(event.code,'F12');assert.equal(event.ok,false);assert.match(event.error,/辅助功能权限/);
 });
+test('current Codex global dictation receives exactly one down/up and is released when mode is disabled',async t=>{
+ const service=await fakeService(t,{tasks,codexKeybindings:[
+  {command:'composer.startDictation',key:'F11'},
+  {command:'globalDictationHold',key:'Ctrl+Shift+D'},
+ ]});
+ await service.command({op:'settings',settings:{codexEnabled:true}});
+ assert.equal((await service.command({op:'codexKey',code:'F9',phase:'down'})).ok,true);
+ await service.command({op:'codexKey',code:'F9',phase:'down'});
+ let events=(await service.operations()).filter(x=>x.op==='shortcut');
+ assert.equal(events.length,1);assert.equal(events[0].delivery,'globalHold');
+ assert.equal(events[0].keyCode,2);assert.equal(events[0].phase,'down');
+ await service.command({op:'settings',settings:{codexEnabled:false}});
+ await service.command({op:'codexKey',code:'F9',phase:'up'});
+ events=(await service.operations()).filter(x=>x.op==='shortcut');
+ assert.deepEqual(events.map(x=>x.phase),['down','up']);
+ assert.equal((await service.state()).codex.keys.held,null);
+});
+test('single-tap dictation keeps key-release and repeat events from immediately stopping recording',async t=>{
+ const service=await fakeService(t,{tasks,codexKeybindings:[
+  {command:'globalDictationHold',key:null},
+  {command:'globalDictationSingleTap',key:'Ctrl+Shift+D'},
+ ]});
+ await service.command({op:'settings',settings:{codexEnabled:true}});
+ await until(service.state,s=>s.codex.keys.dictation.mode==='toggle','toggle UI did not follow current keymap');
+ await service.command({op:'codexKey',code:'F9',phase:'down'});
+ await service.command({op:'codexKey',code:'F9',phase:'down'});
+ await service.command({op:'codexKey',code:'F9',phase:'up'});
+ let events=(await service.operations()).filter(x=>x.op==='shortcut');
+ assert.equal(events.length,1);assert.equal(events[0].delivery,'globalTap');assert.equal(events[0].phase,'tap');
+ assert.equal((await service.state()).codex.keys.held,null);
+ await service.command({op:'codexAction',action:'dictation',phase:'down',source:'button'});
+ await service.command({op:'settings',settings:{codexEnabled:false}});
+ events=(await service.operations()).filter(x=>x.op==='shortcut');
+ assert.deepEqual(events.map(x=>x.phase),['tap','tap']);
+});
 test('Micro slot mappings and command keys use the centralized action path without inventing approval',async t=>{
  const service=await fakeService(t,{tasks});
  await service.command({op:'settings',settings:{codexEnabled:true,codexTaskSource:'priority'}});
@@ -68,6 +103,12 @@ test('preview exposes acknowledged RGB, scales brightness once and diagnoses rea
  await service.command({op:'preview',colors:frame});
  assert.deepEqual((await service.state()).colors,frame);
  assert.equal((await service.command({op:'verifyColors'})).result.matches,true);
+ await service.configure({customColorScale:200});
+ const scaled=(await service.command({op:'verifyColors'})).result;
+ assert.equal(scaled.matches,true);assert.equal(scaled.expected[0],'#c80000');
+ await service.configure({mismatchIndex:7});
+ assert.deepEqual((await service.command({op:'verifyColors'})).result.mismatches,[7]);
+ await service.configure({customColorScale:255,mismatchIndex:null});
  await service.configure({mismatchIndex:7});
  assert.deepEqual((await service.command({op:'verifyColors'})).result.mismatches,[7]);
  await service.configure({mismatchIndex:null});
@@ -127,4 +168,19 @@ test('direct task keys and commands remap atomically, move lights, and pause for
  await service.command({op:'gameStop'});
  await service.command({op:'settings',settings:{codexEnabled:false}});
  assert.equal((await service.command({op:'codexKey',code:'F7'})).ok,false);
+});
+
+
+test('a recent-task reorder keeps UI, physical key routing and status LEDs on one identity',async t=>{
+ const service=await fakeService(t,{tasks});
+ await service.command({op:'settings',settings:{codexEnabled:true,codexTaskSource:'recent',brightness:100,codexBrightness:100,codexSelectedPulse:false}});
+ await service.command({op:'preview',colors:Array(84).fill('#000000')});
+ const before=(await service.state()).codex.slots.map(t=>t?.id??null);
+ await service.configure({tasks:[{...tasks[2],status:'error'},tasks[0],tasks[1]]});
+ const state=await until(service.state,s=>s.codex.slots[2]?.status==='error','updated status did not reach its original slot');
+ assert.deepEqual(state.codex.slots.map(t=>t?.id??null),before);
+ await until(service.state,s=>s.colors[3]==='#ff0033','LED did not follow original F3 task');
+ await service.command({op:'codexKey',code:'F3'});
+ assert.equal((await service.operations()).filter(o=>o.op==='shortcut').at(-1).threadId,'unread');
+ assert.equal((await service.command({op:'verifyColors'})).result.matches,true);
 });

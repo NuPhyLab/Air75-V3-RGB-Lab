@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CodexLights,resolveSlots,STATUS_COLORS} from '../shared/codex-lighting.mjs';
+import {CodexLights,resolveSlots,StableTaskSlots,STATUS_COLORS} from '../shared/codex-lighting.mjs';
 import {validateSettings} from '../server/storage.mjs';
 const blank=()=>Array(84).fill('#112233');
 test('Micro RGB, empty slots, independent brightness and preserved artwork',()=>{
@@ -39,4 +39,29 @@ test('Micro settings survive validation and reject unsupported ranges atomically
  const value=validateSettings({codexTaskSource:'priority',codexAutoOffMs:3600000,codexBrightness:45,codexSelectedPulse:false,codexAmbient:true});
  assert.equal(validateSettings({},value).codexAutoOffMs,3600000);
  for(const patch of [{codexTaskSource:'anything'},{codexAutoOffMs:123},{codexBrightness:101},{codexAmbient:1},{codexCommandIds:['newTask']}]) assert.throws(()=>validateSettings(patch));
+});
+
+
+test('recent task identities stay on their keys while statuses and colours refresh',()=>{
+ const resolver=new StableTaskSlots(),lights=new CodexLights(()=>0),settings={codexTaskSource:'recent'};
+ const tasks=Array.from('abcdefg',id=>({id,status:'idle'}));
+ const ids=rows=>rows.map(t=>t?.id??null);
+ assert.deepEqual(ids(resolver.resolve(tasks,settings)),Array.from('abcdef'));
+ const updated=[{id:'c',status:'needsInput'},tasks[0],tasks[5],tasks[1],tasks[3],tasks[4],tasks[6]];
+ const slots=resolver.resolve(updated,settings);
+ assert.deepEqual(ids(slots),Array.from('abcdef'));
+ assert.equal(slots[2].status,'needsInput');
+ assert.equal(lights.render(blank(),slots,settings)[3],'#ff6d00');
+ assert.deepEqual(ids(resolver.resolve([tasks[6],...updated.slice(0,5)],settings)),Array.from('abcdgf'));
+ assert.deepEqual(ids(resolver.resolve([],settings)),Array(6).fill(null));
+ assert.deepEqual(ids(resolver.resolve([tasks[2]],settings)),['c',null,null,null,null,null]);
+});
+test('explicit, pinned and priority task sources retain their ordering semantics',()=>{
+ const resolver=new StableTaskSlots(),tasks=[{id:'a',status:'idle'},{id:'b',status:'running',pinned:true,pinOrder:0}];
+ resolver.resolve(tasks,{});
+ const ids=(source,extra={})=>resolver.resolve([...tasks].reverse(),{codexTaskSource:source,...extra}).map(t=>t?.id??null);
+ assert.deepEqual(ids('priority'),['b','a',null,null,null,null]);
+ assert.deepEqual(ids('custom',{slotIds:['a','b']}),['a','b',null,null,null,null]);
+ assert.deepEqual(ids('pinned'),['b',null,null,null,null,null]);
+ assert.deepEqual(ids('recent'),['b','a',null,null,null,null]);
 });

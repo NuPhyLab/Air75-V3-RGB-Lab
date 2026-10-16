@@ -43,6 +43,24 @@ export function resolveSlots(tasks, settings) {
     ? tasks.find(t => t.id === ids[i]) ?? null
     : mode === "custom" ? null : automatic[next++] ?? null);
 }
+// Recent activity changes recency timestamps even when the same six tasks are
+// still on screen. Keep those task identities in their physical slots; refresh
+// the task objects (and therefore colours) independently of their positions.
+export class StableTaskSlots {
+  constructor(){this.ids=[];this.source=null;}
+  resolve(tasks,settings){
+    const source=settings.codexTaskSource??'recent';
+    const desired=resolveSlots(tasks,settings);
+    if(source!=='recent') {this.source=source;this.ids=[];return desired;}
+    const byId=new Map(desired.filter(Boolean).map(task=>[task.id,task]));
+    const ids=this.source===source?this.ids.map(id=>byId.has(id)?id:null):Array(6).fill(null);
+    while(ids.length<6)ids.push(null);
+    const kept=new Set(ids.filter(Boolean));
+    const additions=desired.filter(task=>task&&!kept.has(task.id));
+    this.ids=ids.map(id=>id??additions.shift()?.id??null);this.source=source;
+    return this.ids.map(id=>byId.get(id)??null);
+  }
+}
 // Explicit choice stays pinned, including when that task is temporarily missing.
 // Automatic mode follows a chosen control task, or the sole available task.
 export function resolveWholeTask(tasks, settings, selectedId = null) {

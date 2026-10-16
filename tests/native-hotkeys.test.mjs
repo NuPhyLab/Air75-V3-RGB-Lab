@@ -48,6 +48,22 @@ for (keyCode,code) in functionKeyCodes {
  check(!host.handleReservedKey(.keyUp,event(CGKeyCode(keyCode))),"mode off passes original F release through")
  check(host.keyEventQueue.count==2,"no command when mode is off")
 }
+// Reproduce launch-before-permission: Carbon accepted F11, but its capture
+// failed. Granting access later must retry and clear the stale failure.
+host.hotkeysEnabled=true;host.keyConfiguration=[("F3",99),("F11",103)]
+host.carbonRegisteredCodes=["F3","F11"]
+var captureAllowed=false;var attempts=0
+host.captureAttemptOverride={attempts+=1;return captureAllowed}
+let now=Date(timeIntervalSince1970:100)
+host.refreshReservedKeyCapture(force:true,now:now)
+check(host.failedCodes==["F11"] && host.registeredCodes==["F3"],"failed capture never also reports ready")
+captureAllowed=true
+host.refreshReservedKeyCapture(now:now.addingTimeInterval(1))
+check(attempts==1,"failed capture retry is bounded")
+host.refreshReservedKeyCapture(now:now.addingTimeInterval(3))
+check(host.failedCodes.isEmpty && host.registeredCodes==["F3","F11"],"grant automatically recovers F11")
+check(attempts==2,"grant retried without mode toggle")
+host.setHotkeysEnabled(false)
 print("native-hotkeys-passed")
 `;
   const file=path.join(dir,'main.swift'),binary=path.join(dir,'check');await writeFile(file,body);
