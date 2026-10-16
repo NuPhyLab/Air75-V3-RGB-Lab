@@ -712,7 +712,13 @@ async function command(req) {
         codexPresses.reset();
         codexSetupRevision++;
       }
-      if (settings.lightDurationMs !== old.lightDurationMs || settings.lightIdleMs !== old.lightIdleMs) lightPower.wake();
+      const previousAgentEnabled = old.agentSource === "claude" ? old.claudeEnabled : old.codexEnabled;
+      const startsAgentLighting = agentEnabled() && (!previousAgentEnabled || settings.agentSource !== old.agentSource)
+        && !["game", "trigger", "audio"].includes(playback.mode);
+      // Starting task lighting is a new lighting session even when a previous
+      // scene still owns the device. Do not inherit that scene's elapsed timer.
+      // Colour/binding edits and repeated polls must not restart the timer.
+      if (settings.lightDurationMs !== old.lightDurationMs || settings.lightIdleMs !== old.lightIdleMs || startsAgentLighting) lightPower.wake();
       if (
         old.quotaSideEnabled &&
         !settings.quotaSideEnabled &&

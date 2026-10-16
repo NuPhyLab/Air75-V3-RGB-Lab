@@ -5,7 +5,7 @@ import { LED_COUNT, defaultAnimation } from "../shared/layout.mjs";
 import { GAME_TYPES, validateGameType } from "../shared/games.mjs";
 import { validateTrigger } from "../shared/trigger.mjs";
 import { validateStatusColors } from "../shared/codex-lighting.mjs";
-import { validLightTime } from "../shared/lighting-power.mjs";
+import { DEFAULT_LIGHT_TIME_MS, validLightTime } from "../shared/lighting-power.mjs";
 export function validateColors(colors) {
   if (
     !Array.isArray(colors) ||
@@ -99,8 +99,8 @@ export const defaultSettings = {
   codexTaskKeys: [...DEFAULT_TASK_KEYS],
   codexCommandKeys: [...DEFAULT_COMMAND_KEYS],
   language: "zh-CN",
-  lightDurationMs: 0,
-  lightIdleMs: 0,
+  lightDurationMs: DEFAULT_LIGHT_TIME_MS,
+  lightIdleMs: DEFAULT_LIGHT_TIME_MS,
   brightness: 70,
   codexEnabled: false,
   codexKeyAdaptation: false,

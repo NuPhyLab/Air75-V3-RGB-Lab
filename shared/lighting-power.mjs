@@ -1,4 +1,5 @@
 export const MAX_LIGHT_TIME_MS = 86_400_000;
+export const DEFAULT_LIGHT_TIME_MS = 3_600_000;
 export function validLightTime(value, {allowOff = true, maximum = MAX_LIGHT_TIME_MS} = {}) {
   return Number.isInteger(value) && ((allowOff && value === 0) || (value >= 1000 && value <= maximum));
 }

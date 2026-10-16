@@ -4,6 +4,28 @@ import {readFile} from 'node:fs/promises';
 import {fakeService,until} from './helpers/fake-service.mjs';
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const art=Array(84).fill('#123456');
+test('enabling Codex on an already armed scene starts a fresh timer, while ordinary edits do not',async t=>{
+ const s=await fakeService(t,{tasks:[{id:'a',status:'running'}]});
+ await s.command({op:'settings',settings:{lightDurationMs:2000,lightIdleMs:0}});
+ await s.command({op:'preview',colors:art});
+ await wait(1100);
+ await s.command({op:'settings',settings:{codexEnabled:true}});
+ assert.ok((await s.state()).lightPower.remainingMs>1800);
+ await wait(1100);
+ await s.command({op:'settings',settings:{codexBrightness:90,language:'en'}});
+ const lit=await s.state();
+ assert.equal(lit.lightPower.sleeping,false);assert.ok(lit.lightPower.remainingMs<1100);
+ assert.notEqual(lit.colors[1],'#000000');
+ await until(s.state,v=>v.lightPower.sleeping&&v.colors.every(c=>c==='#000000'),'Codex timer never expired');
+ await s.command({op:'settings',settings:{codexEnabled:false}});
+ await s.command({op:'settings',settings:{codexEnabled:true}});
+ const restarted=await until(s.state,v=>!v.lightPower.sleeping&&v.colors[1]!=='#000000','re-enabling Codex left lighting asleep');
+ assert.ok(restarted.lightPower.remainingMs>1800);
+ // Changing to the other enabled integration starts its lighting session too.
+ await wait(300);
+ await s.command({op:'settings',settings:{agentSource:'claude',claudeEnabled:true}});
+ assert.ok((await s.state()).lightPower.remainingMs>1800);
+});
 test('whole keyboard duration blacks main and side lights, survives language changes, and wakes back to artwork',async t=>{
  const s=await fakeService(t);
  await s.command({op:'settings',settings:{brightness:100,lightDurationMs:1000}});

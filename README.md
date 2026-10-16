@@ -17,7 +17,7 @@ Paint per-key RGB patterns, create animations, make your keyboard react to music
 - **Trigger patterns with a key:** record a trigger, customize its colors and repetition, and keep normal typing available.
 - **Follow agent activity:** choose Codex or Claude Code for task-status lighting and shortcuts. Use individual task keys or a whole-keyboard status color.
 - **Keep a local library:** save, search, rename, import, and export creations as JSON. Switch the interface between English and Simplified Chinese.
-- **Manage light and recovery:** shared brightness and sleep controls, automatic USB detection, and original-lighting backups kept separately for Mac and Windows keyboard profiles.
+- **Manage light and recovery:** shared brightness and sleep controls (one hour by default), automatic USB detection, and original-lighting backups kept separately for Mac and Windows keyboard profiles. Starting Codex or Claude Code mode starts a fresh lighting timer; saved custom timeouts are preserved.
 
 No kernel extension or keyboard firmware modification is required. NuPhyLab streams RGB frames from your Mac while lighting is active; it does not install these animations into the keyboard firmware.
 

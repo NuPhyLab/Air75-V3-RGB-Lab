@@ -1,6 +1,7 @@
 import { t as tr } from "./i18n";
 import { Button, run } from "./primitives";
 import { DurationField } from "./DurationField";
+import { DEFAULT_LIGHT_TIME_MS } from "../../shared/lighting-power.mjs";
 import type { AppState, Command } from "./types";
 export function LightingTimers({state, command}:{state:AppState|null;command:Command}) {
   const power=state?.lightPower;
@@ -9,8 +10,8 @@ export function LightingTimers({state, command}:{state:AppState|null;command:Com
       <Button disabled={!state?.device.armed} onClick={()=>run(command({op:"lightWake"}))}>{tr(power?.sleeping ? "唤醒灯光" : "重新计时")}</Button>
     </div>
     <div className="timer-grid">
-      <DurationField label={tr("每次亮灯时长")} value={Number(state?.settings.lightDurationMs ?? 0)} onChange={lightDurationMs=>command({op:"settings",settings:{lightDurationMs}})} />
-      <DurationField label={tr("空闲多久后休眠")} value={Number(state?.settings.lightIdleMs ?? 0)} onChange={lightIdleMs=>command({op:"settings",settings:{lightIdleMs}})} />
+      <DurationField label={tr("每次亮灯时长")} value={Number(state?.settings.lightDurationMs ?? DEFAULT_LIGHT_TIME_MS)} onChange={lightDurationMs=>command({op:"settings",settings:{lightDurationMs}})} />
+      <DurationField label={tr("空闲多久后休眠")} value={Number(state?.settings.lightIdleMs ?? DEFAULT_LIGHT_TIME_MS)} onChange={lightIdleMs=>command({op:"settings",settings:{lightIdleMs}})} />
     </div>
     <p className="muted">{tr("设为 0 或选择「不限」，关闭对应计时。")}</p>
     <details className="product-details timer-guide"><summary>{tr("计时说明")}</summary>
