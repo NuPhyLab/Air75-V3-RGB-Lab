@@ -1,3 +1,13 @@
+# v1.0.9 task-key and lighting validation / v1.0.9 任务键与灯光验收
+
+[Documentation / 文档目录](README.md)
+
+Physical task keys and the UI share the task mapping acknowledged by lighting output. A press captures its task ID before waiting on queued work; removed targets fail visibly rather than opening another task. Successful task/command actions wake a timed-out keyboard. Existing one-hour/custom timers and user artwork remain; the record states which physical input paths were and were not exercised.
+
+实体键与页面共用已确认灯光的任务表，排队前锁定任务 ID，失效目标不替换打开别的任务；成功操作可唤醒，保留一小时及自定义计时。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.9 validation — 2026-10-16
 
 ## Reproduction and changes

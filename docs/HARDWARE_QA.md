@@ -1,3 +1,14 @@
+# Physical Air75 V3 validation / Air75 V3 真机验证
+
+[Documentation / 文档目录](README.md)
+
+Historical USB validation of Air75 V3 ANSI on firmware 1.0.16.6, including protocol identity, 84 main RGB channels, 20 side-light entries, frame timing, restoration and helper lifecycle. Reports describe numeric device readback rather than optical color calibration. The physical map has 83 confirmed keys; do not infer an unverified LED location from the 84-channel protocol. See each dated addition for its own test count and limits.
+
+历史 USB 验证覆盖身份、84 个主灯通道、20 个侧灯条目、发送耗时和恢复；数字回读不是光学校色，83 个确定物理按键不等于 84 个已定位灯位。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # Air75 V3 真机验证
 
 验证时间：2026-09-10，Asia/Shanghai。测试的是用户通过 USB 连接的 Air75 V3 ANSI；测试过程中由一个 helper 独占本项目的 HID 访问，未刷固件、未修改键位、未发送 `EE`，未发送任何 Codex 操作快捷键。
@@ -60,3 +71,5 @@ python3 native/qa-hardware.py --run
 - 关闭投影中的 effect 0 无法直接写回。恢复时仅将该值换成原厂静态 effect 2，保留其余 16 字节和两个零亮度值；D5 核对以及 104 个 RGB 全黑通过后才删除备份，返回 allLightsOff。若键盘始终关闭且状态未改变，则不额外写入，仍核对 104 个灯位全黑。
 - 实体键盘连续完成两轮接管、84 个不同 RGB 写入和回读、原始有效状态恢复，均通过；无待恢复备份。这里核验的是协议配置和渲染回读，不是对实体键帽颜色的视觉测量。
 - 原生自检 612 项通过；错误文案测试确保已恢复、未恢复和板载灯光关闭状态不会混淆，中英文不展示原始字节数组。
+
+</details>

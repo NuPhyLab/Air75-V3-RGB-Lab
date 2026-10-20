@@ -1,3 +1,14 @@
+# Function-key mode repair — 2026-09-16 / Codex 模式与功能键修复
+
+[Documentation / 文档目录](README.md)
+
+The observed USB base layer sent F13–F24, while the old USB adapter covered only part of that range. Mode-specific temporary mappings and a separate recorder session make all twelve F keys recordable without executing agent actions. Down/up de-duplication avoids double toggles. The run reports 190 software tests, 639 native checks and real USB mapping readback; native injected-event checks are not physical keypress verification, and Bluetooth was simulated in this round.
+
+现场 F 区发送 F13–F24，修复临时映射、录入会话和按下／松开去重。190 项软件、639 项原生检查与 USB 映射回读通过，注入输入和蓝牙模拟不等同实体逐键验收。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # Codex 模式与功能键修复 · 2026-09-16
 
 现场通过 USB 读取 Air75 V3（固件 1.0.16.6）的实际基础层：实体 F1–F12 对应键盘 usage 104–115，即 F13–F24。旧版只有蓝牙适配包含完整扩展层；USB 的媒体键白名单只覆盖其中两个 usage。另一个问题是按键录入暂停快捷键后，服务也撤销了 F 区映射，导致录入器收不到标准 F 键。
@@ -18,3 +29,5 @@
 5. 恢复测试中暂改的任务绑定后，用户所有设置及作品与验证前逐项一致。正式应用退出 status=0 / signaled=false，无遗留子进程、按键或灯光恢复记录，系统映射再次确认为原值。
 
 蓝牙路径经过模拟回归，本次现场连接为 USB；不声称本次逐键复测了蓝牙实体输入。用户仍可自由将任务或命令绑定到任意支持的按键。
+
+</details>

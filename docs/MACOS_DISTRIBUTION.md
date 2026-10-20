@@ -1,3 +1,13 @@
+# macOS distribution / macOS 签名与分发
+
+[Documentation / 文档目录](README.md)
+
+Release builds use the configured company Developer ID, Hardened Runtime, secure timestamps, Apple notarization and a stapled ticket. Verify the final extracted archive without changing the signed app. Keys and notarization credentials stay in Keychain. A host with Gatekeeper assessments disabled does not prove first launch under default security settings on another Mac; do not disable security as a distribution workaround.
+
+对外包完成公司签名、Hardened Runtime、时间戳、公证、staple 及最终解压验证；凭据留在钥匙串。发布机关闭 assessments 的结果不能代替另一台默认安全 Mac 首启验证，不以关闭安全设置绕过。
+
+## Detailed record / 详细记录
+
 # macOS distribution
 
 NuPhyLab v1.0.1 adds Developer ID distribution signing to the existing native AppKit app, Swift HID helper, and bundled Node runtime. The application identifier remains `local.airstudio.desktop`.

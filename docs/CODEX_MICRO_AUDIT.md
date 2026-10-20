@@ -1,3 +1,14 @@
+# Codex Micro capability audit — 2026-09-10–11 / Codex Micro 功能核查
+
+[Documentation / 文档目录](README.md)
+
+A version-specific comparison against installed Codex 26.903.71938, Work Louder Input 0.18.4, official references and the then-current Air Studio implementation. It identifies gaps in task/voice/focus lighting, controls and hardware feedback; it is not a claim that all Micro functions were implemented. Later additions and remaining limitations are recorded separately in CODEX_INTEGRATION.md. No physical Micro was tested and no restriction on automating the Codex window was bypassed.
+
+对照指定版本与官方资料的历史功能核查，不是已实现清单或 Micro 真机验收；后续接入和剩余边界以集成说明为准，原始差距表保留。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # Codex Micro 功能与灯光核查
 
 核查日期：2026-09-10 至 09-11。对照对象：本机 Codex / ChatGPT 桌面版 **26.903.71938**、Work Louder Input 稳定版 **0.18.4**，以及当前 Air Studio 源码。
@@ -217,3 +228,5 @@ Codex 额度侧灯是用户提出的 **Air 扩展功能**，本次没有找到 M
 后续每一项需要同时满足适用的证据：状态／手势的确定性测试，UI 实际交互，USB 写入与颜色回读，动画结束／切换／断线／重连／退出恢复。批准、拒绝和发送动作使用隔离测试上下文，不借用户正在进行的任务当测试对象。无法取得完整链路证据的功能保留明确的待接入状态，不算交付通过。
 
 UI 继续维持紧凑窗口：一级仅保留创作、Codex 控制与设备；Codex 内分任务、按键、状态灯。高阶参数在选中具体灯效或动作后显示，避免把这份清单展开成一个拥挤的大页面。
+
+</details>

@@ -1,3 +1,13 @@
+# UI refresh validation — 2026-09-11 / 界面更新验收
+
+[Documentation / 文档目录](README.md)
+
+Documents the compact Workspace navigation, keyboard stage, parameter dock and responsive typography. Ninety-six software tests, isolated browser flows and real native-window observations are recorded separately. Geometry, protocol, color math and game rules were not redesigned; permission-dependent features were not claimed verified by a visual pass.
+
+记录紧凑导航、键盘画布、参数区与响应式；96 项测试、隔离浏览器和原生窗口观察分开，不以视觉验收代替权限功能或真机灯效验证。
+
+## Detailed record / 详细记录
+
 # UI refresh verification — 2026-09-11
 
 ## Scope

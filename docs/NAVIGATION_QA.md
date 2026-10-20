@@ -1,3 +1,14 @@
+# Workspace child navigation — 2026-09-11 / 创作台子导航
+
+[Documentation / 文档目录](README.md)
+
+Moved Paint, Animation, Key Trigger and Games under the left Workspace entry. App-owned mode state keeps the selected child, canvas and saved-scene navigation consistent; leaving games pauses them. Production build and isolated browser/service checks covered default and narrow windows with no horizontal overflow. No lighting protocol or hardware-write behavior changed.
+
+绘制、动画、触发、游戏移至左侧创作台层级；统一状态保留草稿，离开游戏暂停。构建及隔离界面检查通过，未改灯光协议。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 创作台左侧子导航 · 2026-09-11
 
 「绘制、动画、按键触发、游戏」统一移入左侧「创作台」下方，使用缩进、细引导线和浅灰绿选中态区分层级。移除内容区顶部标签排，页面标题显示当前功能。作品库、Codex、设备仍为一级页面。
@@ -17,3 +28,5 @@
 - 浏览器错误日志为空。
 
 本轮为界面导航调整，没有新增灯效协议或硬件写入逻辑。运行中的旧应用保留，新版在独立交付目录构建。
+
+</details>

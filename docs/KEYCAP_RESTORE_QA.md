@@ -1,3 +1,14 @@
+# Factory keycap-function fallback — 2026-09-16 / 原厂键帽功能恢复
+
+[Documentation / 文档目录](README.md)
+
+Clearing temporary mappings only restored the board’s existing F13–F24 layer, not the printed media functions. An explicit optional fallback maps each physical position to its verified factory brightness, Mission Control, search, dictation, Do Not Disturb, playback or volume function while NuPhyLab runs. Strict pairing rejects reordered functions; no firmware keymap is written. The record reports 194 software tests, 687 native checks and USB mapping checks, not every real system action; exiting leaves the board’s own layer.
+
+清空系统映射不能把板载 F13–F24 当作原厂媒体层。可选兼容模式按位置恢复印刷功能并严格校验；不写固件，需保持软件运行。194 项软件、687 项原生及 USB 映射检查不等于每项系统动作已实按。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 关闭 Codex 后的键帽功能修复 · 2026-09-16
 
 ## 现场原因
@@ -20,3 +31,5 @@
 这是软件兼容模式，需要 NuPhyLab 保持运行；退出后使用键盘自身的 F13–F24 配置。该限制已写入页面提示，未将清空系统映射描述成硬件恢复出厂。若要求离开 NuPhyLab 也使用原厂功能，需要单独将键盘板载 F 区改回出厂配置，本次未作此修改。
 
 参考：本机 Xcode SDK 的 IOHIDUsageTables.h（Consumer 亮度、AC Search、Voice Command、Generic Desktop Do Not Disturb 等）；[Apple HID remapping](https://developer.apple.com/library/archive/technotes/tn2450/)；[NuPhy S4 read-keymap wire format](https://github.com/kelchm/nuphy-tools/blob/03140bc1534001599bfcd0a0ef61706bd34d377d/PROTOCOL.md)。
+
+</details>

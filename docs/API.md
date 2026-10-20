@@ -1,3 +1,13 @@
+# Internal UI API / 内部界面接口
+
+[Documentation / 文档目录](README.md)
+
+Reference for the local same-origin HTTP API, authenticated with X-Air-Token. It documents state, settings, artwork, playback, games, audio, triggers, agent controls and recovery. Request fields and executable examples are retained exactly; this is an internal interface rather than a promise of a stable public API.
+
+说明同源本地 HTTP 接口、令牌认证、状态、作品、播放、游戏、声音、触发、助手控制和恢复；字段及示例保留，不承诺公开 API 稳定性。
+
+## Detailed record / 详细记录
+
 # Internal UI API (same-origin, X-Air-Token from window.__AIR_TOKEN__)
 
 GET /api/state -> {device:{connected,armed,firmware,ledCount,error},playback:{mode,playing,fps,framesSent,lastError},colors:string[84],scenes:Scene[],settings:{brightness:number,codexEnabled:boolean,quotaSideEnabled:boolean,slotIds:string[]},codex:{available,reason,tasks,slots,quota,updatedAt},game:GameState}

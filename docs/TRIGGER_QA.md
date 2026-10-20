@@ -1,3 +1,14 @@
+# Key-triggered patterns / 按键触发图案
+
+[Documentation / 文档目录](README.md)
+
+The default 19-key heart stays off while armed, flashes three times when Space is pressed, then returns to waiting. Rebind a supported key and adjust 1–20 repeats and 0.2–2 second full cycles; per-key colors persist. Input Monitoring enables a read-only global listener, otherwise foreground fallback is explicit. Mode changes and errors release capture and restore lighting. The historical run distinguishes simulated input, listener creation and untested physical-to-LED behavior.
+
+默认空格触发 19 键爱心三次，等待熄灯；可改键、次数和周期，保留逐键颜色。全局监听缺权限时明确降级前台，状态交接和退出执行清理，验证边界见原记录。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 按键触发灯效 · 2026-09-11
 
 默认爱心采用用户最新截图的右侧 19 键图案：8、9、−、=；U、I、O、P、[、]；J、K、L、;、'；逗号、句号、斜杠；右 Command。Del 键帽标签保持不变。既有作品和草稿不会被新预设覆盖。
@@ -32,3 +43,5 @@
 真实 macOS 权限读取显示 Input Monitoring、Accessibility 均已授权；实际创建、关闭全局监听均成功。CUA 向隔离 Chrome 输入框发送空格后文字正常增加，但该自动化输入没有产生全局 tap 回调，因此不能据此声称真实物理按键的系统链路通过。代码过滤逻辑与服务接收事件链路分别验证。
 
 本轮没有重启运行中的旧应用，没有进行实体键盘 LED 输出或物理按键到 LED 的整链路复测。软件测试、模拟设备界面测试、系统权限与监听建立测试，不能替代肉眼观察真实灯光。
+
+</details>

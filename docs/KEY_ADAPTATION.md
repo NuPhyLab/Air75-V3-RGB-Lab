@@ -1,3 +1,13 @@
+# Keyboard setup / 键盘快捷键适配
+
+[Documentation / 文档目录](README.md)
+
+Documents temporary, keyboard-specific mapping for verified factory media keys or extended F13–F24 layers, with conflict checks and restoration. Agent mode, normal keycap fallback and key recording have separate behavior. Standard F keys can also be used directly; unsupported or conflicting mappings are reported rather than overwritten. Global shortcuts depend on macOS permission and may be received from another keyboard.
+
+说明目标键盘的临时映射、冲突保护与恢复，区分助手模式、普通键帽兼容和录入状态；不覆盖不支持的映射，全局快捷键依赖 macOS 权限。
+
+## Detailed record / 详细记录
+
 # Keyboard setup
 
 Codex → **适配这把键盘 / Set up this keyboard** enables a local, opt-in compatibility layer. First-time macOS permissions remain user-approved. The app remembers this choice, rereads the connected keyboard's actual active base layer, checks shortcut registration, and reapplies compatible mappings after reconnecting. Existing installations remain unchanged until this button is used.

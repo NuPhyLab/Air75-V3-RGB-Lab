@@ -1,3 +1,13 @@
+# Official protocol review — 2026-10-16 / 官方协议核对
+
+[Documentation / 文档目录](README.md)
+
+The supplied official protocol confirms the 64-byte HID framing and legacy A0/A1/D1/D2/D5/D6 behavior but omits D8 streaming and the newer 22-byte shape extension. NuPhyLab keeps verified schema adapters instead of replacing them with a legacy-only implementation. This record explains the 30 Hz target, changed-key packets, structural Codex completion events and the limits of interpreting the supplied video and unidentified installer screenshot.
+
+官方文档确认基础 HID 与旧结构，但未覆盖 D8 和新版 22 字节扩展；保留已验证适配，并说明 30 Hz、差量帧、任务完成事件及来件视频／截图的证据边界。
+
+## Detailed record / 详细记录
+
 # Air75 V3 protocol review — 2026-10-16
 
 NuPhyLab already uses the keyboard's USB vendor HID protocol. The supplied NuPhy mechanical keyboard protocol description (v0.1.0, 2026-07-07) confirms the 64-byte report, XOR/checksum framing, A0 mode selection, A1 version layout, one-byte D1 LED count, D2 RGB ordering and D5/D6 lighting configuration. The supplied document itself is not redistributed here.

@@ -1,3 +1,13 @@
+# Project brief and historical requirements / 项目需求与历史边界
+
+[Documentation / 文档目录](README.md)
+
+The original development brief records user decisions about the flat keyboard, continuous color wheel, games, local-first architecture, recovery and verification. It is a design/engineering baseline, not an up-to-date feature claim. Some early heart layouts, quota-side-light ideas, firmware schemas and timer behavior were superseded by later user requests and release notes. Follow the current README and dated release QA when they differ.
+
+保留原始开发需求与验收目标，不把目标当成已完成功能；早期爱心、额度侧灯、协议和计时设想可能已被后续需求替代，以当前主页和版本记录为准。
+
+## Detailed record / 详细记录
+
 # NuPhyLab
 
 Local-first macOS keyboard light studio for NuPhy Air75 V3 ANSI stock firmware 1.0.16.6.

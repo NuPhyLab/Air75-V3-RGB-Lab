@@ -1,3 +1,13 @@
+# Product UI refinement — 2026-09-14 / 产品界面优化
+
+[Documentation / 文档目录](README.md)
+
+Focused cleanup of information hierarchy, equal-height timer controls and a consistent Lucide outline icon family. Diagnostics and extended help are collapsed; actionable errors and required instructions remain visible. Chinese/English and responsive browser checks used isolated transports and did not alter system permissions or execute real Codex commands.
+
+聚焦信息层级、统一计时控件高度和线性图标；诊断与长说明折叠，必要操作和错误保留。中英文和响应式检查使用隔离服务，不改变系统权限或执行真实 Codex 命令。
+
+## Detailed record / 详细记录
+
 # Product UI refinement · 2026-09-14
 
 This is a focused correction within the existing Memo-inspired design, not a new visual direction. The frontend-app-builder small-fix exception applies: no generated concept or new artwork is needed. The user's screenshots are the visual baseline:

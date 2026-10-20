@@ -1,3 +1,13 @@
+# v1.0.11 exclusive-lighting validation / v1.0.11 独占灯光验收
+
+[Documentation / 文档目录](README.md)
+
+Agent lighting stops other effects/capture and clears non-task keys and sides. Exact color restoration accounts for firmware quantization; disconnect releases USB even when recovery is deferred. The dated run reports 324 software tests, 6,259 native checks, an official downgrade/update round trip and 47 physical checks. It does not repeat every physical shortcut, Bluetooth, microphone or unplug scenario. Signed/notarized ZIP verification and the default-security Mac limitation remain explicit.
+
+助手灯光独占、量化色恢复和断开释放 USB 的验收包含 324 项软件、6,259 项原生、官网回退升级及 47 项真机检查；未复测场景和默认安全 Mac 边界保留。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.11 — exclusive agent lighting and reliable disconnect
 
 Verified on 2026-10-16, Apple Silicon Mac, Air75 V3 ANSI USB, Mac profile.

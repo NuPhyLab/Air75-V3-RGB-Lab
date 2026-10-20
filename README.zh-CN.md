@@ -1,5 +1,9 @@
 # NuPhyLab
 
+[English-first bilingual overview / 英文优先双语主页](README.md) · [Downloads / 下载](README.md#downloads--下载) · [Documentation / 文档目录](docs/README.md)
+
+本文件保留详细中文使用指南。最新 Mac 开发版为 [v1.0.11](https://github.com/bohu8264/NuPhyLab/releases/tag/v1.0.11)；单独提供的 Windows 包为 [Preview 5](https://github.com/bohu8264/NuPhyLab/releases/tag/v1.0.0-windows-preview.5)。两端功能和验证范围不同，请勿将 Mac 验收记录当作 Windows 验收。分享项目可使用固定的[项目主页](https://github.com/bohu8264/NuPhyLab)。
+
 为 NuPhy Air75 V3 创作灯光的本地 Mac 应用。用键盘画图案、播放动画、玩贪吃蛇、打地鼠、记忆灯序和双人乒乓球，也可以把 F1–F6 用作任务状态灯：可以选择 **Codex** 或 **Claude Code** 作为状态来源。
 
 应用由原生 macOS 窗口、菜单栏常驻程序、可视化编辑器和用户态 HID 控制组成。无需内核驱动，不刷键盘固件。Codex 功能键适配包含临时系统映射及已确认的原厂 Mac F4 单键备份与恢复，关闭模式后还原。作品和设置保存在这台 Mac，动画运行时由电脑向键盘发送 RGB 帧。
@@ -35,7 +39,7 @@ v1.0.10 修复部分 1.0.23.6 键盘被误判为协议变化的问题：保留�
 
 v1.0.11 开启 Codex 灯光时会停止其他灯效、游戏和声音采集，关闭非任务灯位与侧灯；修复 1.0.23.6 主灯颜色量化造成的恢复失败，断开连接不再被恢复错误卡住。已完成官网回退、应用提示更新、官网升级及升级后真机回归，详见[本版验证记录](docs/RELEASE_QA_1.0.11.md)。
 
-分享给其他用户时使用 `release/NuPhyLab-macOS-arm64.zip`。此包适用于 Apple Silicon Mac、macOS 13.5 及以上、Air75 V3 ANSI；自带运行时，不含你的作品库或账户数据。首次打开仍遵循 macOS 对本地签名应用的系统要求。Windows、Intel Mac、ISO/JIS 布局尚无对应的已验证安装包。
+分享给 Mac 用户时使用 [NuPhyLab-macOS-arm64.zip](https://github.com/bohu8264/NuPhyLab/releases/download/v1.0.11/NuPhyLab-macOS-arm64.zip)。此包适用于 Apple Silicon Mac、macOS 13.5 及以上、Air75 V3 ANSI；自带运行时，不含你的作品库或账户数据。首次打开仍遵循 macOS 的系统要求。Intel Mac、ISO/JIS 布局没有对应的已验证 Mac 安装包。Windows 预览版独立发布，要求和限制见 [Windows guide / Windows 指南](README.Windows.md)。
 
 设备页的权限状态来自 macOS 只读查询。点击输入监控或辅助功能旁的「允许」，会打开对应的系统设置页面；需在系统设置中为 NuPhyLab 开启权限，按钮本身不会自动授权，也不会调用权限请求 API 弹出授权提示。返回 NuPhyLab 的设备页后会自动刷新状态，打开设置成功不等于权限已允许。
 
@@ -68,7 +72,7 @@ v1.0.11 开启 Codex 灯光时会停止其他灯效、游戏和声音采集，�
 
 在「状态颜色」点击色块，用色盘或十六进制值修改，再点击「应用颜色」。颜色保存到本机，任务灯、状态标记和命令键流光同步使用；可一键恢复默认颜色。启用 Codex 时，其绑定灯位使用这组状态色。
 
-Codex 页的「灯光模式」可切换「多任务灯位」与「单任务全键盘」。后者让整把键盘的按键灯用同一种颜色显示一个任务的状态，沿用状态颜色、亮度和统一休眠设置。只有一个任务时自动跟随；多个任务时，可在「跟随任务」指定一个，也可选择自动并用任务键切换控制任务。指定的任务暂不可用时保持熄灯，不会自动改为别的任务。任务快捷键折叠保留，命令键仍可使用；单任务模式不叠加命令键流光，切回多任务后恢复原设置。游戏和按键触发期间暂停 Codex 灯光；原有图案不会被覆盖。
+Codex 页的「灯光模式」可切换「多任务灯位」与「单任务全键盘」。后者让整把键盘的按键灯用同一种颜色显示一个任务的状态，沿用状态颜色、亮度和统一休眠设置。只有一个任务时自动跟随；多个任务时，可在「跟随任务」指定一个，也可选择自动并用任务键切换控制任务。指定的任务暂不可用时保持熄灯，不会自动改为别的任务。任务快捷键折叠保留，命令键仍可使用；单任务模式不叠加命令键流光，切回多任务后恢复原设置。v1.0.11 开启助手灯光会停止其他效果并独占灯光；主动开始其他效果会转移灯光控制权，任务状态仍继续读取，保存的原有图案保留。
 
 In English: use the language selector at the bottom left. **Device → Lighting timers** sets **Light-on duration** and **Sleep after inactivity** for key lights, side lights, and Codex status lights together. Enter seconds, minutes or hours; 0 means no limit. Codex has no separate timeout. Settings persist across restarts.
 

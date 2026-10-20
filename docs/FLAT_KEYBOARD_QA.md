@@ -1,3 +1,14 @@
+# Flat keyboard rendering — 2026-09-11 / 平面键盘图验证
+
+[Documentation / 文档目录](README.md)
+
+Removed keycap shadows, highlights and glow while preserving geometry and RGB data. LED 14 is Ins; the top-right decorative position displays Del without an invented LED. Browser checks covered painting, selection, drag-stroke undo/redo, previews and narrow layouts. A mutable undo snapshot was fixed. This was a UI change, not a repeat of physical lighting validation.
+
+去掉立体阴影、高光和光晕，保留几何与 RGB；Ins 与装饰 Del 不改变映射。界面操作、整笔撤销和窄屏检查通过，本轮不冒充真机灯效复验。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 平面键盘图修正 — 2026-09-11
 
 用户要求保留原来的正视平面键盘图，去掉立体感。本次为现有设计中的局部修正，没有重新设计页面或生成新的键盘素材。
@@ -28,3 +39,5 @@
 操作验证还发现原有撤销快照在 React 批处理时可能读到绘制后的可变 ref。现在在笔画开始和历史入队前固定颜色快照，首次撤销与重做、三键拖动的整笔撤销均已实际验证。
 
 本次只改键盘图样式与历史快照捕获，没有改固件协议、灯光 RGB 或预设帧。未重复前一轮实机灯效验收；该记录仍见 `PRESETS_QA.md`。
+
+</details>

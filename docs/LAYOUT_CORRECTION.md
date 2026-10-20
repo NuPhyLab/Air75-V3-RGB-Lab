@@ -1,3 +1,14 @@
+# ANSI layout and whole-keyboard games / ANSI 布局与全键盘游戏
+
+[Documentation / 文档目录](README.md)
+
+The official ANSI layout and user reference established 83 visible keys across six rows. LED 14 is Insert; a decorative Del replaces the drawn knob at the user’s request without adding an RGB index. Snake uses the irregular physical adjacency graph, with all 83 keys reachable. Unmapped channel 83 and side lights stay black during games. Original RGB indices and saved artwork remain intact.
+
+官方 ANSI 布局确认六行 83 键；LED 14 为 Ins，装饰 Del 不增加 RGB。贪吃蛇使用真实错位邻接，游戏期间保留通道和侧灯熄灭，已有作品索引保持。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 原图布局核对与全键盘游戏
 
 参考用户提供的 `原图/Air75 V3 Silver  .png`，仅用于位置、尺寸及间距；没有修改原图，也没有把其绿色/黄色/橙色移植到界面配色。
@@ -13,3 +24,5 @@ LED 14 是 Insert；旧显示名称“旋钮”不正确。官方 ANSI 键位数
 游戏采用全键盘的不规则行结构，左右为相邻按键，上下优先进入相邻行中覆盖蛇头中心的按键；没有覆盖时选最近按键。空格只占一个节点，全部 83 键互相可达。只有蛇与食物输出非零 RGB，其他主键通道和 20 个侧灯通道全部为零。退出游戏恢复原作品与侧灯模式。
 
 视觉截图：`design/layout-corrected.png`、`design/whole-keyboard-game.png`。真实设备 RGB 回读记录：`whole-keyboard-qa-results.json`。
+
+</details>

@@ -1,3 +1,14 @@
+# Three-game acceptance — 2026-09-11 / 三款新游戏验收
+
+[Documentation / 文档目录](README.md)
+
+Whack-a-Mole, Memory Sequence and two-player Pong were added beside Snake using the existing layout and recovery system. The dated run passed 83 automated tests, a production build and isolated browser interactions, including pause/focus handling, score persistence and small windows. It did not access a physical HID keyboard or the user’s library/accounts; the simulated connected indicator is not hardware evidence.
+
+新增三款游戏的记录包含 83 项软件测试、构建和隔离界面检查；本轮未连接实体 HID，不将模拟已连接状态算作真机验收。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 三款新游戏验收 · 2026-09-11
 
 本次加入打地鼠、记忆灯序、双人乒乓球，与贪吃蛇共用「创作台 → 游戏」入口。使用现有键位映射、灯光传输和恢复机制，未改变固件或物理按键绑定。
@@ -16,3 +27,5 @@
 本次联调没有访问实际 HID 键盘、用户作品库或 Codex 账号，也没有重启用户正在编辑的原生窗口。屏幕上的“已连接”仅属于上述隔离模拟环境，不能当作本轮真机验收。游戏输出始终是84项RGB数组，其中可玩物理键映射为0–82，保留通道83黑色；未把逻辑通道数当成实物可玩键数。
 
 当前项目中的真实硬件历史验收仍见 `HARDWARE_QA.md` 与相关记录，不属于本轮新游戏的重复验证。新应用包位于 `release/pending-update/Air Studio.app`，完整交付压缩包会包含本次游戏和既有色盘、爱心、Del键帽修改。
+
+</details>

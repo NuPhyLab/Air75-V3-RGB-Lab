@@ -1,3 +1,13 @@
+# v1.0.5 validation / v1.0.5 验收
+
+[Documentation / 文档目录](README.md)
+
+Documents toggle dictation following Codex’s actual configured shortcut, with hold mode retained and repeat/release de-duplication. The record includes 300 software tests, 1,623 native checks, real F9 start/stop with resulting text, RGB readback and factory-key restoration on the recorded board. Distribution validation is separate from action delivery and optical color accuracy.
+
+跟随实际听写设置，保留按住模式并过滤重复／松开切换；300 项软件、1,623 项原生、实体 F9 出字、RGB 和按键恢复按原记录范围验收。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.5 validation — 2026-10-16
 
 ## Behavior and regression checks

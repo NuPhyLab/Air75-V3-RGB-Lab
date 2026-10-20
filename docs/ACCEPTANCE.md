@@ -1,3 +1,14 @@
+# Historical acceptance records / 历史验收记录
+
+[Documentation / 文档目录](README.md)
+
+Dated software, browser, native-host and Air75 V3 USB checks. The original record distinguishes simulated transports from actual HID readback, describes persistence and recovery, and states which permissions and external-agent actions were not verified. Early names, firmware versions, test counts and timer defaults describe their own dates; use the current README and release QA for today’s build.
+
+按日期保留软件、界面、原生宿主与 USB 验收结果，区分模拟检查、真机回读和未验证范围；旧名称、默认值及测试数量只对应原日期。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # Air Studio 验证记录
 
 验证日期：2026-09-10。目标为这台 Mac 上以 USB 有线连接的 NuPhy Air75 V3 ANSI，固件 1.0.16.6。验证由开发代理执行，无需用户承担验收操作。
@@ -118,3 +129,5 @@ Reference: [Apple DTS on stable signatures for TCC](https://developer.apple.com/
 - Removed Codex-specific idle and hint duration controls. Device timers now govern key lights, side lights and Codex status lights together. Existing global durations are retained; legacy Codex durations cannot override them. Nonworking command-key feedback persists with the selected task rather than using a separate hint timer.
 - 155 automated tests passed and the production frontend built successfully. Regression coverage includes stale legacy timers, simultaneous artwork/status sleep and wake, duration expiry despite task updates, the legacy wake command, and animation/game clock preservation.
 - Isolated UI checks confirm the simplified Chinese controls. Real Codex command execution is outside this timer change and retains the previously documented verification limits.
+
+</details>

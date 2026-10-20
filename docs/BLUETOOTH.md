@@ -1,3 +1,13 @@
+# Bluetooth support / 蓝牙支持
+
+[Documentation / 文档目录](README.md)
+
+Bluetooth can retain supported agent shortcuts and offline artwork editing after macOS pairs the Air75 V3. Software RGB, audio lighting, lighting games, lighting timers and firmware checks require USB. Keyboard-specific media/extended-function signals, permissions and temporary mappings determine which shortcuts work. The detailed record separates physical Bluetooth observations from simulated checks and explains restoration when the mode ends.
+
+蓝牙可保留兼容的助手快捷键和离线编辑；软件 RGB、声音灯效、灯光游戏、计时与固件检查需要 USB。实际快捷键取决于信号、权限及临时映射，真机和模拟范围见正文。
+
+## Detailed record / 详细记录
+
 # Bluetooth support
 
 NuPhyLab detects a connected Air75 V3 separately from its USB lighting channel. Existing task and command bindings use non-exclusive Carbon shortcuts in both modes. The configured F11 key additionally uses a native HID event tap (v1.0.4; previously a session tap), because macOS reserves the secondaryFn-marked physical F11 event for Show Desktop. It shares the same held-key gate and dispatch queue as Carbon/local events, so it does not toggle twice. It runs only while shortcuts are enabled and F11 is bound, and stops during capture/editing suspension or exit. Modified shortcuts and ordinary typing pass through; no system shortcut preferences are changed.

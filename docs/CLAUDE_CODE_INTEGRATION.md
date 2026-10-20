@@ -1,3 +1,13 @@
+# Claude Code integration — 2026-09-20 / Claude Code 集成
+
+[Documentation / 文档目录](README.md)
+
+Local opt-in hooks and session records drive Claude Code status. Hooks observe structural lifecycle fields without copying prompts, tool output or credentials, and never answer permission requests. Session jumps require validated desktop IDs; unsupported terminal jumps and subscription-usage readings remain unavailable. The original English specification distinguishes incoming-machine evidence from receiving-machine verification and documents installation, backups, removal and signing identity.
+
+用户主动安装本地 hook，同步结构化会话事件；不复制提示词、工具输出或凭据，也不代替用户审批。跳转必须有有效桌面 ID，不支持的会话和订阅额度明确不可用；来件与本机验证分开记录。
+
+## Detailed record / 详细记录
+
 # Claude Code integration — 2026-09-20
 
 The cross-machine merge and verification record is in [HANDOVER.md](HANDOVER.md). Live observations below were reported by the sending developer; they are not claims of a second live verification on the receiving Mac.

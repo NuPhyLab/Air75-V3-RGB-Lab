@@ -1,3 +1,14 @@
+# Lighting profile and recovery repair — 2026-09-17 / 灯光档位与恢复修复
+
+[Documentation / 文档目录](README.md)
+
+Repairs profile selection and meaningful-field verification when the connected keyboard remains visible but lighting settings do not match. Native offline checks cover Mac/Win routing, old backups and unsupported-field variation while valid-field mismatches still fail. The record reports 719 native checks and 211 regressions, three-color application readback, clean quit and unchanged user data. Windows-profile detection was read-only; output/restoration tests ran in the Mac profile.
+
+修复连接仍在但灯光设置不匹配的档位路由和有效字段校验；719 项原生、211 项回归、三原色和退出恢复通过。Win 档本轮仅验证识别读取，实际输出恢复使用 Mac 档。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 灯效恢复与档位修复 · 2026-09-17
 
 现场故障：设备仍连接，但固件显示未识别，原有灯效恢复失败。
@@ -33,3 +44,5 @@ D5/D6 跳转表和 getter，只有这两个槽不作为可恢复配置检查；�
 
 Win 档的实际识别和配置读取已验证；本轮写入、播放、恢复测试在 Mac 档完成。
 没有改写键盘固件、键位或执行恢复出厂设置。
+
+</details>

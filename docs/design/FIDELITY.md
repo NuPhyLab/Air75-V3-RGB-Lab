@@ -1,3 +1,14 @@
+# Design fidelity and visual acceptance / 设计与视觉验收
+
+[Documentation / 文档目录](../README.md)
+
+Historical design decisions preserve a white/gray canvas, system typography, restrained sage/coral accents and a flat functional keyboard. Window sizing, control hierarchy, color-wheel interactions, game entry points and child navigation were checked at the stated sizes. Early heart/keycap descriptions were subsequently updated; screenshots and dates are evidence for their own revision, not the latest UI contract.
+
+保留白灰底、系统字体、少量品牌色和功能性平面键盘的历史设计记录；窗口、层级、色盘及导航按各自日期验收，早期爱心／键帽说明不作为当前界面承诺。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 设计与视觉验收
 
 视觉基准是用户提供的 `NuPhy-Memo-Mobile.html` 和早期概念 `creation-concept.png`。白色背景、浅灰分区、系统字体、细边框、鼠尾草绿与珊瑚红保持不变。参考文件只作为视觉材料。
@@ -66,3 +77,5 @@ TypeScript/Vite 构建和 50 项测试通过，其中包含旧彩虹作品加载
 ## 2026-09-11 · 创作台子导航移至左侧
 
 按照用户要求，将绘制、动画、按键触发、游戏收进左侧创作台层级，删除内容区顶部分页。用缩进与细引导线表达归属，浅灰绿仅标记当前子项；内容页标题与子项同步。桌面宽度保持原样，窄浏览器仍保留左侧归属关系，极窄宽度下参数区改为上下排列。
+
+</details>

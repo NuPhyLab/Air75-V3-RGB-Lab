@@ -1,3 +1,13 @@
+# v1.0.10 replacement-board validation / v1.0.10 换键盘兼容验收
+
+[Documentation / 文档目录](README.md)
+
+Separates stored preset readback ranges from writable ranges on another 1.0.23.6 board. Official partial D6 writes preserve untouched extended parameters and retain complete backup/readback protections. The record reports 318 software tests, 2,158 native checks and physical connection, RGB, application and restoration checks. This is protocol compatibility work, not firmware flashing.
+
+区分存储读值和可写范围，通过官方 D6 分段保留扩展预设；318 项软件、2,158 项原生及换板真机验证见正文，未刷写固件。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.10 — replacement Air75 V3 protocol validation
 
 ## Root cause and official protocol comparison

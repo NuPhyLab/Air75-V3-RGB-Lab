@@ -1,3 +1,16 @@
+# Audio-reactive lighting / 声音律动
+
+[Documentation / 文档目录](README.md)
+
+USB audio lighting offers ten effects: Volume Breathing, Spectrum Bars, Beat Ripples, Center Waves, Melody Waves, Note Rain, Rhythm Meteor, Twinkling Stars, Heartbeat and Bass/Treble Dialogue. Choose monochrome or multicolor, sensitivity and a noise gate. System audio uses a Core Audio process tap on macOS 14.2+; microphone mode supports the system default or a selected input. Capture stays local and is not recorded or uploaded. Bluetooth and 2.4 GHz software RGB are unavailable.
+
+This record covers the original 1.0.16.6 implementation and later beat/multicolor checks. The 140 ms beat gate is onset detection, not guaranteed BPM or instrument recognition. Effects yield lighting ownership, stop capture on exit or source changes, and follow the shared sleep timer. Early 20 Hz statements describe that implementation; v1.0.6 raised the lighting target to 30 Hz. See the latest release QA for 1.0.23.6 validation. RGB readback is not optical calibration, and external microphone enumeration is not certification of every device.
+
+十种效果支持单色／彩色、灵敏度与噪声门限；系统声音需 macOS 14.2+，也可用麦克风。仅本机分析，不保存上传。下方保留原固件、鼓点和彩色验收；早期刷新率为历史值，当前兼容范围见最新版本记录。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 声音律动
 
 入口：创作台 → 声音律动。需要 Air75 V3 USB 有线连接与已验证的 1.0.16.6 灯效固件。首次使用点击开始，按 macOS 提示授权。蓝牙、2.4GHz 不提供此功能。
@@ -69,3 +82,5 @@
 - 使用真实 Core Audio 采集短合成多频段鼓点，十种彩色效果逐一运行于 Air75 V3（1.0.16.6）。每种效果在 2.2 秒观察段内产生 25–30 个不同的非黑帧，并同时显示多种色相；每次等待效果切换稳定后回读 84 个 RGB 通道，全部与发送值匹配。这是协议回读验证，不是 LED 光学校色。
 - 单色和彩色实时切换不重开采集，切回单色保留原颜色；静音后全键熄灭，停止时恢复原灯光。用户原有音源、效果、颜色、灵敏度、门限、作品及其他设置保留，仅按本次需求启用彩色模式。
 - 中英文页面、两种颜色模式的控件切换均已检查。临时测试音及验证脚本清理，不增加测试作品或任务。
+
+</details>

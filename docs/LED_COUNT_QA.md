@@ -1,3 +1,14 @@
+# One-byte LED-count decoding / 一字节灯位数量解码
+
+[Documentation / 文档目录](README.md)
+
+The reported count 32872 came from decoding unencrypted padding as a second XOR-encrypted byte when the session key was 0x80. D1 returns one count byte: 0x68 means 104. The fix requests/decodes exactly one byte and continues rejecting bad counts, checksums and routes rather than forcing a value. The dated run reports 559 native checks, 107 service tests, ten real reconnect cycles, complete RGB readback and exact 17-byte restoration.
+
+32872 来自把未加密填充误当第二个数量字节；D1 应只读取一个字节，0x68 即 104。修复未强制替换异常值，原生、服务、十轮重连、回读及恢复结果见原记录。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 灯位数量读取修复
 
 验证日期：2026-09-11。设备：USB 有线 Air75 V3 ANSI `19f5:1028`，官方固件 `1.0.16.6`。
@@ -31,3 +42,5 @@ node scripts/qa-led-count.mjs --run "$HOME/Library/Application Support/Air Studi
 ```
 
 该脚本会恢复所指定的待恢复备份、临时改变灯效并最终恢复。测试没有切换真实会话密钥；所有其他密钥组合在原生自检中验证。
+
+</details>

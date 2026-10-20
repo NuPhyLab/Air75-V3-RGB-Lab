@@ -1,3 +1,13 @@
+# v1.0.8 task-status validation / v1.0.8 多任务状态验收
+
+[Documentation / 文档目录](README.md)
+
+Incremental JSONL reading preserves confirmed status across oversized tool results, compaction and partial records while still handling completion promptly. Cold-start search, file replacement and bounded buffers avoid inventing running state. Reconnect clears only stale playback errors after compatibility succeeds. Test scope and physical limits remain in the dated record.
+
+增量读取保留大记录、压缩和半行前的有效状态，同时及时处理完成；冷启动、截断与缓存有界，不凭空延长运行状态，重连仅清除已解决的旧错误。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.8 validation — 2026-10-16
 
 ## Diagnosis and change

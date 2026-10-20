@@ -1,3 +1,13 @@
+# UI fidelity review / 界面一致性核对
+
+[Documentation / 文档目录](../../README.md)
+
+Records visual comparison of the implemented Workspace against its concept and reference, including information hierarchy, spacing, controls, responsive behavior and deliberate differences. Screenshot observations and isolated interactions retain their original scope; they are not new physical-keyboard acceptance.
+
+记录界面与概念参考的层级、间距、控件和响应式对照，有意差异及原始截图范围保留，不作为新真机验收。
+
+## Detailed record / 详细记录
+
 # UI fidelity review
 
 Reference: [ImageGen primary concept](paint-concept.png), generated before implementation. Method: actual app served by the real local HTTP service with isolated fake HID/Codex adapters, operated and captured through Codex CUA in-app browser. No raster mockup is used as the application.

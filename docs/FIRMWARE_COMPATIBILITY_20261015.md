@@ -1,3 +1,13 @@
+# Firmware compatibility — 2026-10-15 / 固件兼容性
+
+[Documentation / 文档目录](README.md)
+
+Explains support for the legacy 17-byte and newer 22-byte lighting states, schema/profile-aware recovery, firmware-rendered RGB scaling and read-only compatibility probes. Compatibility is based on verified protocol capabilities rather than a permanent exact-version whitelist. A breaking protocol change still requires an adapter update. This dated record distinguishes the initially available 1.0.16.6 board from later 1.0.23.6 hardware checks.
+
+说明两种灯光结构、档位恢复、新固件 RGB 缩放与只读能力检查；版本号不单独证明兼容性，破坏性协议变化仍需适配，并区分各阶段可用真机。
+
+## Detailed record / 详细记录
+
 # Air75 V3 firmware compatibility — 2026-10-15
 
 ## Findings and evidence

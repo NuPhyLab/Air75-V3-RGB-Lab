@@ -1,3 +1,13 @@
+# v1.0.6 validation / v1.0.6 验收
+
+[Documentation / 文档目录](README.md)
+
+Covers 30 Hz target scheduling, sparse changed-key frames, updated Codex completion parsing and official-protocol review. The original run reports 303 software tests and 1,628 native checks plus 1.0.23.6 USB RGB, animation, four games, ten real system-audio effects and quit restoration. Actual throughput depends on USB acknowledgement; 30 Hz is a target, not a guaranteed measured frame rate.
+
+覆盖 30 Hz 目标调度、差量帧和任务完成识别；303 项软件、1,628 项原生及 1.0.23.6 真机记录保留。30 Hz 为目标，不是任何链路都保证的实测帧率。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.6 validation — 2026-10-16
 
 ## Automated checks

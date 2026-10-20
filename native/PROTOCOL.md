@@ -1,3 +1,11 @@
+# Native HID bridge protocol / 原生 HID 通信协议
+
+[Documentation / 文档目录](../docs/README.md)
+
+Technical reference for the Air75 bridge framing, routing, schemas, RGB streaming, validation and restoration. Command bytes, field names and protocol examples below are unchanged.
+
+原生桥接的报文、路由、状态、RGB、校验和恢复参考；以下命令字、字段与示例原样保留。
+
 # Air75 Studio native bridge
 
 `HIDBridge.swift` is an independent Swift implementation of the researched NuPhy S4 protocol. It uses macOS user-space `IOHIDManager`, without a kernel driver, firmware flashing, or an `EE` session-key setter. Lighting uses `A1`, `D1`, `D2`, `D5`, `D6`, and `D8`; key adaptation reads `A0`/`B1`/`B2`. v1.0.4 permits a guarded two-byte `B3` update solely to lease/restore the verified factory Mac F4 entry (see below).

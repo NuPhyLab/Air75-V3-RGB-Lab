@@ -1,3 +1,14 @@
+# Permission settings entry points / 权限设置入口验收
+
+[Documentation / 文档目录](README.md)
+
+Verified read-only permission status and the links to macOS Input Monitoring and Accessibility settings on the recorded OS build. Isolated grant/revoke states are simulated. Real checks opened settings but did not toggle authorization; opening a settings page does not grant permission. The private settings deep links may change across macOS versions, so a manual navigation fallback is documented.
+
+验证只读权限状态和系统设置跳转；模拟 grant/revoke 不等于真实授权。实际检查未切换权限开关，打开页面不会自动授权，私有深链有系统版本限制。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 权限入口验收记录
 
 验证日期：2026-09-11。环境：本机 macOS 26.6（25G72）。本轮验证权限设置入口、只读状态刷新和界面布局；没有切换任何系统权限开关。
@@ -33,3 +44,5 @@
 真实授权后的状态变化尚未测试；grant / revoke 与状态更新仅在 fake 环境验证。不能将本记录表述为已验证 Air Studio 的真实授权流程或授权后功能。
 
 本机已验证两个深链能到达各自页面，但它们属于未公开的 macOS 设置 URL，不保证其他 macOS 版本表现相同。深链失效时可手动进入「系统设置 → 隐私与安全性 → 输入监控 / 辅助功能」。
+
+</details>

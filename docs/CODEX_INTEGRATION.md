@@ -1,3 +1,13 @@
+# Codex integration / Codex 集成
+
+[Documentation / 文档目录](README.md)
+
+Read-only local task metadata and lifecycle events provide status; account usage uses a separate restricted read-only connection. Status colors, task slots, bindings, light ownership and one shared timer are coordinated with acknowledged keyboard output. Task navigation and supported shortcuts remain subject to Codex’s version, configured keymap and macOS permissions. Unsupported approvals, real voice-state feedback and full Micro behavior are not claimed. Historical hold-dictation notes predate the newer toggle-dictation fix; see v1.0.5 and later release records.
+
+只读本地任务与生命周期数据，额度走独立只读连接；颜色、槽位、绑定和统一计时跟随已确认输出。动作受 Codex 版本和权限限制，未接入能力不作承诺；早期按住听写说明需结合后续切换式听写修复阅读。
+
+## Detailed record / 详细记录
+
 # Codex integration — 2026-09-11
 
 NuPhyLab independently reads local task metadata and structural lifecycle events; it does not connect to the live Desktop app-server. Account quota uses a separate read-only app-server connection restricted to `initialize` and `account/rateLimits/read`. It never submits prompts, answers approval requests, or changes Codex settings while reading status.

@@ -1,3 +1,14 @@
+# Automatic connection and firmware checks — 2026-09-11 / 自动连接与固件检查
+
+[Documentation / 文档目录](README.md)
+
+Automatic USB detection uses the ANSI model identity rather than a user serial number. Official release information is fetched separately from lighting, with bounded requests and a six-hour successful cache. Opening the official updater restores/releases USB and pauses auto-connect; NuPhyLab does not flash firmware. This dated run records 119 service tests, 566 native checks and isolated onboarding UI checks; its 1.0.16.6 latest-version result is historical.
+
+按型号自动识别、独立查询官方版本并缓存；进入官方更新前恢复并释放 USB，软件不自行刷固件。119 项服务与 566 项原生检查及当日版本结果仅对应本记录日期。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 自动连接与固件检查 · 2026-09-11
 
 ## 官方依据
@@ -30,3 +41,5 @@ NuPhy 的[固件入口](https://nuphy.com/pages/firmware)把 Air75 V3 指向 [Nu
 - 真实官方请求返回 1.0.16.6，检查模块正确输出 `current`。
 
 验证使用一把本机 Air75 V3 和隔离服务模拟不同连接／版本状态；没有第二把实体设备、其他用户 Mac 或固件降级/升级的实际刷写测试。当前交付目标仍为 Apple Silicon Mac、macOS 13+、Air75 V3 ANSI。
+
+</details>

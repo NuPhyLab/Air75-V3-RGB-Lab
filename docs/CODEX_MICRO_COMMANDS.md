@@ -1,3 +1,14 @@
+# Codex Micro command and keycap catalogue / Codex Micro 命令与键帽目录
+
+[Documentation / 文档目录](README.md)
+
+Independent static catalogue of 134 candidate commands and 39 software keycap entries from the inspected Codex build. Context, account, project and custom bindings affect availability; a catalogue entry or keycap image is not a working NuPhyLab feature. Twenty-three shortcut descriptors were later exposed and tested through isolated delivery paths, not all executed in the real Codex window. Keep the original command IDs, bindings, source hashes and machine-readable catalogue unchanged.
+
+静态整理的 134 个候选命令与 39 个键帽软件条目不等于已实现能力；23 个快捷入口的隔离投递检查也不等于真实 Codex 动作全部验收，命令 ID 和原始证据保留。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # Codex Micro 命令与键帽清单
 
 核查日期：2026-09-10 至 09-11；本机官方版本 26.903.71938。配合 [功能核查](CODEX_MICRO_AUDIT.md) 阅读。
@@ -252,3 +263,5 @@
 | `environmentAction9` | 运行环境动作 9 | 未配置 | 上下文 | 未接入 |
 
 已启用技能是另一类动态选项，不计入这 134 个固定命令候选；不同用户的技能清单不同。外部程序不能只凭这里的内部命令 ID 就认为存在同名公共 API。后续接入要分别验证命令绑定、目标应用、当前任务及实际结果。
+
+</details>

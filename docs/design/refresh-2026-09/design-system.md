@@ -1,3 +1,13 @@
+# UI design system — 2026-09-11 / 界面设计系统
+
+[Documentation / 文档目录](../../README.md)
+
+Defines the historical Memo-inspired palette, typography, spacing, components and responsive rules used by the development UI. This is a design reference, not an instruction to replace the current logo or revive a canceled redesign. Implementation and verification details remain in the original English record.
+
+保留开发版的配色、字体、间距、组件和响应式规范，作为设计参考，不代表替换当前 Logo 或恢复已取消改版。
+
+## Detailed record / 详细记录
+
 # Air Studio UI refresh — 2026-09-11
 
 Design reference: `paint-concept.png`, generated before implementation from the user's NuPhy Memo reference and current app constraints. The user delegated design decisions; this is not a concept approval gate.

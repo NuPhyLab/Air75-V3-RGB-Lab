@@ -1,3 +1,14 @@
+# Animated preset validation — 2026-09-15 / 动态预设验收
+
+[Documentation / 文档目录](README.md)
+
+Twelve looping presets replace the earlier catalogue while preserving saved artwork. The 19-key heart breathes continuously at default speed 2, about 3.49 seconds per cycle. Ten frame-based presets contain 344 valid frames. Isolated UI/service checks covered preview, playback and persistence; all twelve were also played and paused on a 1.0.16.6 USB board with exact RGB readback after the render boundary. User settings and seven artworks were preserved.
+
+十二个循环预设保留个人作品，19 键爱心默认约 3.49 秒呼吸。344 帧数据、隔离界面与实体 USB 回读均有记录，原有设置和七件作品保留。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 默认灯效验证 · 2026-09-15
 
 默认目录精简为 12 个循环灯效；个人已保存的作品不迁移、不删除。
@@ -37,3 +48,5 @@ Air75 V3，USB 有线，固件 1.0.16.6：12 个预设全部播放并暂停，�
 验证期间临时关闭 Codex 叠加与灯光定时；完成后恢复原设置，7 个个人作品与所有设置保持不变。最终播放新版呼吸爱心。逐项结果见 `preset-hardware-qa-results.json`。
 
 本次未改动设备协议、按键适配、权限身份、游戏逻辑或已保存作品格式。
+
+</details>

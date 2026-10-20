@@ -1,3 +1,13 @@
+# v1.0.7 timer validation / v1.0.7 计时验收
+
+[Documentation / 文档目录](README.md)
+
+New installs default to one hour for both light-on duration and idle sleep; custom durations and no-limit choices remain. Starting agent mode begins a full new timer rather than inheriting an artwork’s remaining time. Ordinary settings edits and polling do not repeatedly restart it. This dated record separates automated timer tests from physical sleep/wake checks.
+
+新安装亮灯与空闲均默认一小时，保留自定义和不限；开启助手模式重新完整计时，普通设置与轮询不反复重置，自动与真机检查范围见正文。
+
+## Detailed record / 详细记录
+
 # NuPhyLab v1.0.7 validation — 2026-10-16
 
 ## Change and diagnosis

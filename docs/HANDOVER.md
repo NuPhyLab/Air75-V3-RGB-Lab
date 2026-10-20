@@ -1,3 +1,14 @@
+# Source merge handover — 2026-09-20 / 跨机源码合并交接
+
+[Documentation / 文档目录](README.md)
+
+Retained the receiving project as the main line and merged the incoming Claude Code integration. Active-source key routing, default-binding reset, Unicode download paths and isolated tests were corrected without changing the hardware protocol. Bundle identity, permissions, user data and rollback archives were preserved. The original incoming-machine results are not receiving-machine hardware evidence; use later distribution records for the current Developer ID identity.
+
+保留本机主线并合入 Claude Code，修正来源路由、默认绑定和中文路径；保留身份、权限、用户数据和回退资料，来件验证不等于本机复验，当前签名以较新分发记录为准。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # NuPhyLab 合并交接 · 2026-09-20
 
 ## 当前主线
@@ -48,3 +59,5 @@ node scripts/package.mjs
 ## 回退资料
 
 当前工程 `backups/handover-20260920/` 留存合并前源码、上次源码包和安装包，以及逐文件导入清单 `import-manifest.json`。备份为压缩文件，不额外注册一份应用；它们不进入新的源码包。用户提供的原始交接压缩包仍在下载目录，完整保留原作者的交接说明。
+
+</details>

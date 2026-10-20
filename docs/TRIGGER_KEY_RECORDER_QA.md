@@ -1,3 +1,14 @@
+# Trigger-key recorder validation / 触发键录入验收
+
+[Documentation / 文档目录](README.md)
+
+The Change button records a supported physical code on press and commits on release, with cancel/blur preserving the old value. The 74-key allowlist excludes modifiers and unsupported keys. Isolated browser checks cover editing, persistence, text-field protection and narrow layouts; automation-generated input is not a physical-key-to-LED acceptance test.
+
+更改按钮按下识别、松开确认，取消或失焦保留旧值，使用 74 键允许表；界面与持久化测试不冒充实体按键到 LED 的完整验收。
+
+<details>
+<summary>Original dated record (Chinese) / 中文原始记录</summary>
+
 # 按键录入验收 · 2026-09-11
 
 触发键下拉框已替换成当前按键与「更改」按钮。点击后等待单个物理键，按下识别、松开确认；取消或点击外部保留原值。按物理键 code 匹配现有 74 键允许列表，拒绝修饰组合和不支持的键。录入时拦截当前窗口的默认按键行为，避免空格滚动、Tab 跳焦点及意外启动窗口触发。
@@ -15,3 +26,5 @@
 - 1280×720 与 720×520 界面检查通过；提示跨两列排版，小窗口无横向溢出。
 
 这是前台按键录入控件更新，没有修改 USB 协议或全局监听权限。测试中的按键由 CUA 输入，不能等同于手指按实体键到灯光的整链路观察。LED 数量解析修复继续保留，见 [LED 数量验收](LED_COUNT_QA.md)。
+
+</details>
