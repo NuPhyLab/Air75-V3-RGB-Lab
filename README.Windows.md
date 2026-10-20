@@ -1,4 +1,8 @@
-# Windows preview / Windows 预览版
+# Air75v3灯光助手 — Windows preview / Windows 预览版
+
+**Air75 V3 Lighting Assistant.** The current Windows executable is named `NuPhyLab.exe`.
+
+当前 Windows 程序名为 `NuPhyLab.exe`。
 
 [Project / 项目主页](README.md) · [Download Preview 5 / 下载预览版](https://github.com/bohu8264/NuPhyLab/releases/download/v1.0.0-windows-preview.5/NuPhyLab-Windows-x64-v1.0.0-preview.5.zip) · [Release notes / 发布说明](https://github.com/bohu8264/NuPhyLab/releases/tag/v1.0.0-windows-preview.5)
 

@@ -1,4 +1,6 @@
-# NuPhyLab
+# Air75v3灯光助手
+
+Air75 V3 Lighting Assistant。当前安装包和应用内名称仍为 **NuPhyLab**。
 
 [English-first bilingual overview / 英文优先双语主页](README.md) · [Downloads / 下载](README.md#downloads--下载) · [Documentation / 文档目录](docs/README.md)
 
