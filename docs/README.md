@@ -1,4 +1,6 @@
-# Air75v3灯光助手 — Documentation / 文档
+# Air75 V3 RGB Lab — Documentation / 文档
+
+**Air75v3灯光助手**
 
 [Project and downloads / 项目与下载](../README.md) · [Detailed Chinese guide / 详细中文指南](../README.zh-CN.md) · [Windows guide / Windows 指南](../README.Windows.md)
 

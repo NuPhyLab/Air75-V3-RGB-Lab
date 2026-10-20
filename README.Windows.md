@@ -1,6 +1,6 @@
-# Air75v3灯光助手 — Windows preview / Windows 预览版
+# Air75 V3 RGB Lab — Windows preview / Windows 预览版
 
-**Air75 V3 Lighting Assistant.** The current Windows executable is named `NuPhyLab.exe`.
+**Air75v3灯光助手.** The current Windows executable is named `NuPhyLab.exe`.
 
 当前 Windows 程序名为 `NuPhyLab.exe`。
 

@@ -1,12 +1,12 @@
-# Air75v3灯光助手
+# Air75 V3 RGB Lab v1.0.11
 
-**Air75 V3 Lighting Assistant — an experimental project that turns the Air75 V3 into a canvas for light, sound, and interaction.**
+**Air75v3灯光助手 — an experimental project that turns the Air75 V3 into a canvas for light, sound, and interaction.**
 
 Paint per-key RGB patterns, create animations, make your keyboard react to music, play light-based games, and follow coding-agent activity from your function keys. NuPhyLab runs locally on your Mac, with a native window and menu bar companion.
 
 为 Air75 V3 创作逐键灯光、动画、音乐律动和键盘游戏，也能通过功能键查看编程助手的任务状态。Mac 版在本机运行，提供原生窗口和菜单栏入口。
 
-The project is named **Air75v3灯光助手** (Air75 V3 Lighting Assistant). Current application bundles and download files are distributed as **NuPhyLab**.
+The project is named **Air75 V3 RGB Lab**, with the Chinese name **Air75v3灯光助手**. The current Mac release is **v1.0.11**. Application bundles and download files are distributed as **NuPhyLab**.
 
 项目名称为 **Air75v3灯光助手**，当前安装包和应用内名称仍为 **NuPhyLab**。
 
