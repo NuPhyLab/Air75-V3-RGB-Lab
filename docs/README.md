@@ -1,3 +1,9 @@
+> **Current documentation has moved / 当前文档入口已更新**
+>
+> This directory preserves early AIR-only engineering records. Current dual-model source and documentation are maintained together in [NuPhyLab-next](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/README.md). Dates and capabilities in the historical records do not describe the current app.
+>
+> 本目录保留早期 AIR 专用工程记录。当前双适配源码与文档统一在 [NuPhyLab-next](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/README.md) 维护；历史记录的日期、版本和功能边界不代表当前软件。
+
 # Air75 V3 RGB Lab — Documentation / 文档
 
 **Air75v3灯光助手**

@@ -1,10 +1,16 @@
+> **Historical Windows documentation / 历史 Windows 说明**
+>
+> The old AIR-only repository is being retired. This document records a separately supplied historical preview; the old release links below are no longer distribution entry points. The maintained release is the [AIR75 V3 + Kick75 macOS app](https://github.com/bohu8264/NuPhyLab-next/releases/latest).
+>
+> 旧 AIR 专用仓库将退役。本文仅保留早期 Windows 来件的历史说明，旧发行链接不再作为下载入口。当前持续维护的是 [AIR75 V3＋Kick75 Mac 双适配版](https://github.com/bohu8264/NuPhyLab-next/releases/latest)。
+
 # Air75 V3 RGB Lab — Windows preview / Windows 预览版
 
 **Air75v3灯光助手.** The current Windows executable is named `NuPhyLab.exe`.
 
 当前 Windows 程序名为 `NuPhyLab.exe`。
 
-[Project / 项目主页](README.md) · [Download Preview 5 / 下载预览版](https://github.com/bohu8264/NuPhyLab/releases/download/v1.0.0-windows-preview.5/NuPhyLab-Windows-x64-v1.0.0-preview.5.zip) · [Release notes / 发布说明](https://github.com/bohu8264/NuPhyLab/releases/tag/v1.0.0-windows-preview.5)
+[Project / 项目主页](README.md) · Download Preview 5 / 下载预览版（旧地址停用 / retired URL） · Release notes / 发布说明（旧地址停用 / retired URL）
 
 **Version: 1.0.0-windows-preview.5.** This is a separately supplied Windows port distributed as a portable ZIP. It is based on earlier NuPhyLab resources and does not have the same feature or validation scope as the current Mac release. The original supplied ZIP is published without modification.
 
