@@ -1,63 +1,97 @@
-# NuPhy Lab · AIR75 V3 + Kick75
+# NuPhy Lab
 
-One macOS app for **NuPhy AIR75 V3 and Kick75 (ANSI)**. Connect either keyboard by USB and NuPhy Lab detects the model automatically.
+[简体中文指南](README.zh-CN.md) · [English guide](README.en.md)
 
-一款软件，同时支持 **AIR75 V3＋Kick75（ANSI）**。用 USB 数据线连接并切到有线模式，软件自动识别型号。以后统一维护双适配版，不再单独发布 AIR 专用版。
+为 **NuPhy AIR65 / AIR75 / AIR100 V3、NODE75 / NODE100（LP / HP）和 Kick75（ANSI）** 提供灯光创作、键盘游戏、声音律动，以及 Codex / Claude Code 任务快捷键和状态灯。
 
-## Download / 下载
+A macOS lighting studio for **NuPhy AIR65 / AIR75 / AIR100 V3, NODE75 / NODE100 (LP / HP), and Kick75 (ANSI)**, with keyboard games, audio-reactive lighting, and Codex / Claude Code task shortcuts and status lights.
 
-### [Download the latest NuPhy Lab for macOS / 下载 Mac 最新双适配版](https://github.com/bohu8264/NuPhyLab-next/releases/latest)
+## 下载 / Download
 
-**Apple Silicon · macOS 13.5 or later.** Open the release page and download its `.dmg` installer. macOS packages use NuPhy company Developer ID signing and Apple notarization.
+### [直接下载最新版安装包 · Download the latest macOS installer](https://github.com/bohu8264/NuPhyLab-next/releases/latest/download/NuPhyLab-macOS-AppleSilicon.dmg)
 
-**适用于 Apple 芯片 Mac，macOS 13.5 或以上。** 打开发行页后下载其中的 `.dmg` 安装包。Mac 发行包使用 NuPhy 公司 Developer ID 签名并完成 Apple 公证。
+**Apple Silicon · 键盘功能 macOS 13.5+ · 框选提问 macOS 14+**
 
-This repository URL remains the fixed public entry point. The maintained dual-model source and macOS releases are published together in **[NuPhyLab-next](https://github.com/bohu8264/NuPhyLab-next)**. The download button above always opens that project's latest stable release.
+**Apple Silicon · macOS 13.5+ for keyboard features · macOS 14+ for selection**
 
-本仓库网址继续作为固定的市场分享入口。持续维护的双适配源码、Mac 安装包和应用更新统一在 **[NuPhyLab-next](https://github.com/bohu8264/NuPhyLab-next)** 发布；上方下载按钮始终打开其最新正式发行版。
+- [最新版本与更新说明 / Latest release and notes](https://github.com/bohu8264/NuPhyLab-next/releases/latest)
+- [项目源码 / Source code](https://github.com/bohu8264/NuPhyLab-next/tree/main)
+- [历史版本 / Previous releases](https://github.com/bohu8264/NuPhyLab-next/releases)
 
-## Install and update / 安装与更新
+安装包使用 NuPhy 公司 Developer ID 签名并完成 Apple 公证。
 
-1. Quit any old NuPhyLab application before installing. Open the DMG and drag **NuPhy Lab** to Applications.
-2. Keep one installed Lab application. After confirming the new app opens, move the old application to Trash; keep your application-data folder so artwork and settings remain available.
-3. Connect an AIR75 V3 or Kick75 with a USB data cable, select wired mode, and follow the permission and firmware guidance in the app.
+The installer is signed with NuPhy's Developer ID and notarized by Apple.
 
-1. 安装前先退出旧 NuPhyLab。打开 DMG，把 **NuPhy Lab** 拖入「应用程序」。
-2. 只保留一个 Lab 应用。确认新版可打开后，将旧应用移到废纸篓；保留本机应用数据，作品和设置会继续使用。
-3. 用 USB 数据线连接 AIR75 V3 或 Kick75，切到有线模式，按软件引导完成授权与固件检查。
+## 安装与更新 / Install and update
 
-**Old 1.0.11 / 1.1.x users need to install the current app once manually.** Those versions cannot receive this upgrade through the new updater. The maintained dual-model app includes in-app updates: new versions are checked automatically, and **Check for Updates** is also available in the application menu and Device page.
+1. 退出旧版 NuPhy Lab，打开 DMG，将 **NuPhy Lab** 拖入「应用程序」。保留本机应用数据，继续使用原有作品、草稿和设置。
 
-**旧 1.0.11／1.1.x 用户需要手动安装一次新版。** 旧版本不能通过新版更新器自动完成这次迁移。安装双适配新版后，软件会自动检查更新，也可在应用菜单或设备页点击 **「检查更新」**。
+   Quit the old NuPhy Lab app, open the DMG, and drag **NuPhy Lab** to Applications. Keep the app-data folder to retain your artwork, drafts and settings.
 
-## Features / 功能
+2. 用 USB 数据线连接键盘并切到有线模式。按软件提示授予输入监控和辅助功能权限；首次授权后，软件可能自动关闭并重新打开一次，使新权限生效。
 
-- Per-key RGB painting, animations and a local artwork library.
-- Key-triggered effects, keyboard games and audio-reactive lighting.
-- Codex / Claude Code task-status lighting and shortcuts.
-- Automatic AIR75 V3 / Kick75 detection; separate artwork layouts for each model.
-- 逐键绘图、动画、本地作品库、按键触发、键盘游戏与声音律动。
-- Codex／Claude Code 任务状态灯与快捷操作，按实际连接的键盘切换布局。
+   Connect the keyboard by USB and select wired mode. Follow the Input Monitoring and Accessibility prompts. The app may automatically close and reopen once to apply newly granted permissions.
 
-Lighting requires USB. AIR75 V3 also offers Bluetooth shortcut control. Optional features require their corresponding macOS permissions. Firmware upgrades are completed in the official NuPhyIO driver following the app's guidance.
+3. 软件会自动检查更新，也可打开 **设置 → 关于与更新 → 检查更新**。旧 1.1.x 用户需先手动安装一次新版。
 
-灯效需要 USB 连接；AIR75 V3 还支持蓝牙快捷控制。可选功能按 macOS 要求授权；键盘固件通过软件引导前往官方 NuPhyIO 升级。
+   The app checks for updates automatically. You can also use **Settings → About & updates → Check for Updates**. Users on 1.1.x need to install the current version once manually.
 
-## Source and documentation / 源码与文档
+灯效需要 USB 连接；AIR75 V3 另支持蓝牙快捷控制。需要更新键盘固件时，请按软件指引前往 NuPhyIO。
 
-- [Maintained dual-model source / 持续维护的双适配源码](https://github.com/bohu8264/NuPhyLab-next)
-- [Current Chinese guide / 当前中文说明](https://github.com/bohu8264/NuPhyLab-next/blob/main/README.zh-CN.md)
-- [Documentation / 文档](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/README.md)
-- [Report a current-version issue / 新版问题反馈](https://github.com/bohu8264/NuPhyLab-next/issues)
+Lighting requires USB. AIR75 V3 also supports Bluetooth shortcut control. Follow the app's NuPhyIO guidance if a firmware update is needed.
 
-For source matching a release, use **Source code** on that release's page. The early AIR-only files, tags and automatic source archives in this market-entry repository are historical records, not the current dual-model source. Historical version-specific URLs still identify their historical versions.
+各型号固件与兼容范围 / Model-specific firmware and compatibility: [键盘兼容性 / Keyboard compatibility](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/KEYBOARD_COMPATIBILITY.md)。AIR65 V3 无实体 F 区，不提供 F1–F12 自动接管。/ AIR65 V3 has no physical function row and does not offer automatic F1–F12 takeover.
 
-下载与安装包一致的源码时，请使用对应新版发行页的 **Source code**。本市场入口仓库中的早期 AIR 专用源码、标签和自动源码归档为历史记录，不代表当前双适配版；历史版本专属链接仍对应历史版本。
+新增型号的实体检查目前仅覆盖 NODE75 LP，不代表该型号所有功能均已逐项验证；其余新增型号仍需实机验证。另一台 Mac 的首次安装授权、AI 命令的实际效果，以及触摸手势和媒体输入配合仍需分别验证。
 
-## Historical Windows materials / 历史 Windows 资料
+Physical checks for newly added models currently cover NODE75 LP only, without establishing that every feature on that model has been verified. The other new models still require hardware validation. First-install permissions on another Mac, actual AI command effects, touch gestures and interaction with media inputs require separate checks.
 
-The maintained dual-model installer is for macOS. Early Windows preview documentation is historical; its old download addresses are retired along with the old AIR-only repository. It is not a maintained dual-model Windows release.
+## Codex 默认命令键 / Default Codex command keys
 
-当前持续维护的双适配安装包适用于 macOS。早期 Windows 预览文档仅为历史资料，旧下载地址随旧 AIR 仓库退役；不代表当前有持续维护的 Windows 双适配版。
+在 AI 助手中开启 Codex 模式后使用。/ Enable Codex mode in AI Assistant to use these defaults.
 
-[完整中文说明](README.zh-CN.md)
+| 按键 / Key | 功能 | Action |
+| --- | --- | --- |
+| F7 | 普通 / 极速 | Standard / Fast |
+| F8 | 批准一次 | Allow once |
+| F9 | 拒绝 | Deny |
+| F10 | 新聊天 | New chat |
+| F11 | 按住听写，松开结束 | Hold to dictate, release to finish |
+| F12 | 发送 | Send |
+
+批准与拒绝需要当前存在审批请求；发送时需聚焦聊天输入框。
+
+Approval commands require a current request. Sending requires the chat composer to be focused.
+
+## 功能 / Features
+
+- 逐键 RGB 绘图、动画与本地作品库。/ Per-key RGB painting, animation and a local artwork library.
+- 按键触发、键盘游戏和声音律动。/ Key-triggered effects, keyboard games and audio-reactive lighting.
+- Codex / Claude Code 任务快捷键和状态灯。/ Codex / Claude Code task shortcuts and status lights.
+- USB 自动识别键盘型号，各型号的作品分别保存。/ Automatic USB model detection, with separate artwork for each keyboard model.
+- 框选翻译、总结与提问，可选本机语音转写，并连接自己的模型服务。/ Selection translation, summaries and questions, with optional local speech transcription and your own model service.
+- 中英文界面与 16 种可保存的翻译目标语言。/ Chinese and English interfaces, with 16 saved translation-language choices.
+
+## 文档与源码 / Documentation and source
+
+- [中文安装与使用指南](README.zh-CN.md) · [English installation and usage guide](README.en.md)
+- [文档目录 / Documentation index](docs/README.md)
+- [发布流程（中文）](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/RELEASING.md) · [Release workflow (English)](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/RELEASING.en.md)
+- [第三方声明 / Third-party notices](THIRD_PARTY_NOTICES.md)
+- [问题反馈 / Report an issue](https://github.com/bohu8264/NuPhyLab-next/issues)
+
+## 框选提问 / Ask about a selection
+
+打开 **实验室 → 框选提问**，在 **设置 → 模型与 API** 选择服务和模型并保存自己的 API Key，按提示完成授权。按住快捷键拖动框选，松开后获得翻译或总结，也可输入或口述问题。
+
+Open **Labs → Ask about a selection**, choose a service and model in **Settings → Models & API**, and save your own API key. Complete the permission prompts, hold the shortcut, drag over a region and release for a translation or summary. You can also type or dictate a question.
+
+“翻译为”支持中文、英语、日语、韩语等 16 种语言，选择会保存。界面语言与翻译目标独立设置。“发送图片”位于“按住说话”下方，仅在你开启且所选模型支持图片输入时使用；语音在本机转写。
+
+**Translate to** offers 16 languages, including Chinese, English, Japanese and Korean, and remembers your choice independently of the interface language. The image switch sits below **Hold to speak** and requires a model that supports image input. Speech is transcribed locally.
+
+选区文字与问题会发送到你配置的模型服务；图片仅在启用后按操作需要发送，API Key 保存在本机钥匙串中。
+
+Selected text and questions are sent to your configured model service. Images are included only when enabled and needed for the selected action. API keys are stored in the local Keychain.
+
+[设置与使用 / Setup and usage](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/SELECTION.md) · [界面与翻译语言 / Interface and translation languages](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/SELECTION_LANGUAGES.md) · [1.2.41 更新说明 / What's new in 1.2.41](https://github.com/bohu8264/NuPhyLab-next/blob/main/docs/RELEASE_1.2.41.md)
